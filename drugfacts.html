@@ -3037,17 +3037,17 @@ let lastScrollY = window.scrollY;
 const header = document.querySelector('.header');
 
 window.addEventListener('scroll', () => {
-  // Mobile only check
+  // Check if screen is mobile-sized (< 768px)
   if (window.innerWidth <= 768) {
-    // Hidden when scrolling down, shown when scrolling up
-    // threshold of 100px prevents jitter at the top
     if (window.scrollY > lastScrollY && window.scrollY > 100) {
+      // Scrolling down on mobile - hide header
       header.classList.add('header--hidden');
     } else {
+      // Scrolling up on mobile - show header
       header.classList.remove('header--hidden');
     }
   } else {
-    // Safety: ensure header is visible on desktop
+    // On laptop/desktop - force header to stay visible
     header.classList.remove('header--hidden');
   }
   lastScrollY = window.scrollY;
