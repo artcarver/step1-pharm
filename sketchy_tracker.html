@@ -383,15 +383,14 @@ const TIER_NAMES  = {1:"HIGH YIELD",2:"IMPORTANT",3:"REVIEW",4:"LOW YIELD"};
 const authBtn = document.getElementById('auth-btn');
 
 auth.onAuthStateChanged(async (user) => {
-  if (!user) {
-    // Kick to index if not logged in
-    window.location.replace("index.html");
-  } else {
-    // Allow any logged-in user to see their own tracker
+  if (user) {
     currentUser = user;
-    await fetchStateFromFirebase();
-    updateAll();
+    await fetchStateFromFirebase(); 
+  } else {
+    currentUser = null;
+    loadStateFromLocal(); 
   }
+  updateAll(); 
 });
 
 authBtn.addEventListener('click', () => {
@@ -417,30 +416,37 @@ async function fetchStateFromFirebase() {
   }
 }
 
-function saveStateToFirebase() {
-  if (!currentUser) {
-    alert("You must log in to save your progress.");
-    return;
+function loadStateFromLocal() {
+  const saved = localStorage.getItem('sketchy_local_progress');
+  if (saved) {
+    try {
+      watchedState = JSON.parse(saved);
+    } catch(e) {
+      watchedState = {};
+    }
+  } else {
+    watchedState = {};
   }
-  db.collection('users').doc(currentUser.uid).set({
-    watched: watchedState
-  }, { merge: true }).catch(console.error);
 }
 
+function saveState() {
+  if (currentUser) {
+    db.collection('users').doc(currentUser.uid).set({
+      watched: watchedState
+    }, { merge: true }).catch(console.error);
+  } else {
+    localStorage.setItem('sketchy_local_progress', JSON.stringify(watchedState));
+  }
+}
 function isWatched(id) {
   return !!watchedState[id];
 }
 
 function toggleWatch(id) {
-  if (!currentUser) {
-    alert("Please log in first to track your progress.");
-    return;
-  }
   watchedState[id] = !watchedState[id];
-  saveStateToFirebase();
+  saveState();
   updateAll();
 }
-
 // Rendering Logic
 function allVideos(){return categories.flatMap(c=>c.videos);}
 function updateAll(){updateTracker();renderByCat();renderByTier();renderTracker();}
