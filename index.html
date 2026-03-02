@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Step 1 Pharmacology Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* Fuji & Sakura Theme Colors */
+  --bg-main: #f4f7f9;
+  --bg-surface: #ffffff;
+  --fuji-dark: #1a365d;
+  --fuji-blue: #2a4b7c;
+  --fuji-light: #e6eaf0;
+  --sakura-pink: #ffb7c5;
+  --sakura-dark: #d77b93;
+  --sakura-bg: #fff0f3;
+  --ink-main: #2c3539;
+  --ink-muted: #64748b;
+  --border-light: #cbd5e1;
+
+  /* Tier Badge Colors */
+  --tier-hy-bg: #fee2e2;
+  --tier-hy-text: #b91c1c;
+  --tier-ess-bg: #e0f2fe;
+  --tier-ess-text: #0369a1;
+  --tier-sec-bg: #f1f5f9;
+  --tier-sec-text: #475569;
+
+  /* System Colors */
+  --auto: #b55a70; --auto-bg: #fdf0f3; --auto-light: rgba(181,90,112,0.12);
+  --cv: #1e3a8a; --cv-bg: #eff6ff; --cv-light: rgba(30,58,138,0.1);
+  --blood: #9f1239; --blood-bg: #fff1f2; --blood-light: rgba(159,18,57,0.1);
+  --neuro: #5b21b6; --neuro-bg: #f5f3ff; --neuro-light: rgba(91,33,182,0.1);
+  --micro: #166534; --micro-bg: #f0fdf4; --micro-light: rgba(22,101,52,0.1);
+  --gi: #9a3412; --gi-bg: #fff7ed; --gi-light: rgba(154,52,18,0.1);
+  --pulm: #0e7490; --pulm-bg: #ecfeff; --pulm-light: rgba(14,116,144,0.1);
+  --onco: #334155; --onco-bg: #f8fafc; --onco-light: rgba(51,65,85,0.1);
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--ink-main);
+  font-family: 'Jost', sans-serif;
+  min-height: 100vh;
+  /* Subtle geometric Fuji/Sakura background pattern */
+  background-image: radial-gradient(var(--sakura-pink) 0.5px, transparent 0.5px), radial-gradient(var(--sakura-pink) 0.5px, var(--bg-main) 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--fuji-dark) 0%, var(--fuji-blue) 100%);
+  padding: 32px 44px 0;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 4px 20px rgba(26,54,93,0.15);
+  border-bottom: 4px solid var(--sakura-pink);
+}
+.header-inner { max-width: 1400px; margin: 0 auto; }
+.header-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 20px; flex-wrap: wrap; }
+
+.brand-super {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 3px;
+  color: var(--sakura-pink); text-transform: uppercase; margin-bottom: 8px;
+}
+.brand-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px; font-weight: 600;
+  color: #ffffff; line-height: 1;
+}
+.brand-sub { font-size: 13px; color: var(--fuji-light); margin-top: 8px; }
+
+.search-wrap { flex: 1; min-width: 250px; max-width: 500px; position: relative; }
+.search-input {
+  width: 100%; padding: 12px 16px 12px 40px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,183,197,0.3);
+  border-radius: 8px;
+  color: #ffffff; font-family: 'Jost', sans-serif; font-size: 14px;
+  outline: none; transition: all 0.2s;
+}
+.search-input::placeholder { color: rgba(255,255,255,0.6); }
+.search-input:focus {
+  border-color: var(--sakura-pink);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 0 3px rgba(255,183,197,0.2);
+}
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); font-size: 16px; pointer-events: none; }
+
+/* Tabs - Fixed wrapping */
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding-bottom: 12px; }
+.tab-btn {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--fuji-light);
+  transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+}
+.tab-btn:hover { background: rgba(255,255,255,0.1); color: #ffffff; }
+.tab-btn.active { background: var(--bg-surface); color: var(--fuji-dark); border-color: var(--bg-surface); font-weight: 500; }
+.tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Content & Grid - Fixed max-width */
+.content { max-width: 1400px; margin: 0 auto; padding: 30px 44px 70px; position: relative; z-index: 1; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* System Intro */
+.sys-intro {
+  border-radius: 12px; padding: 20px 24px; margin-bottom: 30px;
+  display: flex; align-items: flex-start; gap: 16px;
+  background: var(--bg-surface); border-left: 4px solid;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.sys-intro-icon { font-size: 28px; flex-shrink: 0; }
+.sys-intro-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+.sys-intro-text { font-size: 14px; color: var(--ink-muted); line-height: 1.6; }
+
+/* Class Group */
+.class-group { margin-bottom: 40px; }
+.class-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; padding: 6px 16px; display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 6px; margin-bottom: 16px; font-weight: 500;
+}
+
+/* Drug Grid */
+.drug-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+  gap: 16px; 
+}
+
+/* Drug Card */
+.drug-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 12px; overflow: hidden;
+  border-top: 4px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  display: flex; flex-direction: column;
+}
+.drug-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); border-color: var(--sakura-dark); }
+.drug-card.open { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+.drug-card-header { padding: 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.drug-name-wrap { flex: 1; min-width: 0; }
+.drug-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; line-height: 1.2; color: var(--fuji-dark); }
+.drug-aka { font-size: 12px; color: var(--ink-muted); margin-top: 4px; font-family: 'DM Mono', monospace; }
+
+.card-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+.tier-badge {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 8px; border-radius: 4px; font-weight: 500; white-space: nowrap;
+}
+.tier-high-yield { background: var(--tier-hy-bg); color: var(--tier-hy-text); }
+.tier-essential { background: var(--tier-ess-bg); color: var(--tier-ess-text); }
+.tier-secondary { background: var(--tier-sec-bg); color: var(--tier-sec-text); }
+
+.drug-tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+.tag { font-family: 'Jost', sans-serif; font-size: 11px; padding: 2px 8px; border-radius: 12px; background: var(--fuji-light); color: var(--fuji-dark); }
+
+.expand-arrow { font-size: 10px; color: var(--ink-muted); transition: transform 0.2s; }
+.open .expand-arrow { transform: rotate(180deg); }
+
+.drug-moa { padding: 0 16px 16px; font-size: 13.5px; color: var(--ink-main); line-height: 1.6; border-bottom: 1px solid var(--border-light); }
+
+/* Expanded Body */
+.drug-body { display: none; padding: 16px; background: #fafcff; }
+.open .drug-body { display: block; animation: slideDown 0.2s ease; }
+@keyframes slideDown { from { opacity:0; transform: translateY(-4px); } to { opacity:1; transform: translateY(0); } }
+
+.info-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+.info-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; width: 55px; text-align: center;
+}
+.info-text { font-size: 13.5px; color: var(--ink-main); line-height: 1.6; }
+.info-text strong { color: var(--fuji-dark); font-weight: 600; }
+
+.info-label.use { background: #dcfce7; color: #166534; }
+.info-label.se { background: #fee2e2; color: #b91c1c; }
+.info-label.ci { background: #ffedd5; color: #9a3412; }
+.info-label.pk { background: #f3e8ff; color: #6b21a8; }
+
+/* Pearl Box */
+.pearl-box {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--sakura-bg); border-left: 3px solid var(--sakura-dark);
+  border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 16px;
+}
+.pearl-star { color: var(--sakura-dark); font-size: 16px; flex-shrink: 0; }
+.pearl-text { font-size: 13px; color: var(--ink-main); line-height: 1.6; }
+
+/* Colors */
+.c-auto { color: var(--auto); } .c-cv { color: var(--cv); } .c-blood { color: var(--blood); } .c-neuro { color: var(--neuro); }
+.c-micro { color: var(--micro); } .c-gi { color: var(--gi); } .c-pulm { color: var(--pulm); } .c-onco { color: var(--onco); }
+.b-auto { border-top-color: var(--auto); } .b-cv { border-top-color: var(--cv); } .b-blood { border-top-color: var(--blood); }
+.b-neuro { border-top-color: var(--neuro); } .b-micro { border-top-color: var(--micro); } .b-gi { border-top-color: var(--gi); }
+.b-pulm { border-top-color: var(--pulm); } .b-onco { border-top-color: var(--onco); }
+
+.class-label.bg-auto { background: var(--auto-light); color: var(--auto); }
+.class-label.bg-cv { background: var(--cv-light); color: var(--cv); }
+.class-label.bg-blood { background: var(--blood-light); color: var(--blood); }
+.class-label.bg-neuro { background: var(--neuro-light); color: var(--neuro); }
+.class-label.bg-micro { background: var(--micro-light); color: var(--micro); }
+.class-label.bg-gi { background: var(--gi-light); color: var(--gi); }
+.class-label.bg-pulm { background: var(--pulm-light); color: var(--pulm); }
+.class-label.bg-onco { background: var(--onco-light); color: var(--onco); }
+
+/* Search / Empty */
+#search-results { display: none; }
+#search-results.active { display: block; }
+.search-count { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-muted); margin-bottom: 20px; }
+.empty { text-align: center; padding: 80px 20px; color: var(--ink-muted); }
+.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+.empty-text { font-family: 'Cormorant Garamond', serif; font-size: 24px; }
+
+@media(max-width: 768px) {
+  .header { padding: 20px 20px 0; }
+  .content { padding: 20px 20px 60px; }
+  .drug-grid { grid-template-columns: 1fr; }
+  .header-top { flex-direction: column; align-items: stretch; }
+  .search-wrap { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <p class="brand-super">Step 1: Pharmacology Reference</p>
+        <h1 class="brand-title">Drug Facts Database</h1>
+        <p class="brand-sub">MOA | Uses | Side Effects | PK | Clinical Pearls</p>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input class="search-input" type="text" id="search-input" placeholder="Search drug, class, MOA, side effect..." oninput="handleSearch(this.value)"/>
+      </div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" onclick="switchTab('autonomic',this)"><span class="tab-dot" style="background:var(--auto)"></span>Autonomic</button>
+      <button class="tab-btn" onclick="switchTab('cv',this)"><span class="tab-dot" style="background:var(--cv)"></span>Cardio</button>
+      <button class="tab-btn" onclick="switchTab('blood',this)"><span class="tab-dot" style="background:var(--blood)"></span>Blood / Rheum</button>
+      <button class="tab-btn" onclick="switchTab('neuro',this)"><span class="tab-dot" style="background:var(--neuro)"></span>Neuro / Psych</button>
+      <button class="tab-btn" onclick="switchTab('micro',this)"><span class="tab-dot" style="background:var(--micro)"></span>Micro</button>
+      <button class="tab-btn" onclick="switchTab('gi',this)"><span class="tab-dot" style="background:var(--gi)"></span>GI / Endocrine</button>
+      <button class="tab-btn" onclick="switchTab('pulm',this)"><span class="tab-dot" style="background:var(--pulm)"></span>Pulm</button>
+      <button class="tab-btn" onclick="switchTab('onco',this)"><span class="tab-dot" style="background:var(--onco)"></span>Oncology</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div id="search-results">
+    <div class="search-count" id="search-count"></div>
+    <div class="drug-grid" id="search-grid"></div>
+    <div class="empty" id="search-empty" style="display:none">
+      <div class="empty-icon">🌸</div>
+      <div class="empty-text">No drugs found matching your search.</div>
+    </div>
+  </div>
+
+  <div id="tab-autonomic" class="tab-panel active">
+    <div class="sys-intro" style="border-left-color: var(--auto);">
+      <div class="sys-intro-icon">⚡</div>
+      <div>
+        <div class="sys-intro-title c-auto">Autonomic Pharmacology</div>
+        <div class="sys-intro-text">Master receptor subtypes first (M1/M2/M3, α1/α2, β1/β2) and the drugs fall into place. High yield for organ specific side effects and clinical applications.</div>
+      </div>
+    </div>
+    <div id="autonomic-content"></div>
+  </div>
+
+  <div id="tab-cv" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--cv);">
+      <div class="sys-intro-icon">♥</div>
+      <div>
+        <div class="sys-intro-title c-cv">Cardiovascular Pharmacology</div>
+        <div class="sys-intro-text">The most tested drug system on Step 1. Know ACEi/ARBs cold. Antiarrhythmic classes: think ion channels first, then drugs. Diuretic electrolyte effects are guaranteed questions.</div>
+      </div>
+    </div>
+    <div id="cv-content"></div>
+  </div>
+
+  <div id="tab-blood" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--blood);">
+      <div class="sys-intro-icon">🩸</div>
+      <div>
+        <div class="sys-intro-title c-blood">Blood, Coagulation &amp; Rheumatology</div>
+        <div class="sys-intro-text">Anticoagulants appear on nearly every Step 1 exam. Know reversal agents cold. Heparin induced thrombocytopenia (HIT) is a classic trap. NSAIDs and DMARDs are heavily tested for toxicities.</div>
+      </div>
+    </div>
+    <div id="blood-content"></div>
+  </div>
+
+  <div id="tab-neuro" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--neuro);">
+      <div class="sys-intro-icon">🧠</div>
+      <div>
+        <div class="sys-intro-title c-neuro">Neuro / Psychiatric Pharmacology</div>
+        <div class="sys-intro-text">Memorize antidepressant side effect profiles (TCA overdose, SSRI serotonin syndrome). Antipsychotic EPS and NMS are classic vignettes. Antiepileptic drugs require exact mechanism knowledge.</div>
+      </div>
+    </div>
+    <div id="neuro-content"></div>
+  </div>
+
+  <div id="tab-micro" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--micro);">
+      <div class="sys-intro-icon">🦠</div>
+      <div>
+        <div class="sys-intro-title c-micro">Antimicrobial Pharmacology</div>
+        <div class="sys-intro-text">Organized by mechanism. For each drug know its unique toxicity, not just its coverage. Antibiotic associated C. diff is a perennial vignette.</div>
+      </div>
+    </div>
+    <div id="micro-content"></div>
+  </div>
+
+  <div id="tab-gi" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--gi);">
+      <div class="sys-intro-icon">🔬</div>
+      <div>
+        <div class="sys-intro-title c-gi">GI &amp; Endocrine Pharmacology</div>
+        <div class="sys-intro-text">Diabetes pharmacology is enormous. Know every class MOA, when to use it, and key side effects. Corticosteroids are the highest yield drug class for toxicity.</div>
+      </div>
+    </div>
+    <div id="gi-content"></div>
+  </div>
+
+  <div id="tab-pulm" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--pulm);">
+      <div class="sys-intro-icon">🫁</div>
+      <div>
+        <div class="sys-intro-title c-pulm">Pulmonary Pharmacology</div>
+        <div class="sys-intro-text">Asthma step therapy is heavily tested. Know which drugs are for acute relief vs. maintenance. Antihistamine receptor subtypes determine organ effects and drug indication.</div>
+      </div>
+    </div>
+    <div id="pulm-content"></div>
+  </div>
+
+  <div id="tab-onco" class="tab-panel">
+    <div class="sys-intro" style="border-left-color: var(--onco);">
+      <div class="sys-intro-icon">⚗</div>
+      <div>
+        <div class="sys-intro-title c-onco">Antineoplastic Pharmacology</div>
+        <div class="sys-intro-text">Step 1 tests toxicities more than mechanisms. Key rule: every chemo drug has one unique, memorable toxicity. Learn these cold.</div>
+      </div>
+    </div>
+    <div id="onco-content"></div>
+  </div>
+</div>
+
+<script>
+const DRUGS = {
+autonomic: [
+  {
+    group: "Parasympathomimetics", color: "auto",
+    drugs: [
+      {
+        name: "Cholinomimetics (Direct)", aka: "Bethanechol, Pilocarpine, Methacholine",
+        tier: "Essential", tags: ["Glaucoma", "Ileus"],
+        moa: "Directly bind and activate <strong>muscarinic (M) receptors</strong>.",
+        use: "Bethanechol: postop ileus, urinary retention. Pilocarpine: glaucoma. Methacholine: asthma challenge test.",
+        se: "<strong>DUMBBELLS</strong>: Diarrhea, Urination, Miosis, Bradycardia, Bronchospasm, Emesis, Lacrimation, Salivation.",
+        ci: "Asthma, peptic ulcer, bowel obstruction.",
+        pearl: "Pilocarpine is the classic <strong>glaucoma drug that constricts the pupil</strong>. Bethanechol does NOT cross the BBB."
+      },
+      {
+        name: "Acetylcholinesterase Inhibitors", aka: "Neostigmine, Physostigmine, Donepezil",
+        tier: "High Yield", tags: ["Myasthenia", "Alzheimer's"],
+        moa: "Inhibit <strong>AChE</strong> increasing ACh at muscarinic and nicotinic synapses.",
+        use: "Neostigmine/pyridostigmine: myasthenia gravis. Donepezil: Alzheimer's. Physostigmine: anticholinergic overdose.",
+        se: "Cholinergic excess (DUMBBELLS).",
+        pearl: "<strong>Organophosphate poisoning</strong> is irreversible AChE inhibition. Treat with <strong>atropine</strong> + <strong>pralidoxime</strong>."
+      },
+      {
+        name: "Muscarinic Antagonists", aka: "Atropine, Scopolamine, Ipratropium",
+        tier: "High Yield", tags: ["Asthma/COPD", "Motion Sickness"],
+        moa: "Competitively block <strong>muscarinic receptors</strong>.",
+        use: "Atropine: bradycardia. Scopolamine: motion sickness. Ipratropium: COPD.",
+        se: "<strong>Can't see, spit, pee, or poop.</strong> Mydriasis, dry mouth, urinary retention, constipation.",
+        pearl: "Elderly patient with confusion, dilated pupils, urinary retention, dry flushed skin = anticholinergic toxicity. <strong>Reverse with physostigmine</strong>."
+      }
+    ]
+  },
+  {
+    group: "Sympathomimetics & Adrenergic Drugs", color: "auto",
+    drugs: [
+      {
+        name: "Epinephrine & Direct Agonists", aka: "Epinephrine, Norepinephrine, Dopamine",
+        tier: "High Yield", tags: ["Shock", "Anaphylaxis"],
+        moa: "Directly activate <strong>adrenergic receptors</strong>. Epi = α1/α2/β1/β2.",
+        use: "Epinephrine: anaphylaxis (#1), cardiac arrest. NE: septic shock.",
+        se: "Tachycardia, hypertension, arrhythmia.",
+        pearl: "<strong>Epinephrine in anaphylaxis:</strong> α1 causes vasoconstriction; β1 increases HR; β2 causes bronchodilation. Give IM."
+      },
+      {
+        name: "Beta Blockers", aka: "Metoprolol (β1), Propranolol (non-selective)",
+        tier: "High Yield", tags: ["HTN", "HF", "Post-MI"],
+        moa: "Competitively block <strong>β-adrenergic receptors</strong>.",
+        use: "HTN, angina, HF, post-MI, rate control.",
+        se: "Bradycardia, fatigue, <strong>masks hypoglycemia</strong>, bronchospasm (non-selective).",
+        ci: "Asthma/COPD (non-selective), decompensated HF.",
+        pearl: "<strong>Pheochromocytoma trap:</strong> never give β-blocker without α-blocker first. Unopposed α causes severe paradoxical hypertension."
+      }
+    ]
+  }
+],
+
+cv: [
+  {
+    group: "ACE Inhibitors & ARBs", color: "cv",
+    drugs: [
+      {
+        name: "ACE Inhibitors", aka: "Lisinopril, Captopril",
+        tier: "High Yield", tags: ["HTN", "HF", "DM Nephropathy"],
+        moa: "Inhibit <strong>ACE</strong> decreasing angiotensin II and aldosterone. Increases bradykinin.",
+        use: "HTN, HF, <strong>diabetic nephropathy</strong>.",
+        se: "<strong>Cough</strong>, Angioedema, hyperkalemia, first-dose hypotension.",
+        ci: "<strong>Pregnancy (teratogenic)</strong>, bilateral renal artery stenosis.",
+        pearl: "<strong>Dry cough</strong> is bradykinin mediated. Switch to ARB if intolerable."
+      }
+    ]
+  },
+  {
+    group: "Diuretics", color: "cv",
+    drugs: [
+      {
+        name: "Loop Diuretics", aka: "Furosemide, Bumetanide",
+        tier: "High Yield", tags: ["HF", "Edema", "Hypercalcemia"],
+        moa: "Inhibit <strong>Na-K-2Cl cotransporter (NKCC2)</strong> in thick ascending loop of Henle.",
+        use: "Acute pulmonary edema, HF, hypercalcemia.",
+        se: "<strong>Oh DANG:</strong> Ototoxicity, Dehydration, hyperuricemia, hypokalemia, sulfa allergy.",
+        pearl: "<strong>Loop diuretics Lose calcium.</strong> Use for hypercalcemia."
+      },
+      {
+        name: "Thiazide Diuretics", aka: "Hydrochlorothiazide (HCTZ)",
+        tier: "High Yield", tags: ["HTN", "Nephrolithiasis"],
+        moa: "Inhibit <strong>NaCl cotransporter (NCC)</strong> in early DCT.",
+        use: "HTN, calcium nephrolithiasis.",
+        se: "<strong>HyperGLUCaemia:</strong> Hyperglycemia, hyperLipidemia, hyperUricemia, hyperCalcemia, <strong>hypokalemia</strong>.",
+        pearl: "<strong>Thiazides retain calcium.</strong> Use for hypercalciuria/kidney stones."
+      }
+    ]
+  }
+],
+
+blood: [
+  {
+    group: "Anticoagulants", color: "blood",
+    drugs: [
+      {
+        name: "Heparin (UFH & LMWH)", aka: "Unfractionated Heparin, Enoxaparin",
+        tier: "High Yield", tags: ["DVT/PE", "ACS"],
+        moa: "Activates antithrombin III to inhibit <strong>IIa (thrombin) and Xa</strong>.",
+        use: "DVT, PE, ACS. Safe in pregnancy.",
+        se: "<strong>HIT (Heparin Induced Thrombocytopenia):</strong> paradoxical thrombosis.",
+        pearl: "<strong>HIT type II:</strong> Stop heparin immediately, switch to <strong>argatroban</strong>. Reversal agent for UFH is protamine sulfate."
+      },
+      {
+        name: "Warfarin", aka: "Coumadin",
+        tier: "High Yield", tags: ["AF", "DVT/PE"],
+        moa: "Inhibits <strong>vitamin K epoxide reductase</strong>.",
+        use: "AF, mechanical heart valves.",
+        se: "Bleeding, <strong>Warfarin skin necrosis</strong>, teratogenic.",
+        pearl: "<strong>Warfarin reversal:</strong> Minor bleeding use oral vitamin K. Serious bleeding use IV vitamin K and <strong>4-factor PCC</strong>."
+      }
+    ]
+  },
+  {
+    group: "Anti-Inflammatory & Rheumatology", color: "blood",
+    drugs: [
+      {
+        name: "Colchicine", aka: "Colcrys",
+        tier: "Essential", tags: ["Gout Flare", "Pericarditis"],
+        moa: "Binds <strong>tubulin</strong> to decrease microtubule polymerization and neutrophil migration.",
+        use: "Acute gout flare, pericarditis.",
+        se: "GI (diarrhea, nausea), myelosuppression.",
+        pearl: "<strong>Colchicine does NOT lower uric acid.</strong> It suppresses the inflammatory response to urate crystals."
+      },
+      {
+        name: "Hydroxychloroquine", aka: "Plaquenil",
+        tier: "Secondary", tags: ["SLE", "RA"],
+        moa: "Increases lysosomal pH in antigen-presenting cells, blocking TLR signaling.",
+        use: "SLE (reduces mortality), Rheumatoid Arthritis, Malaria.",
+        se: "<strong>Retinopathy (bulls-eye maculopathy)</strong>, GI distress.",
+        pearl: "Requires annual dilated eye exams to check for irreversible macular toxicity."
+      }
+    ]
+  }
+],
+
+neuro: [
+  {
+    group: "Antidepressants & Psych", color: "neuro",
+    drugs: [
+      {
+        name: "SSRIs", aka: "Fluoxetine, Sertraline",
+        tier: "High Yield", tags: ["Depression", "Anxiety"],
+        moa: "Inhibit <strong>serotonin reuptake transporter (SERT)</strong>.",
+        use: "First line for depression, anxiety disorders, OCD.",
+        se: "<strong>GI upset</strong>, sexual dysfunction, <strong>serotonin syndrome</strong>.",
+        pearl: "<strong>Serotonin Syndrome triad:</strong> altered mental status, autonomic instability, neuromuscular abnormalities."
+      },
+      {
+        name: "Tricyclic Antidepressants (TCAs)", aka: "Amitriptyline",
+        tier: "Essential", tags: ["Depression", "Neuropathic Pain"],
+        moa: "Block <strong>NE and 5-HT reuptake</strong> and muscarinic, H1, and α1 receptors.",
+        se: "<strong>TCA toxicity:</strong> anticholinergic + wide QRS + QT prolongation.",
+        pearl: "<strong>TCA overdose:</strong> wide QRS on ECG. Treat with <strong>sodium bicarbonate IV</strong>."
+      }
+    ]
+  },
+  {
+    group: "Antiepileptic Drugs (AEDs)", color: "neuro",
+    drugs: [
+      {
+        name: "Phenytoin", aka: "Dilantin",
+        tier: "High Yield", tags: ["Status Epilepticus", "Focal Seizures"],
+        moa: "Blocks <strong>Na+ channels</strong> (use-dependent).",
+        use: "Tonic-clonic, focal seizures, status epilepticus (IV).",
+        se: "<strong>Zero-order kinetics</strong>, gingival hyperplasia, hirsutism, fetal hydantoin syndrome.",
+        pearl: "<strong>Zero-order kinetics:</strong> Small dose increase causes massive plasma level increase."
+      },
+      {
+        name: "Carbamazepine", aka: "Tegretol",
+        tier: "High Yield", tags: ["Trigeminal Neuralgia", "Bipolar"],
+        moa: "Blocks <strong>Na+ channels</strong>.",
+        use: "Focal seizures, trigeminal neuralgia, bipolar.",
+        se: "<strong>Agranulocytosis</strong>, SIADH, CYP auto-induction.",
+        pearl: "First line for trigeminal neuralgia. Check CBC for agranulocytosis."
+      },
+      {
+        name: "Lamotrigine", aka: "Lamictal",
+        tier: "Essential", tags: ["Broad Spectrum", "Bipolar"],
+        moa: "Blocks voltage-gated <strong>Na+ channels</strong>.",
+        use: "Broad-spectrum AED, bipolar maintenance.",
+        se: "<strong>Stevens-Johnson syndrome</strong>.",
+        pearl: "<strong>Valproate + lamotrigine = dangerous.</strong> Valproate doubles lamotrigine levels increasing SJS risk."
+      }
+    ]
+  },
+  {
+    group: "Migraine Therapeutics", color: "neuro",
+    drugs: [
+      {
+        name: "Triptans", aka: "Sumatriptan, Rizatriptan",
+        tier: "High Yield", tags: ["Acute Migraine", "Cluster Headache"],
+        moa: "Agonists at <strong>5-HT1B/1D receptors</strong> on cranial blood vessels and nerve terminals causing vasoconstriction.",
+        use: "Acute migraine therapy, acute cluster headaches.",
+        se: "<strong>Coronary vasospasm</strong>, mild tingling.",
+        ci: "Patients with CAD or Prinzmetal angina.",
+        pearl: "Do not combine with ergotamines or MAOIs. Contraindicated in ischemic heart disease."
+      }
+    ]
+  }
+],
+
+micro: [
+  {
+    group: "Penicillins", color: "micro",
+    drugs: [
+      {
+        name: "Natural Penicillins", aka: "Penicillin G (IV), Penicillin V (Oral)",
+        tier: "Essential", tags: ["Syphilis", "Strep"],
+        moa: "Bind <strong>penicillin-binding proteins (PBPs)</strong> blocking peptidoglycan cross-linking.",
+        use: "Syphilis (Treponema), Group A Strep.",
+        se: "Hypersensitivity (IgE mediated anaphylaxis).",
+        pearl: "Drug of choice for all stages of syphilis."
+      },
+      {
+        name: "Aminopenicillins", aka: "Ampicillin, Amoxicillin",
+        tier: "High Yield", tags: ["Listeria", "Otitis Media"],
+        moa: "Bind PBPs. Wider spectrum than natural penicillins.",
+        use: "Listeria, enterococcus, H. flu, Lyme disease (children).",
+        se: "Maculopapular rash in EBV infection.",
+        pearl: "<strong>Ampicillin in Listeria:</strong> Always add ampicillin to meningitis empiric coverage for neonates/elderly."
+      },
+      {
+        name: "Antistaphylococcal Penicillins", aka: "Nafcillin, Oxacillin",
+        tier: "Secondary", tags: ["MSSA"],
+        moa: "Bulky R-group prevents degradation by staphylococcal penicillinase.",
+        use: "MSSA infections (endocarditis, osteomyelitis).",
+        se: "Interstitial nephritis.",
+        pearl: "Use for MSSA. Ineffective against MRSA (altered PBP2a)."
+      }
+    ]
+  },
+  {
+    group: "Protein Synthesis Inhibitors", color: "micro",
+    drugs: [
+      {
+        name: "Macrolides", aka: "Azithromycin, Clarithromycin",
+        tier: "High Yield", tags: ["Atypicals", "CAP", "Chlamydia"],
+        moa: "Bind <strong>50S ribosomal subunit</strong> inhibiting translocation.",
+        use: "Atypical pneumonia, Chlamydia, MAC prophylaxis.",
+        se: "<strong>QT prolongation</strong>, GI motility stimulation.",
+        pearl: "<strong>Drug interaction:</strong> Erythromycin + statin increases rhabdomyolysis risk via CYP3A4 inhibition."
+      }
+    ]
+  },
+  {
+    group: "DNA / Cell Membrane", color: "micro",
+    drugs: [
+      {
+        name: "Fluoroquinolones", aka: "Ciprofloxacin, Levofloxacin",
+        tier: "High Yield", tags: ["UTI", "Pseudomonas"],
+        moa: "Inhibit <strong>DNA gyrase (topoisomerase II)</strong>.",
+        use: "UTI, Pseudomonas, atypical PNA.",
+        se: "<strong>Tendon rupture</strong>, QT prolongation, cartilage damage.",
+        pearl: "<strong>FQ + tendon rupture:</strong> Classic in elderly patients concurrently on systemic corticosteroids."
+      }
+    ]
+  }
+],
+
+gi: [
+  {
+    group: "GI Pharmacology", color: "gi",
+    drugs: [
+      {
+        name: "PPIs", aka: "Omeprazole, Pantoprazole",
+        tier: "Essential", tags: ["GERD", "PUD"],
+        moa: "Irreversibly inhibit <strong>H+/K+ ATPase</strong>.",
+        use: "GERD, peptic ulcer disease, H. pylori therapy.",
+        se: "Hypomagnesemia, C. diff risk, osteoporosis long term.",
+        pearl: "<strong>H. pylori triple therapy:</strong> PPI + clarithromycin + amoxicillin."
+      },
+      {
+        name: "Ondansetron", aka: "Zofran",
+        tier: "High Yield", tags: ["Antiemetic", "Chemo Nausea"],
+        moa: "<strong>5-HT3 receptor antagonist</strong> centrally (chemoreceptor trigger zone) and peripherally (vagal nerve terminals).",
+        use: "Nausea and vomiting control (post-op, chemo, pregnancy).",
+        se: "<strong>QT prolongation</strong>, headache, constipation.",
+        pearl: "Gold standard for chemotherapy induced nausea. Watch the QT interval!"
+      }
+    ]
+  }
+],
+
+pulm: [
+  {
+    group: "Asthma Step Therapy", color: "pulm",
+    drugs: [
+      {
+        name: "Short-Acting Beta Agonists (SABA)", aka: "Albuterol",
+        tier: "Essential", tags: ["Acute Rescue"],
+        moa: "β2 agonist increases cAMP causing rapid smooth muscle relaxation.",
+        use: "Acute asthma exacerbations.",
+        se: "Tachycardia, hypokalemia, tremor.",
+        pearl: "Hypokalemia occurs because β2 stimulation drives potassium into cells."
+      },
+      {
+        name: "Long-Acting Beta Agonists (LABA)", aka: "Salmeterol, Formoterol",
+        tier: "High Yield", tags: ["Maintenance"],
+        moa: "Long acting β2 agonist.",
+        use: "Asthma maintenance (ONLY with ICS), COPD.",
+        ci: "Never use as monotherapy in asthma (increased mortality).",
+        pearl: "Always prescribe in combination with an inhaled corticosteroid for asthma."
+      },
+      {
+        name: "Inhaled Corticosteroids (ICS)", aka: "Fluticasone, Budesonide",
+        tier: "High Yield", tags: ["First-Line Controller"],
+        moa: "Decreases airway inflammation and immune cell infiltration.",
+        use: "First-line chronic maintenance therapy for asthma.",
+        se: "Oral candidiasis (thrush), dysphonia.",
+        pearl: "Instruct patients to rinse mouth after use to prevent thrush."
+      },
+      {
+        name: "Leukotriene Receptor Antagonists", aka: "Montelukast",
+        tier: "Essential", tags: ["Aspirin Asthma", "Allergies"],
+        moa: "Blocks <strong>cysteinyl leukotriene receptors</strong>.",
+        use: "Aspirin exacerbated respiratory disease (AERD), allergic rhinitis.",
+        se: "Neuropsychiatric effects (nightmares, suicidality).",
+        pearl: "<strong>Samter's triad:</strong> Asthma, nasal polyps, aspirin sensitivity. Montelukast is the treatment of choice."
+      }
+    ]
+  }
+],
+
+onco: [
+  {
+    group: "Alkylating Agents", color: "onco",
+    drugs: [
+      {
+        name: "Cyclophosphamide", aka: "Cytoxan",
+        tier: "High Yield", tags: ["Solid Tumors", "SLE"],
+        moa: "Cross-links <strong>DNA strands</strong> at guanine N-7.",
+        use: "Breast cancer, lymphomas, severe SLE.",
+        se: "<strong>Hemorrhagic cystitis</strong>, myelosuppression.",
+        pearl: "Toxicity prevention: <strong>MESNA</strong> binds the toxic acrolein metabolite in the urine."
+      },
+      {
+        name: "Platinum Compounds", aka: "Cisplatin, Carboplatin",
+        tier: "High Yield", tags: ["Testicular", "Ovarian"],
+        moa: "Cross-links DNA.",
+        use: "Testicular, lung, ovarian cancers.",
+        se: "<strong>Nephrotoxicity, Ototoxicity</strong>, severe emesis.",
+        pearl: "Always aggressively hydrate with normal saline to prevent nephrotoxicity. Amifostine can also be used."
+      }
+    ]
+  },
+  {
+    group: "Microtubule Inhibitors", color: "onco",
+    drugs: [
+      {
+        name: "Vinca Alkaloids", aka: "Vincristine, Vinblastine",
+        tier: "High Yield", tags: ["Leukemia", "Lymphoma"],
+        moa: "Bind β-tubulin to <strong>inhibit polymerization</strong>.",
+        use: "Hodgkin's, ALL.",
+        se: "<strong>Vincristine: peripheral neuropathy</strong>. Vinblastine: myelosuppression.",
+        pearl: "Vincristine = neuropathy. Vinblastine = blasts your bone marrow."
+      },
+      {
+        name: "Taxanes", aka: "Paclitaxel, Docetaxel",
+        tier: "Secondary", tags: ["Breast", "Ovarian"],
+        moa: "Bind tubulin to <strong>inhibit depolymerization</strong> (freezes the spindle).",
+        use: "Breast, ovarian cancers.",
+        se: "Peripheral neuropathy, hypersensitivity.",
+        pearl: "Taxanes prevent the breakdown of the mitotic spindle, halting cells in M phase."
+      }
+    ]
+  }
+]
+};
+
+// Rendering Engine
+let cardCounter = 0;
+
+function drugCardHTML(drug, colorClass, idx) {
+  const id = `drug-${colorClass}-${idx}-${cardCounter++}`;
+  const tierClass = drug.tier ? `tier-${drug.tier.toLowerCase().replace(/\s+/g, '-')}` : 'tier-secondary';
+  const tierLabel = drug.tier || 'Secondary';
+
+  return `
+  <div class="drug-card b-${colorClass}" id="${id}" onclick="toggleCard('${id}')">
+    <div class="drug-card-header">
+      <div class="drug-name-wrap">
+        <div class="drug-name">${drug.name}</div>
+        ${drug.aka ? `<div class="drug-aka">${drug.aka}</div>` : ''}
+      </div>
+      <div class="card-meta">
+        <span class="tier-badge ${tierClass}">${tierLabel}</span>
+        <div class="drug-tags">
+          ${drug.tags ? drug.tags.map(t => `<span class="tag">${t}</span>`).join('') : ''}
+        </div>
+        <span class="expand-arrow">▼</span>
+      </div>
+    </div>
+    <div class="drug-moa">${drug.moa}</div>
+    <div class="drug-body">
+      ${drug.use ? `<div class="info-row"><span class="info-label use">Uses</span><span class="info-text">${drug.use}</span></div>` : ''}
+      ${drug.se ? `<div class="info-row"><span class="info-label se">SEs</span><span class="info-text">${drug.se}</span></div>` : ''}
+      ${drug.ci ? `<div class="info-row"><span class="info-label ci">Avoid</span><span class="info-text">${drug.ci}</span></div>` : ''}
+      ${drug.pk ? `<div class="info-row"><span class="info-label pk">PK</span><span class="info-text">${drug.pk}</span></div>` : ''}
+      ${drug.pearl ? `<div class="pearl-box"><span class="pearl-star">🌸</span><div class="pearl-text"><strong>High Yield Pearl:</strong> ${drug.pearl}</div></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderSection(sectionId, sysKey) {
+  const container = document.getElementById(sectionId);
+  const groups = DRUGS[sysKey];
+  if(!groups || !container) return;
+  let html = '';
+  let globalIdx = 0;
+  groups.forEach(group => {
+    html += `<div class="class-group">
+      <span class="class-label bg-${group.color}">${group.group}</span>
+      <div class="drug-grid">
+        ${group.drugs.map(d => drugCardHTML(d, group.color, globalIdx++)).join('')}
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+const sysMap = {
+  'autonomic-content': 'autonomic',
+  'cv-content': 'cv',
+  'blood-content': 'blood',
+  'neuro-content': 'neuro',
+  'micro-content': 'micro',
+  'gi-content': 'gi',
+  'pulm-content': 'pulm',
+  'onco-content': 'onco',
+};
+Object.entries(sysMap).forEach(([id, key]) => renderSection(id, key));
+
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  if(card) card.classList.toggle('open');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').classList.remove('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
+}
+
+function allDrugs() {
+  const results = [];
+  Object.entries(DRUGS).forEach(([sysKey, groups]) => {
+    groups.forEach(group => {
+      group.drugs.forEach(d => {
+        results.push({ ...d, colorClass: group.color, sysKey });
+      });
+    });
+  });
+  return results;
+}
+
+function handleSearch(q) {
+  const sr = document.getElementById('search-results');
+  const grid = document.getElementById('search-grid');
+  const empty = document.getElementById('search-empty');
+  const count = document.getElementById('search-count');
+
+  if(!q || q.length < 2) {
+    sr.classList.remove('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
+    return;
+  }
+
+  sr.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+
+  const ql = q.toLowerCase();
+  const matches = allDrugs().filter(d =>
+    d.name.toLowerCase().includes(ql) ||
+    (d.aka || '').toLowerCase().includes(ql) ||
+    (d.moa || '').toLowerCase().includes(ql) ||
+    (d.se || '').toLowerCase().includes(ql) ||
+    (d.use || '').toLowerCase().includes(ql) ||
+    (d.pearl || '').toLowerCase().includes(ql) ||
+    (d.tags || []).some(t => t.toLowerCase().includes(ql))
+  );
+
+  if(matches.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    count.textContent = 'No results for "' + q + '"';
+    return;
+  }
+
+  empty.style.display = 'none';
+  count.textContent = matches.length + ' result' + (matches.length !== 1 ? 's' : '') + ' for "' + q + '"';
+  grid.innerHTML = matches.map((d, i) => drugCardHTML(d, d.colorClass, 'search-' + i)).join('');
+}
+</script>
+</body>
+</html>
