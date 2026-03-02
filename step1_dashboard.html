@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Step 1 Dashboard — Gwendalynn Stilson</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -243,7 +245,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </div>
   </div>
 
-  <!-- ═══ OVERVIEW ═══ -->
   <div id="tab-overview" class="tab-panel active">
     <div class="card-grid-4">
       <div class="card"><p class="stat-label">CBSE Score</p><div class="stat-num" style="color:var(--yellow)">58</div><p class="stat-sub">Dec 11, 2025</p></div>
@@ -282,23 +283,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </div>
   </div>
 
-  <!-- ═══ DISCIPLINES ═══ -->
   <div id="tab-disciplines" class="tab-panel">
     <div class="ds-grid" id="disciplines-grid"></div>
   </div>
 
-  <!-- ═══ SYSTEMS ═══ -->
   <div id="tab-systems" class="tab-panel">
     <div class="ds-grid" id="systems-grid"></div>
   </div>
 
-  <!-- ═══ PHARMACOLOGY ═══ -->
   <div id="tab-pharmacology" class="tab-panel">
     <div class="info-banner">⚠️ <strong>Pharmacology is your most urgent priority.</strong> On both the CBSE (43) and CBSSA (46), your score is 30 points below average (76). It constitutes 10–20% of Step 1. Data below is from your UWorld Pharmacology progress.</div>
     <div class="pharma-list" id="pharma-list"></div>
   </div>
 
-  <!-- ═══ FOCUS ═══ -->
   <div id="tab-focus" class="tab-panel">
     <div class="focus-grid">
       <div class="focus-box critical-box">
@@ -339,7 +336,7 @@ const auth = firebase.auth();
 auth.onAuthStateChanged((user) => {
   const myEmail = "ghstilson@gmail.com"; 
 
-  if (!user || user.email !== myEmail) {
+  if (!user || user.email.toLowerCase() !== myEmail.toLowerCase()) {
     // Kick to index if no user, or if the email is wrong
     window.location.replace("index.html");
   } else {
