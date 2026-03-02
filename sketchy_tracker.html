@@ -170,19 +170,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     <div class="stats-row">
       <div class="stat-chip">
         <div class="num" style="color:var(--t1)" id="chip-t1">—</div>
-        <div class="lbl">Tier 1 — Do Today</div>
+        <div class="lbl">Tier 1 — High Yield</div>
       </div>
       <div class="stat-chip">
         <div class="num" style="color:var(--t2)" id="chip-t2">—</div>
-        <div class="lbl">Tier 2 — This Week</div>
+        <div class="lbl">Tier 2 — Important</div>
       </div>
       <div class="stat-chip">
         <div class="num" style="color:var(--t3)" id="chip-t3">—</div>
-        <div class="lbl">Tier 3 — Soon</div>
+        <div class="lbl">Tier 3 — Review</div>
       </div>
       <div class="stat-chip">
         <div class="num" style="color:var(--t4)" id="chip-t4">—</div>
-        <div class="lbl">Tier 4 — Later</div>
+        <div class="lbl">Tier 4 — Low Yield</div>
       </div>
       <div class="stat-chip">
         <div class="num" style="color:var(--green)" id="header-completed">0 / —</div>
@@ -385,7 +385,7 @@ const categories = [
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 const TIER_COLORS = {1:"var(--t1)",2:"var(--t2)",3:"var(--t3)",4:"var(--t4)"};
 const TIER_BG     = {1:"rgba(192,48,80,0.08)",2:"rgba(184,88,32,0.08)",3:"rgba(138,110,16,0.07)",4:"rgba(90,112,96,0.07)"};
-const TIER_NAMES  = {1:"DO TODAY",2:"THIS WEEK",3:"SOON",4:"LATER"};
+const TIER_NAMES  = {1:"HIGH YIELD",2:"IMPORTANT",3:"REVIEW",4:"LOW YIELD"};
 
 // ── STATE ────────────────────────────────────────────────────────────────────
 function loadWatched(){try{return JSON.parse(localStorage.getItem("sketchy_sakura_v1")||"{}");}catch{return{};}}
@@ -455,10 +455,10 @@ function renderByCat(){
 function renderByTier(){
   const c=document.getElementById("bytier-content");
   const td={
-    1:{label:"Tier 1 — Do Today",sub:"Highest-frequency Step 1 topics. Each video covers multiple guaranteed questions.",color:"var(--t1)"},
-    2:{label:"Tier 2 — This Week",sub:"High-yield content that consolidates your foundation and covers common vignettes.",color:"var(--t2)"},
-    3:{label:"Tier 3 — Soon",sub:"Medium-yield topics. Worth watching but only after Tiers 1 & 2 are complete.",color:"var(--t3)"},
-    4:{label:"Tier 4 — Later",sub:"Lower-yield — skip if time is short. Skim First Aid instead.",color:"var(--t4)"},
+    1:{label:"Tier 1 — High Yield",sub:"Highest-frequency Step 1 topics. Each video covers multiple guaranteed questions.",color:"var(--t1)"},
+    2:{label:"Tier 2 — Important",sub:"High-yield content that consolidates your foundation and covers common vignettes.",color:"var(--t2)"},
+    3:{label:"Tier 3 — Review",sub:"Medium-yield topics. Worth watching but only after Tiers 1 & 2 are complete.",color:"var(--t3)"},
+    4:{label:"Tier 4 — Low Yield",sub:"Lower-yield — skip if time is short. Skim First Aid instead.",color:"var(--t4)"},
   };
   let html="";
   for(let t=1;t<=4;t++){
