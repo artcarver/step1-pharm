@@ -39,6 +39,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   border-bottom:1px solid rgba(90,56,120,0.18);
   padding:24px 44px 0;position:sticky;top:0;z-index:200;
   box-shadow:0 1px 0 rgba(90,56,120,0.12),0 6px 24px rgba(90,68,140,0.1);
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+}
+.header--hidden {
+  transform: translateY(-100%);
 }
 .header-inner{max-width:1200px;margin:0 auto;}
 .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:16px;}
@@ -452,6 +457,25 @@ function switchTab(name,btn){
   document.getElementById("tab-"+name).classList.add("active");
   btn.classList.add("active");
 }
+let lastScrollY = window.scrollY;
+const header = document.querySelector('.header');
+
+window.addEventListener('scroll', () => {
+  // Only execute logic if the screen width is mobile-sized (< 768px)
+  if (window.innerWidth <= 768) {
+    if (window.scrollY > lastScrollY && window.scrollY > 100) {
+      // Scrolling down: Hide header
+      header.classList.add('header--hidden');
+    } else {
+      // Scrolling up: Show header
+      header.classList.remove('header--hidden');
+    }
+  } else {
+    // Desktop safety: Ensure header is never hidden if window is resized
+    header.classList.remove('header--hidden');
+  }
+  lastScrollY = window.scrollY;
+});
 </script>
 </body>
 </html>
