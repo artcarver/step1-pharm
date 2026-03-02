@@ -2241,6 +2241,9 @@ const sysMap = {
 Object.entries(sysMap).forEach(([id, key]) => renderSection(id, key));
 
 function toggleCard(id) {
+  // If the user is highlighting text, do not toggle the card
+  if (window.getSelection().toString().length > 0) return;
+
   const card = document.getElementById(id);
   if(card) card.classList.toggle('open');
 }
