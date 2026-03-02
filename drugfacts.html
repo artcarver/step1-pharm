@@ -1035,6 +1035,38 @@ blood: [
       },
     ]
   },
+  {
+    group: "Immunosuppressants",
+    color: "blood",
+    drugs: [
+      {
+        name: "Azathioprine",
+        summary: "Purine antimetabolite prodrug → 6-MP → inhibits de novo purine synthesis → ↓ lymphocyte proliferation. Used in transplant, autoimmune disease. DANGEROUS with allopurinol",
+        tier: 1,
+        aka: "Imuran · Prodrug of 6-mercaptopurine (6-MP)",
+        tags: ["Transplant", "Autoimmune", "IBD", "RA"],
+        moa: "<strong>Prodrug</strong> converted to <strong>6-mercaptopurine (6-MP)</strong> → further converted to 6-thioguanine nucleotides → inhibit de novo purine synthesis → suppress proliferation of <strong>T and B lymphocytes</strong> (lymphocytes rely on de novo synthesis, unlike most cells)",
+        use: "Organ transplant rejection prophylaxis (with other agents), Crohn's disease, ulcerative colitis (steroid-sparing), rheumatoid arthritis, SLE, myasthenia gravis, autoimmune hepatitis",
+        se: "<strong>Myelosuppression</strong> (leukopenia, thrombocytopenia, anemia — dose-limiting). <strong>Hepatotoxicity</strong> (↑ LFTs). Increased infection risk. GI upset. <strong>Malignancy risk</strong> (lymphoma, skin cancer with long-term use). Teratogenic",
+        ci: "<strong>Allopurinol / febuxostat co-administration</strong> (xanthine oxidase inhibitors block 6-MP metabolism → massive 6-MP accumulation → severe myelosuppression — FATAL if missed). Pregnancy. Severe myelosuppression",
+        pk: "<strong>TPMT (thiopurine methyltransferase) genotype testing</strong> before starting — TPMT deficiency → cannot metabolize 6-MP → severe myelosuppression. Metabolized by xanthine oxidase and TPMT. If allopurinol must be used, reduce azathioprine dose by 75%. Monitor CBC regularly",
+        pearl: "<strong>The azathioprine + allopurinol interaction is a classic Step 1 kill question.</strong> Allopurinol inhibits xanthine oxidase → 6-MP cannot be cleared → toxic accumulation → fatal myelosuppression. TPMT testing is standard of care before initiation. Lymphocytes are uniquely dependent on de novo purine synthesis (no salvage pathway backup), which is why this drug selectively immunosuppresses."
+      },
+      {
+        name: "Mycophenolate Mofetil",
+        summary: "Prodrug → mycophenolic acid → inhibits IMPDH → blocks de novo guanosine synthesis → selective suppression of T and B lymphocytes. Mainstay of solid organ transplant. Major teratogen",
+        tier: 1,
+        aka: "CellCept · Myfortic (enteric-coated) · MMF",
+        tags: ["Transplant", "Lupus Nephritis", "Autoimmune"],
+        moa: "<strong>Prodrug</strong> hydrolyzed to <strong>mycophenolic acid (MPA)</strong> → selectively inhibits <strong>inosine monophosphate dehydrogenase (IMPDH)</strong> → blocks de novo guanosine nucleotide synthesis → cytostatic effect on <strong>T and B lymphocytes</strong> (which lack a guanosine salvage pathway)",
+        use: "Solid organ transplant rejection prophylaxis (kidney, heart, liver — used with calcineurin inhibitor + corticosteroid). Lupus nephritis (first-line induction and maintenance). Myasthenia gravis. Steroid-sparing agent in various autoimmune conditions",
+        se: "<strong>GI toxicity</strong> (diarrhea, nausea, cramping — most common; enteric-coated formulation reduces GI burden). <strong>Myelosuppression</strong> (leukopenia, anemia, thrombocytopenia). Increased infection risk (CMV, PCP). <strong>Teratogenic</strong> (cleft lip/palate, limb abnormalities, miscarriage — two forms of contraception mandatory)",
+        ci: "<strong>Pregnancy</strong> (major teratogen — category D). Hypersensitivity to MMF. Caution with antacids/PPIs (↓ absorption via chelation)",
+        pk: "Rapidly hydrolyzed to MPA after oral absorption. Enterohepatic recirculation prolongs effect. Renal excretion. Antacids and cholestyramine reduce absorption. <strong>No dangerous allopurinol interaction</strong> (unlike azathioprine). Monitor CBC and renal function",
+        pearl: "<strong>MMF vs Azathioprine:</strong> Both target lymphocyte purine synthesis but via different enzymes — MMF inhibits IMPDH (guanosine pathway); azathioprine inhibits via 6-MP (overall purine synthesis). MMF has largely replaced azathioprine in transplant due to better efficacy and <strong>no allopurinol interaction</strong>. GI toxicity is MMF's main limitation — enteric-coated form helps. <strong>Teratogenicity is a major Step 1 theme</strong> — always flag in women of childbearing age and counsel on contraception."
+      },
+    ]
+  },
 ],
 
 neuro: [
