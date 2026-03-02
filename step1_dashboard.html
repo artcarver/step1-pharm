@@ -321,6 +321,31 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 </div>
 
 <script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",
+  authDomain: "sketchy-tracker.firebaseapp.com",
+  projectId: "sketchy-tracker",
+  storageBucket: "sketchy-tracker.firebasestorage.app",
+  messagingSenderId: "970470066509",
+  appId: "1:970470066509:web:14c7300fb1dd882a038f04",
+  measurementId: "G-2KVBCP4THR"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+
+auth.onAuthStateChanged((user) => {
+  const myEmail = "ghstilson@gmail.com"; 
+
+  if (!user || user.email !== myEmail) {
+    // Kick to index if no user, or if the email is wrong
+    window.location.replace("index.html");
+  } else {
+    console.log("Authorized access granted.");
+  }
+});
 const disciplines=[
   {name:"Pathology",cbse:57,cbssa:68,avg:75,weight:"45–55%"},
   {name:"Physiology",cbse:56,cbssa:67,avg:75,weight:"30–40%"},
@@ -416,30 +441,5 @@ function switchTab(name,btn){
   btn.classList.add("active");
 }
 </script>
-  const firebaseConfig = {
-  apiKey: "AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",
-  authDomain: "sketchy-tracker.firebaseapp.com",
-  projectId: "sketchy-tracker",
-  storageBucket: "sketchy-tracker.firebasestorage.app",
-  messagingSenderId: "970470066509",
-  appId: "1:970470066509:web:14c7300fb1dd882a038f04",
-  measurementId: "G-2KVBCP4THR"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
-
-auth.onAuthStateChanged((user) => {
-  const myEmail = "ghstilson@gmail.com"; 
-
-  if (!user || user.email !== myEmail) {
-    // Kick to index if no user, or if the email is wrong
-    window.location.replace("index.html");
-  } else {
-    console.log("Authorized access granted.");
-  }
-});
 </body>
 </html>
