@@ -137,10 +137,58 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .mini-bar-fill{height:100%;border-radius:3px;}
 
 @media(max-width:768px){
-  .header,.content{padding-left:18px;padding-right:18px;}
-  .video-row{grid-template-columns:24px 1fr 60px;}
-  .video-row .yield-bar-wrap,.video-row .reason-tag{display:none;}
-  .col-hdr{grid-template-columns:24px 1fr 60px;}
+  /* 1. Un-stick the header and tighten padding */
+  .header {
+    position: relative; 
+    padding: 16px 16px 0;
+  }
+  .content {
+    padding: 16px 16px 0;
+  }
+  
+  /* 2. Shrink fonts and hide non-essential decoration */
+  .brand-title { font-size: 22px; }
+  .brand-flourish { display: none; }
+  .eyebrow, .brand-super { margin-bottom: 2px; }
+  .back-link { margin-bottom: 8px; }
+
+  /* 3. Compress the stat chips and scores */
+  .stats-row, .scores-widget { 
+    gap: 6px; 
+    margin-top: 8px;
+  }
+  .stat-chip, .score-block, .gain-badge { 
+    padding: 8px 12px; 
+  }
+  .stat-chip .num, .score-num, .gain-badge .num { 
+    font-size: 20px; 
+  }
+  .stat-chip .lbl, .score-label {
+    font-size: 7.5px;
+  }
+
+  /* 4. Allow tabs to scroll horizontally instead of wrapping/stacking */
+  .tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .tab-btn {
+    padding: 8px 12px;
+  }
+
+  /* 5. Existing grid fixes */
+  .card-grid-4 { grid-template-columns: 1fr 1fr; }
+  .card-grid-2, .ds-grid, .focus-grid { grid-template-columns: 1fr; }
+  .header-top { flex-direction: column; gap: 8px; }
+  .pharma-row { grid-template-columns: 1fr 60px; }
+  .pharma-bar-col { display: none; }
+  .action-row { grid-template-columns: 36px 1fr; }
+  
+  /* Tracker specific grid fixes */
+  .video-row, .col-hdr { grid-template-columns: 24px 1fr 60px; }
+  .video-row .yield-bar-wrap, .video-row .reason-tag { display: none; }
 }
 .back-link {
   display: inline-block;
