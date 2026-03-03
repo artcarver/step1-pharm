@@ -397,14 +397,39 @@ body::before {
   margin-left: 6px;
 }
 
-@media(max-width: 768px) {
-  .header { padding: 20px 18px 0; }
-  .content { padding: 18px 18px 60px; }
+@media(max-width: 600px) {
+  .header { 
+    padding: 12px 14px 0; 
+    transition: transform 0.3s ease-in-out; /* Slide ONLY on mobile */
+  }
+  
+  /* Movement class used by JavaScript */
+  .header--hidden {
+    transform: translateY(-100%);
+  }
+
+  .content { padding: 12px 12px 60px; }
   .drug-grid { grid-template-columns: 1fr; }
   .header-top { flex-direction: column; gap: 12px; }
   .search-wrap { max-width: 100%; }
-}
 
+  .tab-btn { 
+    padding: 12px 14px; 
+    font-size: 10px; 
+  }
+  
+  /* Fixed Tabs Styling: Prevents background bleed-through */
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 201;
+    background: #bcb0d0; /* Solid match for header bottom */
+    padding: 8px 4px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+}
 /* ── TIER BADGE ── */
 .tier-badge {
   font-family: 'DM Mono', monospace;
@@ -460,16 +485,16 @@ body::before {
         <input class="search-input" type="text" id="search-input" placeholder="Search drug, class, mechanism, side effect..." oninput="handleSearch(this.value)"/>
       </div>
     </div>
-   <nav class="tabs" id="tabs">
-  <button class="tab-btn active" onclick="switchTab('micro', this)"><span class="tab-dot" style="background:var(--micro)"></span>Micro</button>
+  <nav class="tabs" id="tabs">
+  <button class="tab-btn active" onclick="switchTab('micro', this)"><span class="tab-dot" style="background:var(--micro)"></span>Microbiology</button>
   <button class="tab-btn" onclick="switchTab('autonomic', this)"><span class="tab-dot" style="background:var(--auto)"></span>Autonomics</button>
   <button class="tab-btn" onclick="switchTab('cv', this)"><span class="tab-dot" style="background:var(--cv)"></span>Cardio &amp; Renal</button>
-  <button class="tab-btn" onclick="switchTab('blood', this)"><span class="tab-dot" style="background:var(--blood)"></span>Heme</button>
-  <button class="tab-btn" onclick="switchTab('gi', this)"><span class="tab-dot" style="background:var(--gi)"></span>GI</button>
+  <button class="tab-btn" onclick="switchTab('blood', this)"><span class="tab-dot" style="background:var(--blood)"></span>Hematology</button>
+  <button class="tab-btn" onclick="switchTab('gi', this)"><span class="tab-dot" style="background:var(--gi)"></span>GI &amp; Motility</button>
   <button class="tab-btn" onclick="switchTab('endo', this)"><span class="tab-dot" style="background:var(--endo)"></span>Endo &amp; Repro</button>
   <button class="tab-btn" onclick="switchTab('neuro', this)"><span class="tab-dot" style="background:var(--neuro)"></span>Neuro &amp; Psych</button>
-  <button class="tab-btn" onclick="switchTab('onco', this)"><span class="tab-dot" style="background:var(--onco)"></span>Onc</button>
-  <button class="tab-btn" onclick="switchTab('toxicology', this)"><span class="tab-dot" style="background:var(--toxic)"></span>Tox</button>
+  <button class="tab-btn" onclick="switchTab('onco', this)"><span class="tab-dot" style="background:var(--onco)"></span>Oncology</button>
+  <button class="tab-btn" onclick="switchTab('toxicology', this)"><span class="tab-dot" style="background:var(--toxic)"></span>Toxicology</button>
 </nav>
   </div>
 </div>
@@ -3011,6 +3036,24 @@ function handleSearch(q) {
   count.textContent = matches.length + ' result' + (matches.length !== 1 ? 's' : '') + ' for "' + q + '"';
   grid.innerHTML = matches.map((d, i) => drugCardHTML(d, d.colorClass, 'search-' + i)).join('');
 }
+let lastScrollY = window.scrollY;
+const header = document.querySelector('.header');
+
+window.addEventListener('scroll', () => {
+  // HARD GUARD: If screen is wider than 768px (laptop), do nothing.
+  if (window.innerWidth > 600) {
+    header.classList.remove('header--hidden');
+    return; 
+  }
+
+  // Mobile-only logic: Hide on down-scroll, show on up-scroll
+  if (window.scrollY > lastScrollY && window.scrollY > 100) {
+    header.classList.add('header--hidden');
+  } else {
+    header.classList.remove('header--hidden');
+  }
+  lastScrollY = window.scrollY;
+});
 </script>
 </body>
 </html>
