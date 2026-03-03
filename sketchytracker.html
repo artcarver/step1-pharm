@@ -90,17 +90,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
 .video-list{border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;overflow:hidden;margin-bottom:4px;}
 
-/* Updated Grid for 2 Checkboxes */
-.video-row{
-  display:grid;grid-template-columns:28px 28px 1fr 80px 110px 120px;
+/* Grid Layout */
+.video-row, .col-hdr {
+  display:grid;grid-template-columns:32px 32px 1fr 80px 110px 120px;
   align-items:center;gap:10px;padding:11px 20px;
   border-bottom:1px solid rgba(236,216,222,0.5);
-  transition:background 0.15s;cursor:pointer;
 }
+
+.video-row{transition:background 0.15s;cursor:pointer;}
 .video-row:last-child{border-bottom:none;}
 .video-row:hover{background:var(--surface2);}
-.video-row.done{opacity:0.6;} /* Adjusted opacity so review box is still visible */
-.video-row.done .video-name{opacity: 0.5; text-decoration: line-through;}
+
+.video-row.fully-done{opacity:0.6;}
+.video-row.fully-done .video-name{text-decoration:line-through;opacity:0.7;}
 
 .video-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--dim);}
 .video-name{font-size:13px;color:var(--ink2);line-height:1.35;}
@@ -117,16 +119,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   display:flex;align-items:center;justify-content:center;
   font-size:10px;color:transparent;transition:all 0.18s;flex-shrink:0;
 }
-/* Watched (Green) */
 .check-box.checked{background:var(--green);border-color:var(--green);color:#fff;}
-/* Reviewed (Purple) */
 .check-box.reviewed{background:var(--fuji2);border-color:var(--fuji2);color:#fff;}
 
 .reason-tag{font-size:8.5px;padding:2px 7px;border-radius:5px;display:inline-block;font-family:'DM Mono',monospace;letter-spacing:0.5px;white-space:nowrap;border:1px solid;}
 
-/* Column Headers Updated */
-.col-hdr{display:grid;grid-template-columns:28px 28px 1fr 80px 110px 120px;padding:7px 20px;border-bottom:1px solid var(--border);}
-.col-hdr span{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;}
+/* Column Headers */
+.col-hdr{padding:7px 20px;border-bottom:1px solid var(--border);}
+.col-hdr span{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;}
 
 .overall-progress{margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 26px;}
 .op-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
@@ -145,7 +145,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .mini-bar-fill{height:100%;border-radius:3px;}
 
 @media(max-width:768px){
-  /* Mobile Adjustments */
   .header { position: relative; padding: 16px 16px 0; }
   .content { padding: 16px 16px 0; }
   .brand-title { font-size: 22px; }
@@ -161,9 +160,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
   .tab-btn { padding: 8px 12px; }
 
-  /* Tracker specific grid fixes for mobile */
-  /* Added review column (24px) */
-  .video-row, .col-hdr { grid-template-columns: 24px 24px 1fr 60px; }
+  .video-row, .col-hdr { grid-template-columns: 28px 28px 1fr 60px; }
   .video-row .yield-bar-wrap, .video-row .reason-tag { display: none; }
 }
 .back-link {
@@ -195,31 +192,32 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <div class="stat-chip"><div class="num" style="color:var(--t2)" id="chip-t2">0</div><div class="lbl">Tier 2 - Important</div></div>
       <div class="stat-chip"><div class="num" style="color:var(--t3)" id="chip-t3">0</div><div class="lbl">Tier 3 - Review</div></div>
       <div class="stat-chip"><div class="num" style="color:var(--t4)" id="chip-t4">0</div><div class="lbl">Tier 4 - Low Yield</div></div>
-      <div class="stat-chip"><div class="num" style="color:var(--green)" id="header-completed">0 / 0</div><div class="lbl">Watched</div></div>
-      <div class="stat-chip"><div class="num" style="color:var(--fuji2)" id="header-reviewed">0</div><div class="lbl">Reviewed</div></div>
+      <div class="stat-chip"><div class="num" style="color:var(--green)" id="header-completed">0 / 0</div><div class="lbl">Fully Complete</div></div>
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('bycat',this)">By Category</button>
-      <button class="tab-btn" onclick="switchTab('bytier',this)">By Priority Tier</button>
+      <button class="tab-btn active" onclick="switchTab('bytier',this)">By Priority Tier</button>
+      <button class="tab-btn" onclick="switchTab('bycat',this)">By Category</button>
       <button class="tab-btn" onclick="switchTab('tracker',this)">Progress Tracker</button>
     </div>
   </div>
 </div>
 
 <div class="content">
-  <div id="tab-bycat" class="tab-panel active"><div id="bycat-content"></div></div>
-  <div id="tab-bytier" class="tab-panel">
+  <div id="tab-bycat" class="tab-panel"><div id="bycat-content"></div></div>
+  
+  <div id="tab-bytier" class="tab-panel active">
     <div class="alert info">
       <strong>Start with Tier 1.</strong> These <span id="tier1-count">0</span> videos cover topics that appear on almost every Step 1 exam. Complete all of Tier 1 before moving to Tier 2.
     </div>
     <div id="bytier-content"></div>
   </div>
+
   <div id="tab-tracker" class="tab-panel">
     <div class="overall-progress">
       <div class="op-top"><span class="op-label">Overall Completion</span><span class="op-pct" id="tracker-pct">0%</span></div>
       <div class="op-bar"><div class="op-bar-fill" id="tracker-bar" style="width:0%"></div></div>
-      <div class="op-note" id="tracker-note">0 of 0 videos watched</div>
+      <div class="op-note" id="tracker-note">0 of 0 videos completed (Watch + Review)</div>
     </div>
     <div id="tracker-content"></div>
   </div>
@@ -243,7 +241,7 @@ const db = firebase.firestore();
 
 // Application State
 let watchedState = {};
-let reviewedState = {}; // New State for Reviewed
+let reviewedState = {};
 let currentUser = null;
 
 const categories = [
@@ -466,6 +464,7 @@ function saveState() {
 }
 function isWatched(id) { return !!watchedState[id]; }
 function isReviewed(id) { return !!reviewedState[id]; }
+function isComplete(id) { return isWatched(id) && isReviewed(id); }
 
 function toggleWatch(id) {
   watchedState[id] = !watchedState[id];
@@ -487,15 +486,17 @@ function updateAll(){updateTracker();renderByCat();renderByTier();renderTracker(
 function videoRowHTML(v, showCat){
   const w=isWatched(v.id);
   const r=isReviewed(v.id);
+  const complete = w && r; // Logic for visual dimming
+  
   const tc=TIER_COLORS[v.tier];
   const yp=(v.yield/10)*100;
   const yc=v.yield>=9?"var(--t1)":v.yield>=7?"var(--t2)":v.yield>=5?"var(--t3)":"var(--t4)";
   const catName = showCat ? categories.find(c=>c.videos.some(vv=>vv.id===v.id))?.name : null;
   return `
-  <div class="video-row ${w?'done':''}" onclick="toggleWatch('${v.id}')" id="row-${v.id}">
+  <div class="video-row ${complete?'fully-done':''}" onclick="toggleWatch('${v.id}')" id="row-${v.id}">
     <div class="check-box ${w?'checked':''}">${w?'✓':''}</div>
-    <div class="check-box ${r?'reviewed':''}" onclick="toggleReview('${v.id}', event)">${r?'R':''}</div>
-    <div class="video-name ${w?'done-name':''}">${v.name}${catName?` <span style="font-size:10px;color:var(--dim)">[${catName}]</span>`:''}</div>
+    <div class="check-box ${r?'reviewed':''}" onclick="toggleReview('${v.id}', event)">${r?'✓':''}</div>
+    <div class="video-name ${complete?'done-name':''}">${v.name}${catName?` <span style="font-size:10px;color:var(--dim)">[${catName}]</span>`:''}</div>
     <div class="video-time">${v.time}</div>
     <div class="yield-bar-wrap">
       <div class="yield-bar-bg"><div class="yield-bar-fill" style="width:${yp}%;background:${yc}"></div></div>
@@ -508,7 +509,8 @@ function videoRowHTML(v, showCat){
 function renderByCat(){
   const c=document.getElementById("bycat-content");
   c.innerHTML=categories.map(cat=>{
-    const done=cat.videos.filter(v=>isWatched(v.id)).length;
+    // Count ONLY if both watched and reviewed
+    const done=cat.videos.filter(v=>isComplete(v.id)).length;
     const total=cat.videos.length;
     const pct=Math.round((done/total)*100);
     const minTier=Math.min(...cat.videos.map(v=>v.tier));
@@ -528,7 +530,7 @@ function renderByCat(){
     </div>
     <div class="video-list">
       <div class="col-hdr">
-        <span>W</span><span>R</span><span>Video</span><span style="text-align:right">Time</span>
+        <span>WATCH</span><span>REV</span><span>Video</span><span style="text-align:right">Time</span>
         <span>Yield</span><span>Priority</span>
       </div>
       ${cat.videos.map(v=>videoRowHTML(v,false)).join("")}
@@ -548,7 +550,8 @@ function renderByTier(){
   for(let t=1;t<=4;t++){
     const d=td[t];
     const all=allVideos().filter(v=>v.tier===t);
-    const done=all.filter(v=>isWatched(v.id)).length;
+    // Logic: Only count as done if isComplete (watch+review)
+    const done=all.filter(v=>isComplete(v.id)).length;
     const totalMins=all.reduce((s,v)=>s+(parseInt(v.time)||0),0);
     html+=`<div class="section-hdr" style="background:${TIER_BG[t]};border-left-color:${d.color}">
       <div>
@@ -562,7 +565,7 @@ function renderByTier(){
     categories.forEach(cat=>{
       const cv=cat.videos.filter(v=>v.tier===t).sort((a,b)=>b.yield-a.yield);
       if(!cv.length)return;
-      const cd=cv.filter(v=>isWatched(v.id)).length;
+      const cd=cv.filter(v=>isComplete(v.id)).length;
       html+=`<div style="border:1px solid var(--border);border-top:none;overflow:hidden">
         <div style="padding:8px 20px;background:var(--surface2);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
           <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:${d.color};text-transform:uppercase">${cat.name}</span>
@@ -579,8 +582,8 @@ function renderByTier(){
 function updateTracker(){
   const av=allVideos();
   const total=av.length;
-  const done=av.filter(v=>isWatched(v.id)).length;
-  const reviewed=av.filter(v=>isReviewed(v.id)).length;
+  // Progress bar logic: requires BOTH checks
+  const done=av.filter(v=>isComplete(v.id)).length;
   const pct=Math.round((done/total)*100);
   const rem=total-done;
   const totalMins=av.reduce((s,v)=>s+(parseInt(v.time)||0),0);
@@ -592,13 +595,11 @@ function updateTracker(){
   if(document.getElementById("tier1-count")) document.getElementById("tier1-count").textContent = av.filter(v=>v.tier===1).length;
   const el=document.getElementById("tracker-pct"),bar=document.getElementById("tracker-bar"),
         note=document.getElementById("tracker-note"),chip=document.getElementById("header-completed"),
-        chipRev=document.getElementById("header-reviewed"),
         hrem=document.getElementById("header-remaining"),htot=document.getElementById("header-total");
   if(el) el.textContent=(isNaN(pct)?0:pct)+"%";
   if(bar) bar.style.width=(isNaN(pct)?0:pct)+"%";
-  if(note) note.textContent=`${done} of ${total} videos watched · ${rem} remaining`;
+  if(note) note.textContent=`${done} of ${total} videos completed (Watch + Review)`;
   if(chip) chip.textContent=`${done} / ${total}`;
-  if(chipRev) chipRev.textContent=`${reviewed}`;
   if(hrem) hrem.textContent=rem;
   if(htot) htot.textContent=`~${Math.round(totalMins/60*10)/10}`;
 }
@@ -610,13 +611,15 @@ function renderTracker(){
 
   let html=`<table class="cat-table" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px">
     <thead><tr>
-      <th>Category</th><th>Progress</th><th>Done / Total</th><th>Time Left</th><th>Top Tier</th>
+      <th>Category</th><th>Progress (W+R)</th><th>Done / Total</th><th>Time Left</th><th>Top Tier</th>
     </tr></thead><tbody>`;
   categories.forEach(cat=>{
-    const done=cat.videos.filter(v=>isWatched(v.id)).length;
+    // Logic: isComplete (Watch + Review)
+    const done=cat.videos.filter(v=>isComplete(v.id)).length;
     const total=cat.videos.length;
     const pct=Math.round((done/total)*100);
-    const ml=cat.videos.filter(v=>!isWatched(v.id)).reduce((s,v)=>s+(parseInt(v.time)||0),0);
+    // Time left: sum of videos that are NOT complete
+    const ml=cat.videos.filter(v=>!isComplete(v.id)).reduce((s,v)=>s+(parseInt(v.time)||0),0);
     const mt=Math.min(...cat.videos.map(v=>v.tier));
     const tc=TIER_COLORS[mt];
     html+=`<tr>
@@ -632,13 +635,14 @@ function renderTracker(){
   });
   html+=`</tbody></table>`;
 
-  const watched=av.filter(v=>isWatched(v.id));
-  const upcoming=av.filter(v=>!isWatched(v.id)).sort((a,b)=>a.tier-b.tier||b.yield-a.yield).slice(0,8);
+  // Lists: "Completed" means both checked. "Up Next" means not fully complete.
+  const completed=av.filter(v=>isComplete(v.id));
+  const upcoming=av.filter(v=>!isComplete(v.id)).sort((a,b)=>a.tier-b.tier||b.yield-a.yield).slice(0,8);
 
   html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px">
-      <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:14px">✓ Completed (${watched.length})</p>
-      ${watched.length?watched.map(v=>`<div style="font-size:12.5px;padding:7px 0;border-bottom:1px solid rgba(236,216,222,0.5);color:var(--muted);display:flex;justify-content:space-between"><span>${v.name}</span><span style="color:var(--green)">✓</span></div>`).join(""):'<p style="font-size:13px;color:var(--dim);font-style:italic">None yet. Start watching.</p>'}
+      <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:14px">✓ Fully Completed (${completed.length})</p>
+      ${completed.length?completed.map(v=>`<div style="font-size:12.5px;padding:7px 0;border-bottom:1px solid rgba(236,216,222,0.5);color:var(--muted);display:flex;justify-content:space-between"><span>${v.name}</span><span style="color:var(--green)">✓✓</span></div>`).join(""):'<p style="font-size:13px;color:var(--dim);font-style:italic">None yet. Watch & Review to complete.</p>'}
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px">
       <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t1);text-transform:uppercase;margin-bottom:14px">▶ Up Next (Top Priority)</p>
