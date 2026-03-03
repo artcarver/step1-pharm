@@ -92,7 +92,8 @@ body::before {
 .header {
   background: #c4b4d6;
   background-image: linear-gradient(120deg, #c0b0d2 0%, #cabdd8 55%, #bcb0d0 100%);
-  /* Remove the border-bottom line here */
+  /* Ensure border-bottom is NOT here to keep desktop transition invisible */
+  border-bottom: none; 
   padding: 24px 44px 0;
   position: sticky; 
   top: 0; 
@@ -405,7 +406,8 @@ body::before {
   margin-left: 6px;
 }
 
-@media (max-width: 600px) {
+/* Only triggers on actual touch devices (phones/tablets) */
+@media(max-width: 600px) {
   .header { 
     padding: 12px 14px 0; 
     transition: transform 0.3s ease-in-out;
@@ -415,15 +417,14 @@ body::before {
     transform: translateY(-100%);
   }
 
-  /* These styles ONLY apply on mobile */
   .tabs {
     position: sticky;
     top: 0;
     z-index: 201;
-    background: #bcb0d0; /* Solid background for mobile legibility */
+    background: #bcb0d0; /* Solid background only for mobile */
     padding: 8px 4px;
     margin-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.2); /* The line only appears on mobile */
+    border-top: 1px solid rgba(255,255,255,0.2); /* Separation line only on mobile */
   }
 
   .content { padding: 12px 12px 60px; }
@@ -3042,16 +3043,15 @@ let lastScrollY = window.scrollY;
 const header = document.querySelector('.header');
 
 window.addEventListener('scroll', () => {
-  // HARD GUARD: If screen is wider than mobile (laptop/desktop), STOP here.
+  // Check if the device is a touch-based mobile device
   if (window.innerWidth <= 600) {
-    header.classList.remove('header--hidden');
-    return; 
-  }
-
-  // Mobile-only logic
-  if (window.scrollY > lastScrollY && window.scrollY > 100) {
-    header.classList.add('header--hidden');
+    if (window.scrollY > lastScrollY && window.scrollY > 100) {
+      header.classList.add('header--hidden');
+    } else {
+      header.classList.remove('header--hidden');
+    }
   } else {
+    // If using a mouse (laptop), force header to stay visible
     header.classList.remove('header--hidden');
   }
   lastScrollY = window.scrollY;
