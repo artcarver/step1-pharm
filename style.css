@@ -1063,3 +1063,8 @@ body::before {
   .pharma-row    { grid-template-columns: 1fr 60px; }
   .pharma-bar-col { display: none; }
 }
+
+/* Pixorize card theme */
+.card-pixorize { border-top-color: #5a4490; }
+.card-pixorize .card-icon { background: rgba(90,68,144,.10); color: #5a4490; }
+.card-pixorize .card-tag  { background: rgba(90,68,144,.08); color: #5a4490; border-color: rgba(90,68,144,.20); }

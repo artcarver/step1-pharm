@@ -115,6 +115,17 @@
         <div class="card-pills"><span class="pill">Bacteria</span><span class="pill">Viruses</span><span class="pill">Fungi</span><span class="pill">Parasites</span></div>
       </div>
     </a>
+    <a class="tool-card card-pixorize" href="pixorize.html">
+      <div class="card-inner">
+        <div class="card-top">
+          <div class="card-icon">🎨</div>
+          <div class="card-meta"><span class="card-tag">Progress Tracker</span><span class="card-arrow">↗</span></div>
+        </div>
+        <h2 class="card-title">Pixorize</h2>
+        <p class="card-desc">Track all 312 Pixorize videos across biochemistry, immunology, embryology, and more.</p>
+        <div class="card-pills"><span class="pill">Biochem</span><span class="pill">Immunology</span><span class="pill">312 Videos</span></div>
+      </div>
+    </a>
     <a class="tool-card card-dash" href="step1_dashboard.html">
       <div class="card-inner">
         <div class="card-top">
@@ -290,6 +301,7 @@ document.querySelectorAll('.tool-card').forEach(card => {
 
     const isSecure = card.classList.contains('card-pharm') || 
                      card.classList.contains('card-sketchy') || 
+                     card.classList.contains('card-pixorize') || 
                      card.classList.contains('card-dash');
     
     if (isSecure && !auth.currentUser) {
