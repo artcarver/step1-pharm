@@ -5,11 +5,157 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style.css"/>
-<title>Pixorize Tracker - Step 1</title>
-
+<title>Pixorize Tracker — Step 1</title>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<style>
+:root {
+  --p1-color:#c03050; --p1-bg:rgba(192,48,80,0.07);   --p1-border:rgba(192,48,80,0.25);
+  --p2-color:#b87820; --p2-bg:rgba(184,120,32,0.07);  --p2-border:rgba(184,120,32,0.25);
+  --p3-color:#3d6e8a; --p3-bg:rgba(61,110,138,0.07);  --p3-border:rgba(61,110,138,0.25);
+  --p4-color:#7a7a7a; --p4-bg:rgba(120,120,120,0.06); --p4-border:rgba(120,120,120,0.2);
+}
+/* Shell */
+.pix-shell { display:flex; }
+.pix-sidebar {
+  width:224px; flex-shrink:0; position:sticky; top:0; height:100vh;
+  overflow-y:auto; background:var(--surface); border-right:1px solid var(--border);
+  padding:10px 0 60px; scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.pix-sidebar::-webkit-scrollbar { width:3px; }
+.pix-sidebar::-webkit-scrollbar-thumb { background:var(--border); }
+.sb-section { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); padding:14px 14px 5px; }
+.sb-item {
+  display:flex; align-items:center; gap:7px; padding:6px 14px 6px 12px;
+  cursor:pointer; transition:background .12s; border-left:3px solid transparent;
+  position:relative;
+}
+.sb-item:hover { background:var(--surface2); }
+.sb-item.active { background:rgba(212,96,122,0.07); border-left-color:var(--sakura2); }
+.sb-dot   { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.sb-name  { font-size:11px; color:var(--ink2); flex:1; line-height:1.25; }
+.sb-pct   { font-family:'DM Mono',monospace; font-size:9px; color:var(--dim); }
+.sb-strip { position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--border); }
+.sb-fill  { height:100%; transition:width .3s; }
+
+/* Main */
+.pix-main { flex:1; padding:22px 28px 80px; min-width:0; }
+
+/* Priority legend */
+.pleg {
+  display:flex; flex-wrap:wrap; gap:10px 22px; padding:13px 18px; margin-bottom:22px;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  align-items:center;
+}
+.pleg-ttl { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); }
+.pleg-row { display:flex; align-items:center; gap:7px; }
+.pleg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.pleg-lbl { font-family:'DM Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink2); }
+.pleg-sub { font-size:10px; color:var(--muted); }
+
+/* Category block */
+.cat-block { border:1px solid var(--border); border-radius:13px; overflow:hidden; background:var(--surface); box-shadow:var(--card-shadow); margin-bottom:8px; }
+.cat-hdr {
+  display:flex; align-items:center; gap:12px; padding:14px 18px;
+  cursor:pointer; border-left:4px solid; transition:background .13s;
+}
+.cat-hdr:hover { background:var(--surface2); }
+.cat-hdr.open  { border-bottom:1px solid var(--border); }
+.cat-icon { font-size:17px; flex-shrink:0; }
+.cat-left { flex:1; min-width:0; }
+.cat-name { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:600; color:var(--ink); }
+.cat-meta { display:flex; align-items:center; gap:10px; margin-top:3px; flex-wrap:wrap; }
+.cat-badge {
+  font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.8px; text-transform:uppercase;
+  padding:2px 8px; border-radius:10px; border:1px solid;
+}
+.cat-time  { font-family:'DM Mono',monospace; font-size:9px; color:var(--dim); }
+.cat-vcount{ font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); }
+.cat-prog-bar { height:3px; background:var(--border); border-radius:2px; margin-top:7px; }
+.cat-prog-fill{ height:100%; border-radius:2px; transition:width .3s; }
+.cat-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.cat-pct-num { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; line-height:1; }
+.cat-pct-lbl { font-family:'DM Mono',monospace; font-size:8px; color:var(--dim); text-align:right; }
+.cat-chev { color:var(--dim); font-size:11px; transition:transform .2s; }
+.cat-chev.open { transform:rotate(90deg); }
+
+/* Category body */
+.cat-body { display:none; }
+.cat-body.open { display:block; }
+.cat-why {
+  padding:11px 18px; font-size:12.5px; color:var(--muted); line-height:1.65;
+  border-bottom:1px solid var(--border);
+}
+.col-hdr {
+  display:grid; grid-template-columns:34px 34px 1fr 66px; gap:8px;
+  padding:7px 18px; font-family:'DM Mono',monospace; font-size:7.5px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--dim);
+  background:var(--bg2); border-bottom:1px solid var(--border);
+}
+.vid-row {
+  display:grid; grid-template-columns:34px 34px 1fr 66px; gap:8px;
+  padding:8px 18px; align-items:center;
+  border-bottom:1px dashed rgba(236,216,222,0.35); transition:background .11s;
+}
+.vid-row:last-child { border-bottom:none; }
+.vid-row:hover { background:var(--surface2); }
+.vid-row.done  { background:rgba(42,138,106,0.03); }
+.vid-name { font-size:13px; color:var(--ink2); line-height:1.3; }
+.vid-row.done .vid-name { color:var(--muted); text-decoration:line-through; text-decoration-color:rgba(42,138,106,0.5); }
+.vid-time { font-family:'DM Mono',monospace; font-size:10px; color:var(--dim); text-align:right; }
+
+/* Checkboxes */
+.chk {
+  width:28px; height:28px; border-radius:6px; border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  font-size:12px; color:transparent; transition:all .14s; background:var(--bg);
+  position:relative;
+}
+.chk:hover { border-color:var(--sakura); }
+.chk.w { background:var(--green);  border-color:var(--green);  color:#fff; }
+.chk.r { background:var(--fuji2);  border-color:var(--fuji2);  color:#fff; }
+.chk[data-tip]:hover::after {
+  content:attr(data-tip); position:absolute; bottom:calc(100% + 4px); left:50%;
+  transform:translateX(-50%); white-space:nowrap; pointer-events:none;
+  background:rgba(26,20,40,.82); color:#fff; font-family:'DM Mono',monospace;
+  font-size:8px; padding:3px 7px; border-radius:5px; z-index:20;
+}
+
+/* Tracker tab */
+.psum-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:22px; }
+.psum-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+.psum-lbl  { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--dim); margin-bottom:7px; }
+.psum-val  { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:600; line-height:1; }
+.psum-sub  { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); margin-top:5px; }
+
+.cat-table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:13px; overflow:hidden; box-shadow:var(--card-shadow); }
+.cat-table th { background:var(--bg2); font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--dim); padding:9px 13px; text-align:left; font-weight:400; border-bottom:1px solid var(--border); }
+.cat-table td { padding:10px 13px; border-bottom:1px solid rgba(236,216,222,0.25); font-size:13px; vertical-align:middle; }
+.cat-table tr:last-child td { border-bottom:none; }
+.cat-table tr:hover td { background:var(--surface2); }
+
+/* Scroll-to-top */
+.stb {
+  position:fixed; bottom:26px; right:26px; z-index:300;
+  width:40px; height:40px; border-radius:50%; background:var(--fuji2); color:#fff;
+  border:none; cursor:pointer; font-size:15px; display:none;
+  align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(61,46,110,.35);
+}
+.stb.vis { display:flex; }
+
+/* Responsive */
+@media(max-width:780px){
+  .pix-shell   { flex-direction:column; }
+  .pix-sidebar { width:100%; height:auto; position:relative; display:flex; flex-wrap:wrap; gap:3px; padding:8px; border-right:none; border-bottom:1px solid var(--border); }
+  .sb-item     { border-radius:8px; padding:5px 9px; border-left:none; }
+  .sb-strip    { display:none; }
+  .pix-main    { padding:14px; }
+  .psum-grid   { grid-template-columns:1fr 1fr; }
+  .col-hdr, .vid-row { grid-template-columns:30px 30px 1fr 52px; gap:6px; padding:7px 13px; }
+}
+</style>
 </head>
 <body>
 
@@ -17,15 +163,17 @@
   <div class="header-inner">
     <a href="index.html" class="back-link">← Back to Hub</a>
     <h1 class="brand-title">Pixorize Tracker</h1>
-    <p class="brand-sub"><span id="header-remaining">0</span> remaining &nbsp;·&nbsp; <span id="header-total">0</span> videos total</p>
-
+    <p class="brand-sub">
+      <span id="hd-watched">0</span> watched &nbsp;·&nbsp;
+      <span id="hd-done">0</span> / <span id="hd-total">0</span> fully complete &nbsp;·&nbsp;
+      32h 37m total content
+    </p>
     <div class="stats-row">
-      <div class="stat-chip"><div class="num" style="color:var(--green)" id="chip-done">0</div><div class="lbl">Watched</div></div>
-      <div class="stat-chip"><div class="num" style="color:var(--fuji2)" id="chip-reviewed">0</div><div class="lbl">Reviewed</div></div>
-      <div class="stat-chip"><div class="num" style="color:var(--sakura)" id="chip-complete">0 / 0</div><div class="lbl">Fully Complete</div></div>
-      <div class="stat-chip"><div class="num" style="color:var(--muted)" id="chip-remaining">0</div><div class="lbl">Remaining</div></div>
+      <div class="stat-chip"><div class="num" style="color:var(--p1-color)" id="cp1">0/0</div><div class="lbl">🔴 Must Know</div></div>
+      <div class="stat-chip"><div class="num" style="color:var(--p2-color)" id="cp2">0/0</div><div class="lbl">🟡 High Yield</div></div>
+      <div class="stat-chip"><div class="num" style="color:var(--p3-color)" id="cp3">0/0</div><div class="lbl">🔵 Solid Yield</div></div>
+      <div class="stat-chip"><div class="num" style="color:var(--p4-color)" id="cp4">0/0</div><div class="lbl">⚪ Lower Yield</div></div>
     </div>
-
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('bycat',this)">By Category</button>
       <button class="tab-btn" onclick="switchTab('tracker',this)">Progress Tracker</button>
@@ -33,679 +181,645 @@
   </div>
 </div>
 
-<div class="content">
+<div class="content" style="padding:0;max-width:none;">
 
+  <!-- BY CATEGORY -->
   <div id="tab-bycat" class="tab-panel active">
-    <div class="alert">
-      <strong>Pixorize covers biochemistry, immunology, and more with visual mnemonics.</strong> Check off each video as you Watch it, then again when you've Reviewed it. All 312 videos track to your overall progress.
+    <div class="pix-shell">
+      <nav class="pix-sidebar" id="sidebar"></nav>
+      <div class="pix-main">
+        <div class="pleg">
+          <span class="pleg-ttl">Priority</span>
+          <div class="pleg-row"><div class="pleg-dot" style="background:var(--p1-color)"></div><span class="pleg-lbl">Must Know</span><span class="pleg-sub">— on nearly every exam</span></div>
+          <div class="pleg-row"><div class="pleg-dot" style="background:var(--p2-color)"></div><span class="pleg-lbl">High Yield</span><span class="pleg-sub">— very frequently tested</span></div>
+          <div class="pleg-row"><div class="pleg-dot" style="background:var(--p3-color)"></div><span class="pleg-lbl">Solid Yield</span><span class="pleg-sub">— worth knowing well</span></div>
+          <div class="pleg-row"><div class="pleg-dot" style="background:var(--p4-color)"></div><span class="pleg-lbl">Lower Yield</span><span class="pleg-sub">— review if time allows</span></div>
+        </div>
+        <div id="bycat-content"></div>
+      </div>
     </div>
-    <div id="bycat-content"></div>
   </div>
 
-  <div id="tab-tracker" class="tab-panel">
-    <div class="overall-progress">
-      <div class="op-top"><span class="op-label">Overall Completion</span><span class="op-pct" id="tracker-pct">0%</span></div>
-      <div class="op-bar"><div class="op-bar-fill" id="tracker-bar" style="width:0%"></div></div>
-      <div class="op-note" id="tracker-note">0 of 312 videos completed (Watch + Review)</div>
+  <!-- TRACKER -->
+  <div id="tab-tracker" class="tab-panel" style="padding:22px 28px 80px;max-width:920px;">
+    <div class="overall-progress" style="margin-bottom:22px;">
+      <div class="op-top"><span class="op-label">Overall Completion</span><span class="op-pct" id="tr-pct">0%</span></div>
+      <div class="op-bar"><div class="op-bar-fill" id="tr-bar" style="width:0%"></div></div>
+      <div class="op-note" id="tr-note">0 of 312 videos completed</div>
     </div>
-    <div id="tracker-content"></div>
+    <div class="psum-grid" id="psum"></div>
+    <div class="section-label" style="margin-bottom:10px;">All Categories</div>
+    <table class="cat-table"><thead><tr>
+      <th>Category</th><th>Priority</th><th style="min-width:120px">Progress</th>
+      <th>Done</th><th>Watched</th><th>Total Time</th>
+    </tr></thead><tbody id="tr-tbody"></tbody></table>
   </div>
-
 </div>
 
+<button class="stb" id="stb" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
 <script>
-let auth = null, db = null, currentUser = null;
-let watchedState = {}, reviewedState = {};
+// ═══════════════════════════════════════════════════════════
+//  DATA — 312 videos, 25 categories, 4 priority tiers
+//  Priority based on:
+//   • USMLE Step 1 content outline (Biochem/Nutrition 14–24%)
+//   • First Aid Step 1 chapter weighting
+//   • UWorld question frequency analysis (SDN/Reddit)
+//   • Pixorize community Anki deck (AnkiFotL) priority tags
+//   • Student Doctor Network / r/step1 consensus
+// ═══════════════════════════════════════════════════════════
+const CATS = [
 
+  // ════════════ PRIORITY 1 — MUST KNOW ════════════
+  { id:"vitamins", name:"Vitamins", icon:"🍊", priority:1, totalTime:"3h 14m",
+    why:"Biochem/Nutrition = 14–24% of Step 1 (USMLE official outline). Vitamin deficiency presentations, coenzyme roles, and toxicities appear on nearly every exam. Pixorize is widely praised for making vitamins stick — start here.",
+    videos:[
+      {id:"v01",name:"Vitamin B1 (Thiamine) Biochemistry",time:"7:20"},
+      {id:"v02",name:"Vitamin B1 (Thiamine) Deficiency",time:"10:51"},
+      {id:"v03",name:"Vitamin B2 (Riboflavin)",time:"6:30"},
+      {id:"v04",name:"Vitamin B3 (Niacin) Biochemistry",time:"7:51"},
+      {id:"v05",name:"Vitamin B3 (Niacin) Deficiency and Excess",time:"8:33"},
+      {id:"v06",name:"Hartnup Disease",time:"5:58"},
+      {id:"v07",name:"Vitamin B5 (Pantothenic Acid)",time:"5:34"},
+      {id:"v08",name:"Vitamin B6 (Pyridoxine)",time:"10:15"},
+      {id:"v09",name:"Vitamin B7 (Biotin)",time:"7:53"},
+      {id:"v10",name:"Vitamin B9 (Folate)",time:"3:40"},
+      {id:"v11",name:"Vitamin B12 (Cobalamin) Biochemistry",time:"7:03"},
+      {id:"v12",name:"Vitamins B9 and B12 Deficiencies",time:"20:09"},
+      {id:"v13",name:"Vitamin A (Retinol) Biochemistry",time:"9:24"},
+      {id:"v14",name:"Vitamin A (Retinol) Deficiency and Excess",time:"9:17"},
+      {id:"v15",name:"Vitamin C (Ascorbic Acid) Biochemistry",time:"8:06"},
+      {id:"v16",name:"Vitamin C (Ascorbic Acid) Deficiency and Excess",time:"9:02"},
+      {id:"v17",name:"Vitamin D Biochemistry",time:"11:42"},
+      {id:"v18",name:"Vitamin D Deficiency and Excess",time:"11:37"},
+      {id:"v19",name:"Vitamin E (Tocopherol/Tocotrienol)",time:"7:23"},
+      {id:"v20",name:"Vitamin K Biochemistry",time:"6:53"},
+      {id:"v21",name:"Vitamin K Deficiency",time:"6:35"},
+      {id:"v22",name:"Kwashiorkor and Marasmus",time:"5:57"},
+      {id:"v23",name:"Zinc",time:"6:59"},
+    ]
+  },
+  { id:"immunodef", name:"Immunodeficiencies", icon:"🚫", priority:1, totalTime:"1h 5m",
+    why:"A guaranteed multi-question block on every exam. Know the defect, inheritance, characteristic infections, and lab findings (low IgA, absent thymic shadow, etc.) for each syndrome.",
+    videos:[
+      {id:"id01",name:"Selective IgA Deficiency",time:"5:27"},
+      {id:"id02",name:"DiGeorge Syndrome",time:"10:07"},
+      {id:"id03",name:"Hyper-IgM Syndrome",time:"8:36"},
+      {id:"id04",name:"IPEX",time:"7:09"},
+      {id:"id05",name:"Leukocyte Adhesion Deficiency (LAD)",time:"9:40"},
+      {id:"id06",name:"Chronic Granulomatous Disease (CGD)",time:"7:51"},
+      {id:"id07",name:"IL-12 Receptor Deficiency",time:"8:58"},
+      {id:"id08",name:"Wiskott-Aldrich Syndrome",time:"7:40"},
+    ]
+  },
+  { id:"hypersensitivity", name:"Hypersensitivity Reactions", icon:"⚠️", priority:1, totalTime:"28m 37s",
+    why:"Types I–IV appear as both one-liners and extended vignettes. Mechanism, timing, effector cells, and prototypical disease for each type — nearly guaranteed every exam.",
+    videos:[
+      {id:"hs01",name:"Type 1 Hypersensitivity Reactions",time:"9:42"},
+      {id:"hs02",name:"Type 2 Hypersensitivity Reactions",time:"7:33"},
+      {id:"hs03",name:"Type 3 Hypersensitivity Reactions",time:"6:06"},
+      {id:"hs04",name:"Type 4 Hypersensitivity Reactions",time:"5:16"},
+    ]
+  },
+  { id:"lysosomal", name:"Lysosomal Storage Diseases", icon:"🫙", priority:1, totalTime:"42m 56s",
+    why:"Enzyme deficiency, substrate accumulation, ethnic associations, and organomegaly. Gaucher (Ashkenazi + bone marrow), Tay-Sachs (cherry-red spot), and Fabry (angiokeratomas) are the most testable.",
+    videos:[
+      {id:"ls01",name:"Krabbe Disease",time:"4:43"},
+      {id:"ls02",name:"Hurler and Hunter Syndromes",time:"7:54"},
+      {id:"ls03",name:"Fabry Disease",time:"5:33"},
+      {id:"ls04",name:"Tay-Sachs and Niemann-Pick",time:"7:16"},
+      {id:"ls05",name:"Gaucher Disease",time:"3:53"},
+      {id:"ls06",name:"Metachromatic Leukodystrophy",time:"4:45"},
+      {id:"ls07",name:"I-Cell Disease",time:"8:52"},
+    ]
+  },
+  { id:"glycogen", name:"Glycogen Storage Diseases", icon:"🔋", priority:1, totalTime:"20m 27s",
+    why:"Pompe (heart + liver, acid maltase), Von Gierke (liver + kidney, G6Pase), Cori (debranching enzyme), McArdle (muscle, no lactate rise with exercise) — four essential one-liners.",
+    videos:[
+      {id:"gs01",name:"Pompe Disease (Type II)",time:"5:16"},
+      {id:"gs02",name:"Von Gierke (Type I)",time:"5:05"},
+      {id:"gs03",name:"Cori Disease (Type III)",time:"5:00"},
+      {id:"gs04",name:"McArdle Disease (Type V)",time:"5:06"},
+    ]
+  },
+  { id:"complement", name:"Complement System", icon:"💥", priority:1, totalTime:"32m 26s",
+    why:"C3b opsonization, MAC (C5b–9), C3a/C5a anaphylatoxins, and deficiency states (C1q → SLE, C5–9 → Neisseria) are tested directly. Classical vs alternative pathways appear repeatedly.",
+    videos:[
+      {id:"cp01",name:"Common Complement Pathway",time:"13:41"},
+      {id:"cp02",name:"Classical Complement Pathway",time:"7:04"},
+      {id:"cp03",name:"Alternative Complement Pathway",time:"7:04"},
+      {id:"cp04",name:"Lectin Complement Pathway",time:"5:44"},
+    ]
+  },
+  { id:"chromosomal", name:"Chromosomal Abnormalities", icon:"🔬", priority:1, totalTime:"57m 8s",
+    why:"Trisomies and sex chromosome disorders appear on every exam. Pixorize's visual mnemonics are uniquely effective here — widely praised on Reddit/SDN for making these stick.",
+    videos:[
+      {id:"ch01",name:"Down Syndrome (Trisomy 21)",time:"10:53"},
+      {id:"ch02",name:"Edwards Syndrome (Trisomy 18)",time:"7:54"},
+      {id:"ch03",name:"Patau Syndrome (Trisomy 13)",time:"6:22"},
+      {id:"ch04",name:"Klinefelter Syndrome",time:"7:09"},
+      {id:"ch05",name:"Turner Syndrome",time:"8:43"},
+      {id:"ch06",name:"Williams Syndrome",time:"6:58"},
+      {id:"ch07",name:"Cri du Chat Syndrome",time:"3:38"},
+      {id:"ch08",name:"Imprinting",time:"5:31"},
+    ]
+  },
+  { id:"collagen", name:"Collagen Related Disorders", icon:"🦴", priority:1, totalTime:"47m 43s",
+    why:"Collagen synthesis steps, vitamin C and lysyl oxidase roles, and fibril disorders are consistently tested. Osteogenesis imperfecta (blue sclera), Ehlers-Danlos, Goodpasture (anti-GBM), and Menkes are all exam favorites.",
+    videos:[
+      {id:"co01",name:"Alport Syndrome",time:"5:39"},
+      {id:"co02",name:"Menkes Disease",time:"7:32"},
+      {id:"co03",name:"Osteogenesis Imperfecta (Brittle Bone Disease)",time:"6:50"},
+      {id:"co04",name:"Collagen Synthesis",time:"11:45"},
+      {id:"co05",name:"Ehlers-Danlos Syndrome",time:"9:45"},
+      {id:"co06",name:"Goodpasture Syndrome",time:"6:12"},
+    ]
+  },
+  { id:"bcells_tcells", name:"B Cells & T Cells", icon:"🎯", priority:1, totalTime:"2h 6m",
+    why:"MHC I/II restriction, T cell activation (signal 1 + 2), B cell class switching, and CD markers (CD4/8/19/20) are tested across immunology, transplant, and infectious disease blocks on every exam.",
+    videos:[
+      {id:"bt01",name:"MHC I",time:"7:56"},
+      {id:"bt02",name:"MHC II",time:"10:13"},
+      {id:"bt03",name:"B Cells - Overview",time:"6:47"},
+      {id:"bt04",name:"B Cells - Activation",time:"9:25"},
+      {id:"bt05",name:"Plasma B Cells",time:"5:48"},
+      {id:"bt06",name:"Memory B Cells",time:"5:27"},
+      {id:"bt07",name:"T Cells - Overview",time:"3:30"},
+      {id:"bt08",name:"T Cells - Activation",time:"9:34"},
+      {id:"bt09",name:"T Cells - Differentiation",time:"14:56"},
+      {id:"bt10",name:"Cytotoxic (Killer) T Cells",time:"6:31"},
+      {id:"bt11",name:"Helper T Cells - Overview",time:"6:42"},
+      {id:"bt12",name:"Th1 Cells",time:"10:15"},
+      {id:"bt13",name:"Th2 Cells",time:"11:14"},
+      {id:"bt14",name:"Th17 Cells",time:"6:27"},
+      {id:"bt15",name:"Regulatory T Cells (Tregs)",time:"11:15"},
+    ]
+  },
+
+  // ════════════ PRIORITY 2 — HIGH YIELD ════════════
+  { id:"biochempathways", name:"Biochemical Pathways", icon:"⚗️", priority:2, totalTime:"3h 5m",
+    why:"Pyruvate metabolism, urea cycle, fatty acid synthesis/oxidation, and HMP shunt underlie drug MOAs and genetic disease mechanisms. The Cori and Cahill cycles appear as vignette anchors.",
+    videos:[
+      {id:"bp01",name:"Cori Cycle",time:"6:41"},
+      {id:"bp02",name:"De Novo Purine Synthesis",time:"8:49"},
+      {id:"bp03",name:"Pyruvate Metabolism",time:"11:12"},
+      {id:"bp04",name:"Sorbitol (Polyol) Pathway",time:"10:18"},
+      {id:"bp05",name:"Fatty Acid Synthesis (Citrate Shuttle)",time:"5:08"},
+      {id:"bp06",name:"Fatty Acid Breakdown (Carnitine Shuttle)",time:"7:01"},
+      {id:"bp07",name:"Ethanol Metabolism",time:"12:41"},
+      {id:"bp08",name:"Urea Cycle",time:"12:58"},
+      {id:"bp09",name:"Purine Salvage",time:"11:31"},
+      {id:"bp10",name:"Purine Excretion",time:"9:35"},
+      {id:"bp11",name:"Catecholamine Synthesis & Breakdown",time:"19:01"},
+      {id:"bp12",name:"De Novo Pyrimidine Synthesis",time:"21:04"},
+      {id:"bp13",name:"Homocysteine Metabolism",time:"9:29"},
+      {id:"bp14",name:"Alanine (Cahill) Cycle",time:"11:16"},
+      {id:"bp15",name:"Heme Synthesis",time:"17:52"},
+      {id:"bp16",name:"Galactose Metabolism",time:"11:14"},
+      {id:"bp17",name:"HMP Shunt (Pentose Phosphate Pathway)",time:"—"},
+    ]
+  },
+  { id:"metabolic", name:"Metabolic Disorders", icon:"🧪", priority:2, totalTime:"1h 32m",
+    why:"PKU, homocystinuria, MSUD, and galactosemia are classic amino acid/sugar disorder vignettes. Lesch-Nyhan (self-mutilation, gout, neurologic) is a guaranteed board one-liner.",
+    videos:[
+      {id:"md01",name:"Albinism",time:"5:40"},
+      {id:"md02",name:"Cystinuria",time:"7:38"},
+      {id:"md03",name:"Maple Syrup Urine Disease",time:"6:54"},
+      {id:"md04",name:"Essential Fructosuria",time:"3:49"},
+      {id:"md05",name:"Hereditary Fructose Intolerance",time:"7:07"},
+      {id:"md06",name:"Ornithine Transcarbamylase Deficiency",time:"7:11"},
+      {id:"md07",name:"Phenylketonuria (PKU)",time:"8:53"},
+      {id:"md08",name:"Alkaptonuria",time:"6:36"},
+      {id:"md09",name:"Galactosemia",time:"12:02"},
+      {id:"md10",name:"Galactokinase Deficiency",time:"6:16"},
+      {id:"md11",name:"Lesch-Nyhan Syndrome",time:"6:49"},
+      {id:"md12",name:"Pyruvate Kinase Deficiency",time:"8:14"},
+      {id:"md13",name:"Pyruvate Dehydrogenase Deficiency",time:"5:49"},
+      {id:"md14",name:"Propionic Acidemia",time:"7:54"},
+    ]
+  },
+  { id:"cytokines", name:"Cytokines", icon:"📡", priority:2, totalTime:"1h 4m",
+    why:"IL-2 (T cell proliferation), IL-4/5/13 (Th2/IgE/eosinophils), TNF-α (fever, sepsis, cachexia), IFN-γ (macrophage activation) are directly tested. High ROI for time invested.",
+    videos:[
+      {id:"cy01",name:"TNF-alpha",time:"6:04"},
+      {id:"cy02",name:"IL-1",time:"7:07"},
+      {id:"cy03",name:"IL-2",time:"6:35"},
+      {id:"cy04",name:"IL-3",time:"2:41"},
+      {id:"cy05",name:"IL-4",time:"5:54"},
+      {id:"cy06",name:"IL-5",time:"5:09"},
+      {id:"cy07",name:"IL-6",time:"5:29"},
+      {id:"cy08",name:"IL-8",time:"2:29"},
+      {id:"cy09",name:"IL-10",time:"3:26"},
+      {id:"cy10",name:"IL-12",time:"4:30"},
+      {id:"cy11",name:"TGF-beta",time:"3:32"},
+      {id:"cy12",name:"IFN-alpha and IFN-beta",time:"2:54"},
+      {id:"cy13",name:"IFN-gamma",time:"8:09"},
+    ]
+  },
+  { id:"celltypes", name:"Other Cell Types", icon:"🔵", priority:2, totalTime:"1h 41m",
+    why:"Neutrophil oxidative burst (DHR test → CGD), mast cell mediators (anaphylaxis, urticaria), NK cell missing-self recognition, and macrophage activation are all direct exam topics.",
+    videos:[
+      {id:"ct01",name:"Neutrophils - Overview",time:"11:32"},
+      {id:"ct02",name:"Neutrophils - Granules",time:"9:35"},
+      {id:"ct03",name:"Neutrophils - Oxidative Burst",time:"11:04"},
+      {id:"ct04",name:"Basophils",time:"8:21"},
+      {id:"ct05",name:"Eosinophils",time:"11:38"},
+      {id:"ct06",name:"Mast Cells",time:"14:20"},
+      {id:"ct07",name:"Monocytes / Macrophages",time:"16:26"},
+      {id:"ct08",name:"Natural Killer (NK) Cells",time:"13:08"},
+      {id:"ct09",name:"Dendritic Cells",time:"5:11"},
+    ]
+  },
+  { id:"immunoglobulins", name:"Immunoglobulins", icon:"🛡️", priority:2, totalTime:"34m 35s",
+    why:"IgA (mucosal/secretory, deficiency → anaphylaxis with transfusion), IgG (opsonization, crosses placenta), IgE (mast cells, parasites), IgM (first responder, ABO) are board staples.",
+    videos:[
+      {id:"ig01",name:"IgA",time:"6:45"},
+      {id:"ig02",name:"IgG",time:"8:56"},
+      {id:"ig03",name:"IgM",time:"7:06"},
+      {id:"ig04",name:"IgE",time:"9:25"},
+      {id:"ig05",name:"IgD",time:"2:25"},
+    ]
+  },
+  { id:"transfusion", name:"Transfusion Reactions", icon:"🩸", priority:2, totalTime:"27m 1s",
+    why:"ABO incompatibility (acute hemolytic, flank pain + hemoglobinuria), IgA deficiency (anaphylactic), TRALI (non-cardiogenic pulmonary edema), and febrile reactions each appear as distinct question types.",
+    videos:[
+      {id:"tr01",name:"Anaphylactic Transfusion Reactions",time:"4:36"},
+      {id:"tr02",name:"Acute Hemolytic Transfusion Reaction",time:"10:56"},
+      {id:"tr03",name:"Febrile Nonhemolytic Transfusion Reaction",time:"5:55"},
+      {id:"tr04",name:"TRALI",time:"5:34"},
+    ]
+  },
+  { id:"transplant", name:"Transplant Rejection", icon:"🫀", priority:2, totalTime:"26m 48s",
+    why:"Hyperacute (minutes, preformed Ab), acute (weeks, T cells), chronic (months–years, fibrosis) — and GVHD (donor T cells attack host). Timing is the key discriminator in vignettes.",
+    videos:[
+      {id:"tp01",name:"Hyperacute Transplant Rejection",time:"5:00"},
+      {id:"tp02",name:"Acute Transplant Rejection",time:"5:29"},
+      {id:"tp03",name:"Chronic Transplant Rejection",time:"7:15"},
+      {id:"tp04",name:"Graft vs Host Disease (GVHD)",time:"9:04"},
+    ]
+  },
+  { id:"dnarepair", name:"DNA Repair Disorders", icon:"🔧", priority:2, totalTime:"27m 57s",
+    why:"DNA repair pathway failures → specific cancer syndromes. Lynch (MMR → colon/endometrial), Xeroderma Pigmentosum (NER → squamous cell), Ataxia-Telangiectasia (DSBR → lymphoma) are all testable.",
+    videos:[
+      {id:"dr01",name:"Lynch Syndrome",time:"9:40"},
+      {id:"dr02",name:"Xeroderma Pigmentosum",time:"5:54"},
+      {id:"dr03",name:"Ataxia-Telangiectasia",time:"7:44"},
+      {id:"dr04",name:"Bloom Syndrome",time:"4:39"},
+      {id:"dr05",name:"G6PD Deficiency",time:"—"},
+    ]
+  },
+  { id:"germlayer", name:"Germ Layer Derivatives", icon:"🐣", priority:2, totalTime:"1h 7m",
+    why:"Embryology questions hinge on germ layer origin. Neural crest derivatives are perennially tested. Cell junction disorders (pemphigus vulgaris → desmoglein, celiac → tight junctions) connect directly to pathology blocks.",
+    videos:[
+      {id:"gl01",name:"Ectoderm Derivatives",time:"9:56"},
+      {id:"gl02",name:"Mesoderm Derivatives",time:"11:52"},
+      {id:"gl03",name:"Endoderm Derivatives",time:"6:00"},
+      {id:"gl04",name:"Cell Junctions",time:"17:03"},
+      {id:"gl05",name:"Gap Junctions",time:"4:28"},
+      {id:"gl06",name:"Tight Junctions",time:"7:51"},
+      {id:"gl07",name:"Desmosomes",time:"4:44"},
+    ]
+  },
+
+  // ════════════ PRIORITY 3 — SOLID YIELD ════════════
+  { id:"autosomal_dom", name:"Autosomal Dominant Diseases", icon:"🧬", priority:3, totalTime:"1h 5m",
+    why:"MEN syndromes, NF1/2, VHL, Marfan, and ADPKD appear as classic vignettes. Knowing the key finding, gene, and associated tumors for each is worth several points on the exam.",
+    videos:[
+      {id:"ad01",name:"Marfan Syndrome",time:"4:45"},
+      {id:"ad02",name:"Li-Fraumeni Syndrome (LFS)",time:"5:04"},
+      {id:"ad03",name:"Huntington Disease",time:"5:45"},
+      {id:"ad04",name:"Achondroplasia",time:"4:13"},
+      {id:"ad05",name:"Job (Hyper IgE) Syndrome",time:"4:22"},
+      {id:"ad06",name:"HHT",time:"3:45"},
+      {id:"ad07",name:"Hereditary Spherocytosis",time:"6:42"},
+      {id:"ad08",name:"von Hippel-Lindau (VHL)",time:"4:36"},
+      {id:"ad09",name:"MEN 1",time:"5:02"},
+      {id:"ad10",name:"MEN 2",time:"4:29"},
+      {id:"ad11",name:"Von Recklinghausen Disease (NF I)",time:"4:22"},
+      {id:"ad12",name:"Neurofibromatosis Type II (NF II)",time:"2:18"},
+      {id:"ad13",name:"Myotonic Dystrophy",time:"3:51"},
+      {id:"ad14",name:"ADPKD",time:"6:27"},
+    ]
+  },
+  { id:"porphyrias", name:"Porphyrias", icon:"🟤", priority:3, totalTime:"15m 29s",
+    why:"AIP (abdominal pain + neuropsychiatric + dark urine, triggered by drugs/fasting) and PCT (blistering photosensitivity, uroporphyrin in urine) are classic presentations that appear regularly.",
+    videos:[
+      {id:"po01",name:"Acute Intermittent Porphyria (AIP)",time:"8:53"},
+      {id:"po02",name:"Porphyria Cutanea Tarda (PCT)",time:"6:36"},
+    ]
+  },
+  { id:"neuro_disorders", name:"Neurological Disorders", icon:"🧠", priority:3, totalTime:"1h 9m",
+    why:"CNS tumors are reliable one-liners — histology, location, and patient age distinguish them. Glioblastoma (pseudopalisading necrosis), meningioma (psammoma bodies), and acoustic neuroma (schwannoma) appear most often.",
+    videos:[
+      {id:"nd01",name:"Craniopharyngioma",time:"8:09"},
+      {id:"nd02",name:"Ependymoma",time:"7:04"},
+      {id:"nd03",name:"Schwannoma",time:"9:08"},
+      {id:"nd04",name:"Oligodendroglioma",time:"5:49"},
+      {id:"nd05",name:"Meningioma",time:"7:54"},
+      {id:"nd06",name:"Glioblastoma Multiforme (Grade IV Astrocytoma)",time:"7:07"},
+      {id:"nd07",name:"Tuberous Sclerosis",time:"9:53"},
+      {id:"nd08",name:"Charcot-Marie-Tooth Disease",time:"7:35"},
+      {id:"nd09",name:"Tension Headache",time:"6:31"},
+    ]
+  },
+  { id:"toxicology", name:"Toxicology", icon:"☠️", priority:3, totalTime:"52m 54s",
+    why:"CO poisoning (cherry-red skin, treat with O₂), cyanide (inhibits cytochrome oxidase, treat with hydroxocobalamin), methanol (formic acid → optic nerve) and their antidotes are classic exam material.",
+    videos:[
+      {id:"tx01",name:"Cyanide Poisoning",time:"10:09"},
+      {id:"tx02",name:"Tetrodotoxin",time:"6:22"},
+      {id:"tx03",name:"Methanol Poisoning",time:"6:33"},
+      {id:"tx04",name:"Ethylene Glycol Poisoning",time:"8:10"},
+      {id:"tx05",name:"Ciguatoxin (Ciguatera Fish Poisoning)",time:"5:47"},
+      {id:"tx06",name:"Spoiled Fish (Scombroid) Poisoning",time:"4:42"},
+      {id:"tx07",name:"Carbon Monoxide Poisoning",time:"11:11"},
+      {id:"tx08",name:"Amanita Phalloides",time:"—"},
+    ]
+  },
+  { id:"personality", name:"Personality Disorders & Conditioning", icon:"🧩", priority:3, totalTime:"32m 28s",
+    why:"Cluster A/B/C each have a characteristic behavioral profile tested as vignettes. Classical vs operant conditioning definitions are quick behavioral science points that Pixorize makes easy to remember.",
+    videos:[
+      {id:"ps01",name:"Cluster A Personality Disorders",time:"7:31"},
+      {id:"ps02",name:"Cluster B Personality Disorders",time:"8:03"},
+      {id:"ps03",name:"Cluster C Personality Disorders",time:"7:19"},
+      {id:"ps04",name:"Classical Conditioning",time:"4:47"},
+      {id:"ps05",name:"Operant Conditioning",time:"4:48"},
+    ]
+  },
+  { id:"cytoskeleton", name:"Cytoskeleton", icon:"🔩", priority:3, totalTime:"~19m",
+    why:"Intermediate filaments (vimentin, desmin, GFAP, cytokeratin, neurofilaments) identify cell types in pathology. Microtubule dysfunction explains colchicine and vinca alkaloid MOAs.",
+    videos:[
+      {id:"cs01",name:"Cytoskeleton",time:"9:41"},
+      {id:"cs02",name:"Microfilaments (Actin Filaments)",time:"6:21"},
+      {id:"cs03",name:"Intermediate Filaments",time:"3:20"},
+      {id:"cs04",name:"Microtubules",time:"—"},
+    ]
+  },
+  { id:"misc", name:"Miscellaneous High-Yield", icon:"📋", priority:3, totalTime:"2h 40m",
+    why:"Contains multiple independently high-yield topics: CF, Duchenne/Becker, Wegener's, dyslipidemias, Burkitt lymphoma, Fragile X, and lab panels. Sort by need — don't do all at once.",
+    videos:[
+      {id:"mi01",name:"Chediak-Higashi Syndrome",time:"10:09"},
+      {id:"mi02",name:"Bruton (X-linked) Agammaglobulinemia",time:"9:06"},
+      {id:"mi03",name:"Familial Adenomatous Polyposis (FAP)",time:"10:26"},
+      {id:"mi04",name:"Lactase Deficiency",time:"10:04"},
+      {id:"mi05",name:"McCune-Albright Syndrome",time:"8:17"},
+      {id:"mi06",name:"Hexokinase vs Glucokinase",time:"14:21"},
+      {id:"mi07",name:"COP I & II and Clathrin",time:"7:29"},
+      {id:"mi08",name:"Kartagener Syndrome (Primary Ciliary Dyskinesia)",time:"8:34"},
+      {id:"mi09",name:"Peutz-Jeghers Syndrome",time:"8:04"},
+      {id:"mi10",name:"Cystic Fibrosis Overview",time:"8:33"},
+      {id:"mi11",name:"Medicare vs Medicaid",time:"11:34"},
+      {id:"mi12",name:"Duchenne and Becker Muscular Dystrophy",time:"11:09"},
+      {id:"mi13",name:"Yolk Sac Tumor",time:"4:08"},
+      {id:"mi14",name:"Burkitt Lymphoma",time:"6:35"},
+      {id:"mi15",name:"Rett Syndrome",time:"4:30"},
+      {id:"mi16",name:"Fragile X Syndrome",time:"8:18"},
+      {id:"mi17",name:"Whipple's Disease",time:"6:05"},
+      {id:"mi18",name:"Osteoid Osteoma vs Osteoblastoma",time:"8:40"},
+      {id:"mi19",name:"T1 vs T2 MRIs",time:"4:25"},
+      {id:"mi20",name:"Cystic Fibrosis Complications",time:"13:04"},
+      {id:"mi21",name:"Coagulation Panel",time:"8:38"},
+      {id:"mi22",name:"Homocystinuria Findings",time:"10:09"},
+      {id:"mi23",name:"HMP Shunt (Pentose Phosphate Pathway)",time:"—"},
+      {id:"mi24",name:"Microscopic Polyangiitis",time:"11:22"},
+      {id:"mi25",name:"Pinealoma",time:"4:39"},
+      {id:"mi26",name:"Systemic Primary Carnitine Deficiency",time:"—"},
+      {id:"mi27",name:"Abetalipoproteinemia",time:"—"},
+      {id:"mi28",name:"Wegener's Granulomatosis",time:"14:05"},
+      {id:"mi29",name:"MCAD Deficiency",time:"9:14"},
+      {id:"mi30",name:"Apolipoproteins",time:"7:29"},
+      {id:"mi31",name:"Hyperchylomicronemia",time:"3:55"},
+      {id:"mi32",name:"Hypercholesterolemia",time:"4:53"},
+      {id:"mi33",name:"Dysbetalipoproteinemia",time:"2:54"},
+      {id:"mi34",name:"Hypertriglyceridemia",time:"—"},
+      {id:"mi35",name:"Propionic Acid Pathway",time:"11:10"},
+      {id:"mi36",name:"ABG Interpretation",time:"6:15"},
+      {id:"mi37",name:"CMP",time:"8:13"},
+      {id:"mi38",name:"BMP (Chem7) Fishbone",time:"7:41"},
+      {id:"mi39",name:"CBC",time:"7:06"},
+    ]
+  },
+
+  // ════════════ PRIORITY 4 — LOWER YIELD ════════════
+  { id:"peroxisome", name:"Peroxisome Disorders", icon:"🔬", priority:4, totalTime:"19m 44s",
+    why:"Zellweger (absent peroxisomes, hypotonia + dysmorphia) and adrenoleukodystrophy (VLCFA accumulation) are the two to know. Appear less often than lysosomal diseases — review after higher-priority categories.",
+    videos:[
+      {id:"px01",name:"Zellweger Syndrome",time:"4:09"},
+      {id:"px02",name:"Adrenoleukodystrophy",time:"6:16"},
+      {id:"px03",name:"Refsum Disease",time:"9:19"},
+    ]
+  },
+  { id:"mitochondrial", name:"Mitochondrial Diseases", icon:"⚡", priority:4, totalTime:"13m 19s",
+    why:"Maternal inheritance pattern is the key board fact. MELAS and Leber optic neuropathy appear occasionally — worth 1–2 questions. Review after higher-priority categories.",
+    videos:[
+      {id:"mt01",name:"Leber Hereditary Optic Neuropathy",time:"3:49"},
+      {id:"mt02",name:"Mitochondrial Myopathies",time:"9:30"},
+    ]
+  },
+  { id:"dyslipidemias", name:"Dyslipidemias (Legacy Overview)", icon:"💛", priority:4, totalTime:"21m 56s",
+    why:"The core content (apolipoproteins, familial hypercholesterolemia) is now covered in the Misc category videos. This older standalone is largely redundant — skip if time is short.",
+    videos:[
+      {id:"dl01",name:"Dyslipidemias Overview (Deprecated)",time:"21:56"},
+    ]
+  },
+];
+
+// ══════════════════════════════════════════
+const PC = {
+  1:{label:"Must Know",  emoji:"🔴",color:"var(--p1-color)",bg:"var(--p1-bg)",border:"var(--p1-border)"},
+  2:{label:"High Yield", emoji:"🟡",color:"var(--p2-color)",bg:"var(--p2-bg)",border:"var(--p2-border)"},
+  3:{label:"Solid Yield",emoji:"🔵",color:"var(--p3-color)",bg:"var(--p3-bg)",border:"var(--p3-border)"},
+  4:{label:"Lower Yield",emoji:"⚪",color:"var(--p4-color)",bg:"var(--p4-bg)",border:"var(--p4-border)"},
+};
+
+// ══════════════════════════════════════════
+//  STATE + FIREBASE
+// ══════════════════════════════════════════
+let auth=null,db=null,currentUser=null,watchedState={},reviewedState={};
 try {
-  const firebaseConfig = {
-    apiKey: "AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",
-    authDomain: "sketchy-tracker.firebaseapp.com",
-    projectId: "sketchy-tracker",
-    storageBucket: "sketchy-tracker.firebasestorage.app",
-    messagingSenderId: "970470066509",
-    appId: "1:970470066509:web:14c7300fb1dd882a038f04",
-    measurementId: "G-2KVBCP4THR"
-  };
-  firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth();
-  db = firebase.firestore();
-} catch(e) { console.log("Firebase not available, using local storage"); }
+  firebase.initializeApp({apiKey:"AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",authDomain:"sketchy-tracker.firebaseapp.com",projectId:"sketchy-tracker",storageBucket:"sketchy-tracker.firebasestorage.app",messagingSenderId:"970470066509",appId:"1:970470066509:web:14c7300fb1dd882a038f04",measurementId:"G-2KVBCP4THR"});
+  auth=firebase.auth(); db=firebase.firestore();
+} catch(e){}
 
-// ─────────────────────────────────────────────
-// VIDEO DATA  (from PDF — 312 total)
-// ─────────────────────────────────────────────
-const categories = [
-  {
-    id: "vitamins", name: "Vitamins", icon: "🍊",
-    why: "Vitamin deficiencies are among the most frequently tested biochem topics — expect 2–4 questions per exam.",
-    videos: [
-      {id:"v01",  name:"Vitamin B1 (Thiamine) Biochemistry",          time:"7:20"},
-      {id:"v02",  name:"Vitamin B1 (Thiamine) Deficiency",            time:"10:51"},
-      {id:"v03",  name:"Vitamin B2 (Riboflavin)",                     time:"6:30"},
-      {id:"v04",  name:"Vitamin B3 (Niacin) Biochemistry",            time:"7:51"},
-      {id:"v05",  name:"Vitamin B3 (Niacin) Deficiency and Excess",   time:"8:33"},
-      {id:"v06",  name:"Hartnup Disease",                             time:"5:58"},
-      {id:"v07",  name:"Vitamin B5 (Pantothenic Acid)",               time:"5:34"},
-      {id:"v08",  name:"Vitamin B6 (Pyridoxine)",                     time:"10:15"},
-      {id:"v09",  name:"Vitamin B7 (Biotin)",                         time:"7:53"},
-      {id:"v10",  name:"Vitamin B9 (Folate)",                         time:"3:40"},
-      {id:"v11",  name:"Vitamin B12 (Cobalamin) Biochemistry",        time:"7:03"},
-      {id:"v12",  name:"Vitamins B9 and B12 Deficiencies",            time:"20:09"},
-      {id:"v13",  name:"Vitamin A (Retinol) Biochemistry",            time:"9:24"},
-      {id:"v14",  name:"Vitamin A (Retinol) Deficiency and Excess",   time:"9:17"},
-      {id:"v15",  name:"Vitamin C (Ascorbic Acid) Biochemistry",      time:"8:06"},
-      {id:"v16",  name:"Vitamin C (Ascorbic Acid) Deficiency and Excess", time:"9:02"},
-      {id:"v17",  name:"Vitamin D Biochemistry",                      time:"11:42"},
-      {id:"v18",  name:"Vitamin D Deficiency and Excess",             time:"11:37"},
-      {id:"v19",  name:"Vitamin E (Tocopherol/Tocotrienol)",          time:"7:23"},
-      {id:"v20",  name:"Vitamin K Biochemistry",                      time:"6:53"},
-      {id:"v21",  name:"Vitamin K Deficiency",                        time:"6:35"},
-      {id:"v22",  name:"Kwashiorkor and Marasmus",                    time:"5:57"},
-      {id:"v23",  name:"Zinc",                                        time:"6:59"},
-    ]
-  },
-  {
-    id: "biochempathways", name: "Biochemical Pathways", icon: "⚗️",
-    why: "Metabolic pathway questions thread through every organ system — the Cori cycle, urea cycle, and fatty acid pathways are guaranteed.",
-    videos: [
-      {id:"bp01", name:"Cori Cycle",                                  time:"6:41"},
-      {id:"bp02", name:"De Novo Purine Synthesis",                    time:"8:49"},
-      {id:"bp03", name:"Pyruvate Metabolism",                         time:"11:12"},
-      {id:"bp04", name:"Sorbitol (Polyol) Pathway",                   time:"10:18"},
-      {id:"bp05", name:"Fatty Acid Synthesis (Citrate Shuttle)",      time:"5:08"},
-      {id:"bp06", name:"Fatty Acid Breakdown (Carnitine Shuttle)",    time:"7:01"},
-      {id:"bp07", name:"Ethanol Metabolism",                          time:"12:41"},
-      {id:"bp08", name:"Urea Cycle",                                  time:"12:58"},
-      {id:"bp09", name:"Purine Salvage",                              time:"11:31"},
-      {id:"bp10", name:"Purine Excretion",                            time:"9:35"},
-      {id:"bp11", name:"Catecholamine Synthesis & Breakdown",         time:"19:01"},
-      {id:"bp12", name:"De Novo Pyrimidine Synthesis",               time:"21:04"},
-      {id:"bp13", name:"Homocysteine Metabolism",                     time:"9:29"},
-      {id:"bp14", name:"Alanine (Cahill) Cycle",                     time:"11:16"},
-      {id:"bp15", name:"Heme Synthesis",                              time:"17:52"},
-      {id:"bp16", name:"Galactose Metabolism",                        time:"11:14"},
-      {id:"bp17", name:"HMP Shunt (Pentose Phosphate Pathway)",       time:"—"},
-    ]
-  },
-  {
-    id: "porphyrias", name: "Porphyrias", icon: "🔴",
-    why: "AIP and PCT are classic vignettes — urine changes, precipitating drugs, and neuro symptoms are all testable.",
-    videos: [
-      {id:"po01", name:"Acute Intermittent Porphyria (AIP)",          time:"8:53"},
-      {id:"po02", name:"Porphyria Cutanea Tarda (PCT)",               time:"6:36"},
-    ]
-  },
-  {
-    id: "autosomal_dom", name: "Autosomal Dominant Diseases", icon: "🧬",
-    why: "These appear as clinical vignettes — know the key finding and inheritance pattern for each.",
-    videos: [
-      {id:"ad01", name:"Marfan Syndrome",                             time:"4:45"},
-      {id:"ad02", name:"Li-Fraumeni Syndrome (LFS)",                  time:"5:04"},
-      {id:"ad03", name:"Huntington Disease",                          time:"5:45"},
-      {id:"ad04", name:"Achondroplasia",                              time:"4:13"},
-      {id:"ad05", name:"Job (Hyper IgE) Syndrome",                    time:"4:22"},
-      {id:"ad06", name:"HHT",                                         time:"3:45"},
-      {id:"ad07", name:"Hereditary Spherocytosis",                    time:"6:42"},
-      {id:"ad08", name:"von Hippel-Lindau (VHL)",                     time:"4:36"},
-      {id:"ad09", name:"MEN 1",                                       time:"5:02"},
-      {id:"ad10", name:"MEN 2",                                       time:"4:29"},
-      {id:"ad11", name:"Von Recklinghausen Disease (NF I)",           time:"4:22"},
-      {id:"ad12", name:"Neurofibromatosis Type II (NF II)",           time:"2:18"},
-      {id:"ad13", name:"Myotonic Dystrophy",                          time:"3:51"},
-      {id:"ad14", name:"ADPKD",                                       time:"6:27"},
-    ]
-  },
-  {
-    id: "metabolic", name: "Metabolic Disorders", icon: "🧪",
-    why: "Amino acid disorders (PKU, homocystinuria, maple syrup urine disease) and sugar metabolism defects are high-yield.",
-    videos: [
-      {id:"md01", name:"Albinism",                                    time:"5:40"},
-      {id:"md02", name:"Cystinuria",                                  time:"7:38"},
-      {id:"md03", name:"Maple Syrup Urine Disease",                   time:"6:54"},
-      {id:"md04", name:"Essential Fructosuria",                       time:"3:49"},
-      {id:"md05", name:"Hereditary Fructose Intolerance",             time:"7:07"},
-      {id:"md06", name:"Ornithine Transcarbamylase Deficiency",       time:"7:11"},
-      {id:"md07", name:"Phenylketonuria (PKU)",                       time:"8:53"},
-      {id:"md08", name:"Alkaptonuria",                                time:"6:36"},
-      {id:"md09", name:"Galactosemia",                                time:"12:02"},
-      {id:"md10", name:"Galactokinase Deficiency",                    time:"6:16"},
-      {id:"md11", name:"Lesch-Nyhan Syndrome",                        time:"6:49"},
-      {id:"md12", name:"Pyruvate Kinase Deficiency",                  time:"8:14"},
-      {id:"md13", name:"Pyruvate Dehydrogenase Deficiency",           time:"5:49"},
-      {id:"md14", name:"Propionic Acidemia",                          time:"7:54"},
-    ]
-  },
-  {
-    id: "lysosomal", name: "Lysosomal Storage Diseases", icon: "🫙",
-    why: "These are high-yield for enzyme deficiencies, substrate accumulation, and ethnic associations.",
-    videos: [
-      {id:"ls01", name:"Krabbe Disease",                              time:"4:43"},
-      {id:"ls02", name:"Hurler and Hunter Syndromes",                 time:"7:54"},
-      {id:"ls03", name:"Fabry Disease",                               time:"5:33"},
-      {id:"ls04", name:"Tay-Sachs and Niemann-Pick",                  time:"7:16"},
-      {id:"ls05", name:"Gaucher Disease",                             time:"3:53"},
-      {id:"ls06", name:"Metachromatic Leukodystrophy",                time:"4:45"},
-      {id:"ls07", name:"I-Cell Disease",                              time:"8:52"},
-    ]
-  },
-  {
-    id: "glycogen", name: "Glycogen Storage Diseases", icon: "🔋",
-    why: "Pompe, Von Gierke, Cori, and McArdle are the four to know — each has a distinct enzyme, tissue, and presentation.",
-    videos: [
-      {id:"gs01", name:"Pompe Disease (Type II)",                     time:"5:16"},
-      {id:"gs02", name:"Von Gierke (Type I)",                         time:"5:05"},
-      {id:"gs03", name:"Cori Disease (Type III)",                     time:"5:00"},
-      {id:"gs04", name:"McArdle Disease (Type V)",                    time:"5:06"},
-    ]
-  },
-  {
-    id: "chromosomal", name: "Chromosomal Abnormalities", icon: "🔬",
-    why: "Trisomies and sex chromosome disorders appear on every exam — know karyotype, clinical features, and associated findings.",
-    videos: [
-      {id:"ch01", name:"Down Syndrome (Trisomy 21)",                  time:"10:53"},
-      {id:"ch02", name:"Edwards Syndrome (Trisomy 18)",               time:"7:54"},
-      {id:"ch03", name:"Patau Syndrome (Trisomy 13)",                 time:"6:22"},
-      {id:"ch04", name:"Klinefelter Syndrome",                        time:"7:09"},
-      {id:"ch05", name:"Turner Syndrome",                             time:"8:43"},
-      {id:"ch06", name:"Williams Syndrome",                           time:"6:58"},
-      {id:"ch07", name:"Cri du Chat Syndrome",                        time:"3:38"},
-      {id:"ch08", name:"Imprinting",                                  time:"5:31"},
-    ]
-  },
-  {
-    id: "collagen", name: "Collagen Related Disorders", icon: "🦴",
-    why: "Collagen synthesis steps and associated diseases are very high-yield — a guaranteed topic.",
-    videos: [
-      {id:"co01", name:"Alport Syndrome",                             time:"5:39"},
-      {id:"co02", name:"Menkes Disease",                              time:"7:32"},
-      {id:"co03", name:"Osteogenesis Imperfecta (Brittle Bone Disease)", time:"6:50"},
-      {id:"co04", name:"Collagen Synthesis",                          time:"11:45"},
-      {id:"co05", name:"Ehlers-Danlos Syndrome",                      time:"9:45"},
-      {id:"co06", name:"Goodpasture Syndrome",                        time:"6:12"},
-    ]
-  },
-  {
-    id: "dnarepair", name: "DNA Repair", icon: "🔧",
-    why: "DNA repair pathway disorders are classic vignette setups — know which pathway fails and the resulting cancer risk.",
-    videos: [
-      {id:"dr01", name:"Lynch Syndrome",                              time:"9:40"},
-      {id:"dr02", name:"Xeroderma Pigmentosum",                       time:"5:54"},
-      {id:"dr03", name:"Ataxia-Telangiectasia",                       time:"7:44"},
-      {id:"dr04", name:"Bloom Syndrome",                              time:"4:39"},
-      {id:"dr05", name:"G6PD Deficiency",                             time:"—"},
-    ]
-  },
-  {
-    id: "misc", name: "Miscellaneous", icon: "📋",
-    why: "These span multiple systems and are all individually high-yield on Step 1.",
-    videos: [
-      {id:"mi01", name:"Chediak-Higashi Syndrome",                    time:"10:09"},
-      {id:"mi02", name:"Bruton (X-linked) Agammaglobulinemia",        time:"9:06"},
-      {id:"mi03", name:"Familial Adenomatous Polyposis (FAP)",        time:"10:26"},
-      {id:"mi04", name:"Lactase Deficiency",                          time:"10:04"},
-      {id:"mi05", name:"McCune-Albright Syndrome",                    time:"8:17"},
-      {id:"mi06", name:"Hexokinase vs Glucokinase",                   time:"14:21"},
-      {id:"mi07", name:"COP I & II and Clathrin",                     time:"7:29"},
-      {id:"mi08", name:"Kartagener Syndrome (Primary Ciliary Dyskinesia)", time:"8:34"},
-      {id:"mi09", name:"Peutz-Jeghers Syndrome",                      time:"8:04"},
-      {id:"mi10", name:"Cystic Fibrosis Overview",                    time:"8:33"},
-      {id:"mi11", name:"Medicare vs Medicaid",                        time:"11:34"},
-      {id:"mi12", name:"Duchenne and Becker Muscular Dystrophy",      time:"11:09"},
-      {id:"mi13", name:"Yolk Sac Tumor",                              time:"4:08"},
-      {id:"mi14", name:"Burkitt Lymphoma",                            time:"6:35"},
-      {id:"mi15", name:"Rett Syndrome",                               time:"4:30"},
-      {id:"mi16", name:"Fragile X Syndrome",                          time:"8:18"},
-      {id:"mi17", name:"Whipple's Disease",                           time:"6:05"},
-      {id:"mi18", name:"Osteoid Osteoma vs Osteoblastoma",            time:"8:40"},
-      {id:"mi19", name:"T1 vs T2 MRIs",                               time:"4:25"},
-      {id:"mi20", name:"Cystic Fibrosis Complications",               time:"13:04"},
-      {id:"mi21", name:"Coagulation Panel",                           time:"8:38"},
-      {id:"mi22", name:"Homocystinuria Findings",                     time:"10:09"},
-      {id:"mi23", name:"HMP Shunt (Pentose Phosphate Pathway)",       time:"—"},
-      {id:"mi24", name:"Microscopic Polyangiitis",                    time:"11:22"},
-      {id:"mi25", name:"Pinealoma",                                   time:"4:39"},
-      {id:"mi26", name:"Systemic Primary Carnitine Deficiency",       time:"—"},
-      {id:"mi27", name:"Abetalipoproteinemia",                        time:"—"},
-      {id:"mi28", name:"Wegener's Granulomatosis",                    time:"14:05"},
-      {id:"mi29", name:"MCAD Deficiency",                             time:"9:14"},
-      {id:"mi30", name:"Apolipoproteins",                             time:"7:29"},
-      {id:"mi31", name:"Hyperchylomicronemia",                        time:"3:55"},
-      {id:"mi32", name:"Hypercholesterolemia",                        time:"4:53"},
-      {id:"mi33", name:"Dysbetalipoproteinemia",                      time:"2:54"},
-      {id:"mi34", name:"Hypertriglyceridemia",                        time:"—"},
-      {id:"mi35", name:"Propionic Acid Pathway",                      time:"11:10"},
-      {id:"mi36", name:"ABG",                                         time:"6:15"},
-      {id:"mi37", name:"CMP",                                         time:"8:13"},
-      {id:"mi38", name:"BMP (Chem7) Fishbone",                        time:"7:41"},
-      {id:"mi39", name:"CBC",                                         time:"7:06"},
-    ]
-  },
-  {
-    id: "neuro_disorders", name: "Neurological Disorders", icon: "🧠",
-    why: "CNS tumors are classic one-liners — histology, location, and patient age distinguish them.",
-    videos: [
-      {id:"nd01", name:"Craniopharyngioma",                           time:"8:09"},
-      {id:"nd02", name:"Ependymoma",                                  time:"7:04"},
-      {id:"nd03", name:"Schwannoma",                                  time:"9:08"},
-      {id:"nd04", name:"Oligodendroglioma",                           time:"5:49"},
-      {id:"nd05", name:"Meningioma",                                  time:"7:54"},
-      {id:"nd06", name:"Glioblastoma Multiforme (Grade IV Astrocytoma)", time:"7:07"},
-      {id:"nd07", name:"Tuberous Sclerosis",                          time:"9:53"},
-      {id:"nd08", name:"Charcot-Marie-Tooth Disease",                 time:"7:35"},
-      {id:"nd09", name:"Tension Headache",                            time:"6:31"},
-    ]
-  },
-  {
-    id: "toxicology", name: "Toxicology", icon: "☠️",
-    why: "Toxidromes and antidotes are classic Step 1 — know the mechanism and the antidote for each poison.",
-    videos: [
-      {id:"tx01", name:"Cyanide Poisoning",                           time:"10:09"},
-      {id:"tx02", name:"Tetrodotoxin",                                time:"6:22"},
-      {id:"tx03", name:"Methanol Poisoning",                          time:"6:33"},
-      {id:"tx04", name:"Ethylene Glycol Poisoning",                   time:"8:10"},
-      {id:"tx05", name:"Ciguatoxin (Ciguatera Fish Poisoning)",       time:"5:47"},
-      {id:"tx06", name:"Spoiled Fish (Scombroid) Poisoning",          time:"4:42"},
-      {id:"tx07", name:"Carbon Monoxide Poisoning",                   time:"11:11"},
-      {id:"tx08", name:"Amanita Phalloides",                          time:"—"},
-    ]
-  },
-  {
-    id: "peroxisome", name: "Peroxisome Disorders", icon: "🔬",
-    why: "Zellweger and adrenoleukodystrophy are the key peroxisomal diseases — know the organelle and the defect.",
-    videos: [
-      {id:"px01", name:"Zellweger Syndrome",                          time:"4:09"},
-      {id:"px02", name:"Adrenoleukodystrophy",                        time:"6:16"},
-      {id:"px03", name:"Refsum Disease",                              time:"9:19"},
-    ]
-  },
-  {
-    id: "mitochondrial", name: "Mitochondrial Diseases", icon: "⚡",
-    why: "Mitochondrial inheritance (maternal) and MELAS are classic board questions.",
-    videos: [
-      {id:"mt01", name:"Leber Hereditary Optic Neuropathy",           time:"3:49"},
-      {id:"mt02", name:"Mitochondrial Myopathies",                    time:"9:30"},
-    ]
-  },
-  {
-    id: "immunoglobulins", name: "Immunoglobulins", icon: "🛡️",
-    why: "Ig class functions, switching, and deficiency syndromes are tested frequently across multiple systems.",
-    videos: [
-      {id:"ig01", name:"IgA",                                         time:"6:45"},
-      {id:"ig02", name:"IgG",                                         time:"8:56"},
-      {id:"ig03", name:"IgM",                                         time:"7:06"},
-      {id:"ig04", name:"IgE",                                         time:"9:25"},
-      {id:"ig05", name:"IgD",                                         time:"2:25"},
-    ]
-  },
-  {
-    id: "complement", name: "Complement System", icon: "💥",
-    why: "Complement pathways, C3b opsonization, MAC, and deficiency diseases appear on nearly every Step 1 exam.",
-    videos: [
-      {id:"cp01", name:"Common Complement Pathway",                   time:"13:41"},
-      {id:"cp02", name:"Classical Complement Pathway",                time:"7:04"},
-      {id:"cp03", name:"Alternative Complement Pathway",              time:"7:04"},
-      {id:"cp04", name:"Lectin Complement Pathway",                   time:"5:44"},
-    ]
-  },
-  {
-    id: "celltypes", name: "Other Cell Types", icon: "🔵",
-    why: "Neutrophil oxidative burst, mast cell mediators, and NK cell mechanisms are all high-yield.",
-    videos: [
-      {id:"ct01", name:"Neutrophils - Overview",                      time:"11:32"},
-      {id:"ct02", name:"Neutrophils - Granules",                      time:"9:35"},
-      {id:"ct03", name:"Neutrophils - Oxidative Burst",               time:"11:04"},
-      {id:"ct04", name:"Basophils",                                   time:"8:21"},
-      {id:"ct05", name:"Eosinophils",                                 time:"11:38"},
-      {id:"ct06", name:"Mast Cells",                                  time:"14:20"},
-      {id:"ct07", name:"Monocytes / Macrophages",                     time:"16:26"},
-      {id:"ct08", name:"Natural Killer (NK) Cells",                   time:"13:08"},
-      {id:"ct09", name:"Dendritic Cells",                             time:"5:11"},
-    ]
-  },
-  {
-    id: "bcells_tcells", name: "B Cells and T Cells", icon: "🎯",
-    why: "Lymphocyte activation, MHC restriction, and T cell differentiation are the backbone of the immunology block.",
-    videos: [
-      {id:"bt01", name:"MHC I",                                       time:"7:56"},
-      {id:"bt02", name:"MHC II",                                      time:"10:13"},
-      {id:"bt03", name:"B Cells - Overview",                          time:"6:47"},
-      {id:"bt04", name:"B Cells - Activation",                        time:"9:25"},
-      {id:"bt05", name:"Plasma B Cells",                              time:"5:48"},
-      {id:"bt06", name:"Memory B Cells",                              time:"5:27"},
-      {id:"bt07", name:"T Cells - Overview",                          time:"3:30"},
-      {id:"bt08", name:"T Cells - Activation",                        time:"9:34"},
-      {id:"bt09", name:"T Cells - Differentiation",                   time:"14:56"},
-      {id:"bt10", name:"Cytotoxic (Killer) T Cells",                  time:"6:31"},
-      {id:"bt11", name:"Helper T Cells - Overview",                   time:"6:42"},
-      {id:"bt12", name:"Th1 Cells",                                   time:"10:15"},
-      {id:"bt13", name:"Th2 Cells",                                   time:"11:14"},
-      {id:"bt14", name:"Th17 Cells",                                  time:"6:27"},
-      {id:"bt15", name:"Regulatory T Cells (Tregs)",                  time:"11:15"},
-    ]
-  },
-  {
-    id: "cytokines", name: "Cytokines", icon: "📡",
-    why: "Cytokine functions (IL-1, IL-2, TNF-α, IFN-γ) are tested directly — memorize what each one does.",
-    videos: [
-      {id:"cy01", name:"TNF-alpha",                                   time:"6:04"},
-      {id:"cy02", name:"IL-1",                                        time:"7:07"},
-      {id:"cy03", name:"IL-2",                                        time:"6:35"},
-      {id:"cy04", name:"IL-3",                                        time:"2:41"},
-      {id:"cy05", name:"IL-4",                                        time:"5:54"},
-      {id:"cy06", name:"IL-5",                                        time:"5:09"},
-      {id:"cy07", name:"IL-6",                                        time:"5:29"},
-      {id:"cy08", name:"IL-8",                                        time:"2:29"},
-      {id:"cy09", name:"IL-10",                                       time:"3:26"},
-      {id:"cy10", name:"IL-12",                                       time:"4:30"},
-      {id:"cy11", name:"TGF-beta",                                    time:"3:32"},
-      {id:"cy12", name:"IFN-alpha and IFN-beta",                      time:"2:54"},
-      {id:"cy13", name:"IFN-gamma",                                   time:"8:09"},
-    ]
-  },
-  {
-    id: "immunodef", name: "Immunodeficiencies", icon: "🚫",
-    why: "Primary immunodeficiencies are a guaranteed multi-question topic — know the defect, inheritance, and infections for each.",
-    videos: [
-      {id:"id01", name:"Selective IgA Deficiency",                    time:"5:27"},
-      {id:"id02", name:"DiGeorge Syndrome",                           time:"10:07"},
-      {id:"id03", name:"Hyper-IgM Syndrome",                          time:"8:36"},
-      {id:"id04", name:"IPEX",                                        time:"7:09"},
-      {id:"id05", name:"Leukocyte Adhesion Deficiency (LAD)",         time:"9:40"},
-      {id:"id06", name:"Chronic Granulomatous Disease (CGD)",         time:"7:51"},
-      {id:"id07", name:"IL-12 Receptor Deficiency",                   time:"8:58"},
-      {id:"id08", name:"Wiskott-Aldrich Syndrome",                    time:"7:40"},
-    ]
-  },
-  {
-    id: "hypersensitivity", name: "Hypersensitivity Reactions", icon: "⚠️",
-    why: "Types I–IV are classic — know the mechanism, timing, and prototypical disease for each type.",
-    videos: [
-      {id:"hs01", name:"Type 1 Hypersensitivity Reactions",           time:"9:42"},
-      {id:"hs02", name:"Type 2 Hypersensitivity Reactions",           time:"7:33"},
-      {id:"hs03", name:"Type 3 Hypersensitivity Reactions",           time:"6:06"},
-      {id:"hs04", name:"Type 4 Hypersensitivity Reactions",           time:"5:16"},
-    ]
-  },
-  {
-    id: "transfusion", name: "Transfusion Reactions", icon: "🩸",
-    why: "ABO incompatibility, TRALI, and febrile reactions are all independently tested.",
-    videos: [
-      {id:"tr01", name:"Anaphylactic Transfusion Reactions",          time:"4:36"},
-      {id:"tr02", name:"Acute Hemolytic Transfusion Reaction",        time:"10:56"},
-      {id:"tr03", name:"Febrile Nonhemolytic Transfusion Reaction",   time:"5:55"},
-      {id:"tr04", name:"TRALI",                                       time:"5:34"},
-    ]
-  },
-  {
-    id: "transplant", name: "Transplant Rejection", icon: "🫀",
-    why: "The three types of rejection (hyperacute/acute/chronic) and GVHD are high-yield immunology.",
-    videos: [
-      {id:"tp01", name:"Hyperacute Transplant Rejection",             time:"5:00"},
-      {id:"tp02", name:"Acute Transplant Rejection",                  time:"5:29"},
-      {id:"tp03", name:"Chronic Transplant Rejection",                time:"7:15"},
-      {id:"tp04", name:"Graft vs Host Disease (GVHD)",                time:"9:04"},
-    ]
-  },
-  {
-    id: "germlayer", name: "Germ Layer Derivatives", icon: "🐣",
-    why: "Embryology questions hinge on knowing which germ layer gives rise to which tissue.",
-    videos: [
-      {id:"gl01", name:"Ectoderm Derivatives",                        time:"9:56"},
-      {id:"gl02", name:"Mesoderm Derivatives",                        time:"11:52"},
-      {id:"gl03", name:"Endoderm Derivatives",                        time:"6:00"},
-      {id:"gl04", name:"Cell Junctions",                              time:"17:03"},
-      {id:"gl05", name:"Gap Junctions",                               time:"4:28"},
-      {id:"gl06", name:"Tight Junctions",                             time:"7:51"},
-      {id:"gl07", name:"Desmosomes",                                  time:"4:44"},
-    ]
-  },
-  {
-    id: "personality", name: "Personality Disorders & Conditioning", icon: "🧩",
-    why: "Cluster A/B/C and conditioning types are bread-and-butter behavioral science — quick points.",
-    videos: [
-      {id:"ps01", name:"Cluster A Personality Disorders",             time:"7:31"},
-      {id:"ps02", name:"Cluster B Personality Disorders",             time:"8:03"},
-      {id:"ps03", name:"Cluster C Personality Disorders",             time:"7:19"},
-      {id:"ps04", name:"Classical Conditioning",                      time:"4:47"},
-      {id:"ps05", name:"Operant Conditioning",                        time:"4:48"},
-    ]
-  },
-  {
-    id: "cytoskeleton", name: "Cytoskeleton", icon: "🔩",
-    why: "Microtubule/microfilament function underlies several drug MOAs (colchicine, vinca alkaloids) — tested often.",
-    videos: [
-      {id:"cs01", name:"Cytoskeleton",                                time:"9:41"},
-      {id:"cs02", name:"Microfilaments (Actin Filaments)",            time:"6:21"},
-      {id:"cs03", name:"Intermediate Filaments",                      time:"3:20"},
-      {id:"cs04", name:"Microtubules",                                time:"—"},
-    ]
-  },
-  {
-    id: "dyslipidemias", name: "Dyslipidemias", icon: "💛",
-    why: "Lipoprotein disorders, apolipoproteins, and familial dyslipidemias connect to CV risk and are directly tested.",
-    videos: [
-      {id:"dl01", name:"Dyslipidemias (Overview)",                    time:"21:56"},
-    ]
-  },
-];
+if(auth){auth.onAuthStateChanged(async u=>{currentUser=u||null;if(u){try{const d=await db.collection('users').doc(u.uid).get();if(d.exists){watchedState=d.data().pix_watched||{};reviewedState=d.data().pix_reviewed||{};}}catch(e){}}else{try{watchedState=JSON.parse(localStorage.getItem('pix_watched')||'{}');}catch(e){}try{reviewedState=JSON.parse(localStorage.getItem('pix_reviewed')||'{}');}catch(e){}}renderAll();});}
+else{try{watchedState=JSON.parse(localStorage.getItem('pix_watched')||'{}');}catch(e){}try{reviewedState=JSON.parse(localStorage.getItem('pix_reviewed')||'{}');}catch(e){}renderAll();}
 
-// ─────────────────────────────────────────────
-// FIREBASE / STATE
-// ─────────────────────────────────────────────
-if (auth) {
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      currentUser = user;
-      await fetchStateFromFirebase();
-    } else {
-      currentUser = null;
-      loadStateFromLocal();
-    }
-    updateAll();
+function save(){if(currentUser){db.collection('users').doc(currentUser.uid).set({pix_watched:watchedState,pix_reviewed:reviewedState},{merge:true}).catch(console.error);}else{localStorage.setItem('pix_watched',JSON.stringify(watchedState));localStorage.setItem('pix_reviewed',JSON.stringify(reviewedState));}}
+function W(id){return!!watchedState[id];}function R(id){return!!reviewedState[id];}function D(id){return W(id)&&R(id);}
+function allVids(){return CATS.flatMap(c=>c.videos);}
+
+function toggleW(id,e){e.stopPropagation();watchedState[id]=!watchedState[id];save();patchRow(id);patchCatHdr(id);patchSidebar();patchHeader();}
+function toggleR(id,e){e.stopPropagation();reviewedState[id]=!reviewedState[id];save();patchRow(id);patchCatHdr(id);patchSidebar();patchHeader();}
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+const openSet=new Set();
+
+function renderAll(){renderSidebar();renderMain();patchHeader();}
+
+/* Sidebar */
+function renderSidebar(){
+  const sb=document.getElementById('sidebar');
+  let h='';
+  [1,2,3,4].forEach(p=>{
+    const pc=PC[p];
+    h+=`<div class="sb-section">${pc.emoji} ${pc.label}</div>`;
+    CATS.filter(c=>c.priority===p).forEach(cat=>{
+      const done=cat.videos.filter(v=>D(v.id)).length,tot=cat.videos.length,pct=Math.round(done/tot*100);
+      h+=`<div class="sb-item" id="si-${cat.id}" onclick="jumpTo('${cat.id}')">
+        <div class="sb-dot" style="background:${pc.color}"></div>
+        <span class="sb-name">${cat.icon} ${cat.name}</span>
+        <span class="sb-pct" id="sip-${cat.id}">${pct}%</span>
+        <div class="sb-strip"><div class="sb-fill" id="sib-${cat.id}" style="width:${pct}%;background:${pc.color}"></div></div>
+      </div>`;
+    });
   });
-} else {
-  loadStateFromLocal();
-  updateAll();
+  sb.innerHTML=h;
+}
+function patchSidebar(){
+  CATS.forEach(cat=>{
+    const done=cat.videos.filter(v=>D(v.id)).length,tot=cat.videos.length,pct=Math.round(done/tot*100);
+    const pe=document.getElementById('sip-'+cat.id),be=document.getElementById('sib-'+cat.id);
+    if(pe)pe.textContent=pct+'%';if(be)be.style.width=pct+'%';
+  });
 }
 
-async function fetchStateFromFirebase() {
-  if (!currentUser) return;
-  try {
-    const doc = await db.collection('users').doc(currentUser.uid).get();
-    if (doc.exists) {
-      watchedState  = doc.data().pix_watched  || {};
-      reviewedState = doc.data().pix_reviewed || {};
-    }
-  } catch(err) { console.error("Error fetching state:", err); }
-}
-
-function loadStateFromLocal() {
-  try { watchedState  = JSON.parse(localStorage.getItem('pix_watched')  || '{}'); } catch(e) { watchedState  = {}; }
-  try { reviewedState = JSON.parse(localStorage.getItem('pix_reviewed') || '{}'); } catch(e) { reviewedState = {}; }
-}
-
-function saveState() {
-  if (currentUser) {
-    db.collection('users').doc(currentUser.uid).set(
-      { pix_watched: watchedState, pix_reviewed: reviewedState },
-      { merge: true }
-    ).catch(console.error);
-  } else {
-    localStorage.setItem('pix_watched',  JSON.stringify(watchedState));
-    localStorage.setItem('pix_reviewed', JSON.stringify(reviewedState));
-  }
-}
-
-function isWatched(id)  { return !!watchedState[id]; }
-function isReviewed(id) { return !!reviewedState[id]; }
-function isComplete(id) { return isWatched(id) && isReviewed(id); }
-
-function toggleWatch(id, event) {
-  event.stopPropagation();
-  watchedState[id] = !watchedState[id];
-  saveState(); updateAll();
-}
-function toggleReview(id, event) {
-  event.stopPropagation();
-  reviewedState[id] = !reviewedState[id];
-  saveState(); updateAll();
-}
-
-// ─────────────────────────────────────────────
-// RENDERING
-// ─────────────────────────────────────────────
-function allVideos() { return categories.flatMap(c => c.videos); }
-
-// Unique colour per category (cycles through palette)
-const CAT_COLORS = [
-  "#d4607a","#b85820","#8a6e10","#5a7060","#5a4490","#3a6e7a",
-  "#9e3a5a","#7a3a8a","#3d6e8a","#9e6a3d","#c08c3e","#a63e3e",
-  "#3a5a6e","#6e7a3d","#3d2e6e","#c03050","#2a8a6a","#b87820",
-  "#5a3878","#3a6e5a","#7a5a9e","#9e5a70","#3a6e3a","#c05040",
-  "#6e3a7a"
-];
-const CAT_BG = [
-  "rgba(212,96,122,0.08)","rgba(184,88,32,0.08)","rgba(138,110,16,0.07)",
-  "rgba(90,112,96,0.07)","rgba(90,68,144,0.08)","rgba(58,110,122,0.08)",
-  "rgba(158,58,90,0.08)","rgba(122,58,138,0.08)","rgba(61,110,138,0.08)",
-  "rgba(158,106,61,0.08)","rgba(192,140,62,0.08)","rgba(166,62,62,0.08)",
-  "rgba(58,90,110,0.08)","rgba(110,122,61,0.08)","rgba(61,46,110,0.08)",
-  "rgba(192,48,80,0.08)","rgba(42,138,106,0.08)","rgba(184,120,32,0.08)",
-  "rgba(90,56,120,0.08)","rgba(58,110,90,0.08)","rgba(122,90,158,0.08)",
-  "rgba(158,90,112,0.08)","rgba(58,110,58,0.08)","rgba(192,80,64,0.08)",
-  "rgba(110,58,122,0.08)"
-];
-
-function catColor(idx) { return CAT_COLORS[idx % CAT_COLORS.length]; }
-function catBg(idx)    { return CAT_BG[idx % CAT_BG.length]; }
-
-function videoRowHTML(v) {
-  const w = isWatched(v.id), r = isReviewed(v.id), done = w && r;
-  return `<div class="video-row ${done ? 'fully-done' : ''}" id="row-${v.id}">
-    <div class="check-box ${w ? 'checked' : ''}" data-tooltip="Watched"  onclick="toggleWatch('${v.id}',event)">${w ? '✓' : ''}</div>
-    <div class="check-box ${r ? 'reviewed' : ''}" data-tooltip="Reviewed" onclick="toggleReview('${v.id}',event)">${r ? '✓' : ''}</div>
-    <div class="video-name">${v.name}</div>
-    <div class="video-time">${v.time}</div>
+/* Category blocks */
+function rowHTML(v){
+  const w=W(v.id),r=R(v.id),d=w&&r;
+  return `<div class="vid-row${d?' done':''}" id="row-${v.id}">
+    <div class="chk${w?' w':''}" data-tip="Watched"  onclick="toggleW('${v.id}',event)">${w?'✓':''}</div>
+    <div class="chk${r?' r':''}" data-tip="Reviewed" onclick="toggleR('${v.id}',event)">${r?'✓':''}</div>
+    <div class="vid-name">${v.name}</div>
+    <div class="vid-time">${v.time}</div>
   </div>`;
 }
+function patchRow(id){const el=document.getElementById('row-'+id);if(!el)return;const v=allVids().find(x=>x.id===id);if(v)el.outerHTML=rowHTML(v);}
 
-function renderByCat() {
-  let html = '';
-  categories.forEach((cat, idx) => {
-    const done  = cat.videos.filter(v => isComplete(v.id)).length;
-    const total = cat.videos.length;
-    const pct   = Math.round((done / total) * 100);
-    const hc    = catColor(idx);
-    const hbg   = catBg(idx);
-
-    html += `
-    <div class="section-hdr" style="background:${hbg};border-left-color:${hc}">
-      <div style="font-size:20px;flex-shrink:0">${cat.icon}</div>
-      <div>
-        <div class="section-title" style="color:${hc}">${cat.name}</div>
-        <div class="section-why">${cat.why}</div>
-      </div>
-      <div class="section-meta">
-        <span class="section-meta-text" style="color:${pct===100?'var(--green)':'var(--muted)'}">${done}/${total} videos</span>
-        <div class="section-meta-bar">
-          <div class="section-meta-bar-fill" style="width:${pct}%;background:${pct===100?'var(--green)':hc}"></div>
+function renderMain(){
+  let h='';
+  CATS.forEach(cat=>{
+    const pc=PC[cat.priority];
+    const done=cat.videos.filter(v=>D(v.id)).length,tot=cat.videos.length,pct=Math.round(done/tot*100);
+    h+=`<div class="cat-block" id="cat-${cat.id}">
+      <div class="cat-hdr" id="hdr-${cat.id}" style="border-left-color:${pc.color}" onclick="toggleCat('${cat.id}')">
+        <span class="cat-icon">${cat.icon}</span>
+        <div class="cat-left">
+          <div class="cat-name">${cat.name}</div>
+          <div class="cat-meta">
+            <span class="cat-badge" style="color:${pc.color};border-color:${pc.border};background:${pc.bg}">${pc.emoji} ${pc.label}</span>
+            <span class="cat-time">⏱ ${cat.totalTime}</span>
+            <span class="cat-vcount">${tot} videos</span>
+          </div>
+          <div class="cat-prog-bar"><div class="cat-prog-fill" id="cpf-${cat.id}" style="width:${pct}%;background:${pct===100?'var(--green)':pc.color}"></div></div>
+        </div>
+        <div class="cat-right">
+          <div>
+            <div class="cat-pct-num" id="cpn-${cat.id}" style="color:${pct===100?'var(--green)':pc.color}">${pct}%</div>
+            <div class="cat-pct-lbl">${done}/${tot}</div>
+          </div>
+          <span class="cat-chev" id="chev-${cat.id}">▶</span>
         </div>
       </div>
-    </div>
-    <div class="video-list" style="margin-bottom:8px">
-      <div class="col-hdr" style="grid-template-columns:40px 40px 1fr 70px">
-        <span>Watch</span><span>Review</span><span></span><span style="text-align:right">Time</span>
+      <div class="cat-body" id="body-${cat.id}">
+        <div class="cat-why">${cat.why}</div>
+        <div class="col-hdr"><span>Watch</span><span>Review</span><span></span><span style="text-align:right">Time</span></div>
+        ${cat.videos.map(v=>rowHTML(v)).join('')}
       </div>
-      ${cat.videos.map(v => videoRowHTML(v)).join('')}
     </div>`;
   });
-  document.getElementById('bycat-content').innerHTML = html;
+  document.getElementById('bycat-content').innerHTML=h;
+  // Observe for sidebar highlight
+  setTimeout(()=>{
+    const obs=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){const id=en.target.id.replace('cat-','');document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));const si=document.getElementById('si-'+id);if(si)si.classList.add('active');}});},{threshold:0.08,rootMargin:'-50px 0px -75% 0px'});
+    document.querySelectorAll('.cat-block').forEach(el=>obs.observe(el));
+  },200);
 }
 
-function updateAll() {
-  const av    = allVideos();
-  const total = av.length;
-  const done  = av.filter(v => isComplete(v.id)).length;
-  const wOnly = av.filter(v => isWatched(v.id)).length;
-  const rOnly = av.filter(v => isReviewed(v.id)).length;
-  const pct   = total ? Math.round((done / total) * 100) : 0;
-
-  document.getElementById('chip-done').textContent      = wOnly;
-  document.getElementById('chip-reviewed').textContent  = rOnly;
-  document.getElementById('chip-complete').textContent  = `${done} / ${total}`;
-  document.getElementById('chip-remaining').textContent = total - done;
-  document.getElementById('header-remaining').textContent = total - done;
-  document.getElementById('header-total').textContent    = total;
-
-  const el   = document.getElementById('tracker-pct');
-  const bar  = document.getElementById('tracker-bar');
-  const note = document.getElementById('tracker-note');
-  if (el)   el.textContent   = pct + '%';
-  if (bar)  bar.style.width  = pct + '%';
-  if (note) note.textContent = `${done} of ${total} videos completed (Watch + Review)`;
-
-  renderByCat();
-  renderTracker();
+function patchCatHdr(videoId){
+  const cat=CATS.find(c=>c.videos.some(v=>v.id===videoId));if(!cat)return;
+  const pc=PC[cat.priority];
+  const done=cat.videos.filter(v=>D(v.id)).length,tot=cat.videos.length,pct=Math.round(done/tot*100);
+  const pn=document.getElementById('cpn-'+cat.id),pf=document.getElementById('cpf-'+cat.id);
+  if(pn){pn.textContent=pct+'%';pn.style.color=pct===100?'var(--green)':pc.color;}
+  if(pf){pf.style.width=pct+'%';pf.style.background=pct===100?'var(--green)':pc.color;}
 }
 
-function renderTracker() {
-  const av = allVideos();
-  let html = `<table class="cat-table" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:22px;box-shadow:var(--card-shadow)">
-    <thead><tr>
-      <th>Category</th><th>Progress</th><th>Done / Total</th><th>Watched</th><th>Reviewed</th>
-    </tr></thead><tbody>`;
+function toggleCat(id){
+  const body=document.getElementById('body-'+id);
+  const chev=document.getElementById('chev-'+id);
+  const hdr=document.getElementById('hdr-'+id);
+  if(openSet.has(id)){openSet.delete(id);body.classList.remove('open');chev.classList.remove('open');hdr.classList.remove('open');}
+  else{openSet.add(id);body.classList.add('open');chev.classList.add('open');hdr.classList.add('open');}
+}
+function jumpTo(id){
+  if(!openSet.has(id))toggleCat(id);
+  const el=document.getElementById('cat-'+id);
+  if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  const si=document.getElementById('si-'+id);if(si)si.classList.add('active');
+}
 
-  categories.forEach((cat, idx) => {
-    const done    = cat.videos.filter(v => isComplete(v.id)).length;
-    const watched = cat.videos.filter(v => isWatched(v.id)).length;
-    const revd    = cat.videos.filter(v => isReviewed(v.id)).length;
-    const total   = cat.videos.length;
-    const pct     = Math.round((done / total) * 100);
-    const hc      = catColor(idx);
-
-    html += `<tr>
-      <td style="font-weight:500;color:var(--ink2)">${cat.icon} ${cat.name}</td>
-      <td style="min-width:120px">
-        <div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:${pct}%;background:${pct===100?'var(--green)':hc}"></div></div>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${pct}%</span>
-      </td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${done} / ${total}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${watched}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--fuji2)">${revd}</td>
-    </tr>`;
+/* Header stats */
+function patchHeader(){
+  const av=allVids(),tot=av.length;
+  const done=av.filter(v=>D(v.id)).length;
+  const watched=av.filter(v=>W(v.id)).length;
+  document.getElementById('hd-watched').textContent=watched;
+  document.getElementById('hd-done').textContent=done;
+  document.getElementById('hd-total').textContent=tot;
+  [1,2,3,4].forEach(p=>{
+    const allV=CATS.filter(c=>c.priority===p).flatMap(c=>c.videos);
+    const d=allV.filter(v=>D(v.id)).length;
+    const el=document.getElementById('cp'+p);if(el)el.textContent=`${d}/${allV.length}`;
   });
-  html += '</tbody></table>';
-
-  // Up next
-  const upcoming = av.filter(v => !isComplete(v.id)).slice(0, 12);
-  const completed = av.filter(v => isComplete(v.id));
-  html += `<div class="tracker-grid">
-    <div class="tracker-card">
-      <p class="tracker-card-title" style="color:var(--sakura)">▶ Up Next (${upcoming.length} shown)</p>
-      ${upcoming.length
-        ? upcoming.map(v => `<div class="tracker-card-item"><span style="color:var(--ink2)">${v.name}</span><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${v.time}</span></div>`).join('')
-        : '<div style="padding:16px 0;color:var(--dim);font-size:13px;font-style:italic">All done! 🎉</div>'}
-    </div>
-    <div class="tracker-card">
-      <p class="tracker-card-title" style="color:var(--green)">✓ Fully Completed (${completed.length})</p>
-      ${completed.length
-        ? completed.slice(-12).reverse().map(v => `<div class="tracker-card-item"><span style="color:var(--muted)">${v.name}</span><span style="color:var(--green);font-size:11px">✓✓</span></div>`).join('')
-        : '<div style="padding:16px 0;color:var(--dim);font-size:13px;font-style:italic">None yet. Start watching!</div>'}
-    </div>
-  </div>`;
-
-  document.getElementById('tracker-content').innerHTML = html;
 }
 
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
+/* Tracker tab */
+function renderTracker(){
+  const av=allVids(),tot=av.length,done=av.filter(v=>D(v.id)).length;
+  const pct=tot?Math.round(done/tot*100):0;
+  const pe=document.getElementById('tr-pct'),be=document.getElementById('tr-bar'),ne=document.getElementById('tr-note');
+  if(pe)pe.textContent=pct+'%';if(be)be.style.width=pct+'%';
+  if(ne)ne.textContent=`${done} of ${tot} videos fully completed (Watched + Reviewed)`;
+  // Priority summary
+  const ps=document.getElementById('psum');
+  if(ps)ps.innerHTML=[1,2,3,4].map(p=>{
+    const pc=PC[p],allV=CATS.filter(c=>c.priority===p).flatMap(c=>c.videos);
+    const d=allV.filter(v=>D(v.id)).length,ppct=allV.length?Math.round(d/allV.length*100):0;
+    return `<div class="psum-card"><div class="psum-lbl">${pc.emoji} ${pc.label}</div>
+      <div class="psum-val" style="color:${pc.color}">${ppct}%</div>
+      <div class="mini-bar-wrap" style="margin-top:7px"><div class="mini-bar-fill" style="width:${ppct}%;background:${pc.color}"></div></div>
+      <div class="psum-sub">${d} / ${allV.length} videos</div></div>`;
+  }).join('');
+  // Table
+  const tb=document.getElementById('tr-tbody');
+  if(tb)tb.innerHTML=CATS.map(cat=>{
+    const pc=PC[cat.priority],d=cat.videos.filter(v=>D(v.id)).length,w=cat.videos.filter(v=>W(v.id)).length,t=cat.videos.length,p=Math.round(d/t*100);
+    return `<tr>
+      <td style="font-weight:500;color:var(--ink2)">${cat.icon} ${cat.name}</td>
+      <td><span class="cat-badge" style="color:${pc.color};border-color:${pc.border};background:${pc.bg}">${pc.emoji} ${pc.label}</span></td>
+      <td><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:${p}%;background:${p===100?'var(--green)':pc.color}"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${p}%</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${d}/${t}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${w}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--dim)">${cat.totalTime}</td>
+    </tr>`;
+  }).join('');
 }
 
-updateAll();
+/* Tabs */
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='tracker')renderTracker();
+}
+
+/* Scroll to top */
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('stb');if(btn)btn.classList.toggle('vis',window.scrollY>300);
+});
 </script>
 </body>
 </html>
