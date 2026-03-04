@@ -591,6 +591,11 @@ function videoRowHTML(v) {
 }
 
 function renderByCat() {
+  // Preserve which groups are currently open before re-render
+  const openGroups = new Set(
+    [...document.querySelectorAll('.collapsible-group.is-open')].map(el => el.id)
+  );
+
   let html = '';
   categories.forEach((cat, idx) => {
     const done  = cat.videos.filter(v => isComplete(v.id)).length;
@@ -599,9 +604,10 @@ function renderByCat() {
     const hc    = catColor(idx);
     const hbg   = catBg(idx);
     const groupId = 'grp-' + cat.id;
+    const isOpen  = openGroups.has(groupId) ? ' is-open' : '';
 
     html += `
-    <div class="collapsible-group" id="${groupId}">
+    <div class="collapsible-group${isOpen}" id="${groupId}">
       <div class="section-hdr" style="background:${hbg};border-left-color:${hc}" onclick="toggleGroup('${groupId}')">
         <div style="font-size:20px;flex-shrink:0">${cat.icon}</div>
         <div style="flex:1;min-width:0">
