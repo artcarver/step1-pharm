@@ -305,6 +305,17 @@ bacteria: [
         pearl: "**Currant jelly sputum** = Klebsiella or Moraxella (rarely). The 'mucoviscosity test' (string sign) for hypervirulent strains. Klebsiella has a **string sign > 5mm** (mucoviscous). UTI in hospitalized patients with urinary catheter: common Klebsiella habitat."
       },
       {
+        name: "Enterobacter & Serratia",
+        summary: "Nosocomial lactose-fermenting GN rods — UTI, pneumonia, bacteremia in hospitalized/immunocompromised; intrinsically resistant to ampicillin; AmpC β-lactamase → resistance emerges on 3rd-gen cephalosporins",
+        tier: 2,
+        gram: "GN Bacillus (lactose fermenter)",
+        tags: ["Nosocomial","UTI","Pneumonia","AmpC β-lactamase","ICU","Catheter-Associated"],
+        virulence: "**AmpC β-lactamase** (chromosomally encoded, inducible — de-repressed during treatment with 3rd-gen cephalosporins → treatment failure). Serratia: red pigment (prodigiosin) in some strains. Both form biofilms on catheters and ventilators.",
+        disease: "**Enterobacter cloacae/aerogenes:** nosocomial UTI (catheter-associated), hospital-acquired/ventilator-associated pneumonia, bacteremia in ICU patients, wound infections. **Serratia marcescens:** nosocomial pneumonia, UTI, endocarditis in IV drug users (right-sided), bacteremia. Red-pigmented colonies or secretions = classic Serratia exam clue. Both particularly dangerous in neonates and immunocompromised patients.",
+        tx: "**Carbapenems** (imipenem, meropenem) for serious infections. Piperacillin-tazobactam or **cefepime** (4th-gen — AmpC-stable) for less severe. **Avoid 3rd-gen cephalosporins** (ceftriaxone, cefotaxime) — AmpC derepression causes resistance emergence even if initially susceptible ('inoculum effect').",
+        pearl: "**SPACE** organisms = classic chromosomal AmpC producers: **S**erratia, **P**seudomonas, **A**cinetobacter, **C**itrobacter, **E**nterobacter. **Serratia red pigment** (prodigiosin) is produced at room temperature, not 37°C — so infections are rarely visibly red in vivo, but a classic board clue in lab/environmental contamination scenarios. Intrinsic ampicillin resistance = no role for penicillin G or ampicillin."
+      },
+      {
         name: "Helicobacter pylori",
         summary: "Urease-positive, microaerophilic, curved rod — #1 cause of peptic ulcer disease and gastric cancer/MALT lymphoma",
         tier: 1,
@@ -511,48 +522,15 @@ bacteria: [
         pearl: "**RIPE side effects:** Rifampin → red/orange body fluids, rifamycin interactions (CYP inducer). Isoniazid → **peripheral neuropathy** (give B6/pyridoxine), hepatotoxicity, SLE-like reaction. Pyrazinamide → **hyperuricemia**, hepatotoxicity. Ethambutol → **optic neuritis** (red-green color blindness). Streptomycin (old regimen) → ototoxicity."
       },
       {
-        name: "Chlamydia trachomatis",
-        summary: "Obligate intracellular — serovars D–K: STI/PID; L1–L3: lymphogranuloma venereum; A–C: trachoma (leading infectious cause of blindness)",
+        name: "Chlamydia Species",
+        summary: "Obligate intracellular (EB/RB lifecycle, no cell wall) — C. trachomatis: STI/PID/trachoma/LGV; C. pneumoniae: atypical pneumonia in young adults; C. psittaci: psittacosis from bird exposure",
         tier: 1,
-        gram: "Obligate intracellular (no cell wall)",
-        tags: ["STI","PID","Neonatal Conjunctivitis","Trachoma","LGV","Fitz-Hugh-Curtis"],
-        virulence: "**Elementary body (EB):** infectious, metabolically inactive — survives extracellularly, enters cells by endocytosis. **Reticulate body (RB):** replicates intracellularly. Cannot make ATP (energy parasite).",
-        disease: "**Serovars D–K:** most common bacterial STI in US. Urethritis/cervicitis (often asymptomatic), PID (→ ectopic pregnancy, infertility), epididymo-orchitis. **Neonatal:** conjunctivitis (5–14 days post-birth — **most common** neonatal conjunctivitis) and **pneumonia** ('staccato' cough, eosinophilia, 3–12 weeks). **Reactive arthritis** (Reiter syndrome — urethritis + arthritis + conjunctivitis/uveitis: 'Can't see, can't pee, can't climb a tree'). **Serovars A–C:** trachoma (repeated infection → scarring → entropion → corneal abrasion → blindness). **L1–L3 (LGV):** painless genital ulcer → tender inguinal LAD (buboes) → proctitis.",
-        tx: "**Azithromycin** 1g single dose or **doxycycline** × 7 days. Screen partners. LGV: doxycycline × 21 days. Neonatal conjunctivitis: oral erythromycin (prophylaxis: erythromycin eye drops).",
-        pearl: "**Can't see, can't pee, can't climb a tree** = reactive arthritis (Reiter syndrome — associated with HLA-B27 and classically occurs post-Chlamydia or enteric infection). **Does not Gram stain** — no cell wall. **Neonatal conjunctivitis timeline:** Chlamydia (5–14 days) vs. gonorrhea (<5 days, chemical within 24h). **Only azithromycin or doxycycline** — β-lactams don't work (no PBPs)."
-      },
-      {
-        name: "Neisseria gonorrhoeae",
-        summary: "GP intracellular diplococci in PMNs — STI, PID, septic arthritis (young adults), neonatal ophthalmia; β-lactamase strains common",
-        tier: 1,
-        gram: "GN diplococci (kidney-bean shaped, intracellular in PMNs)",
-        tags: ["STI","Septic Arthritis","PID","Neonatal Ophthalmia","Thayer-Martin"],
-        virulence: "**Pili** (antigenic variation — Phase variation); IgA protease; Porin proteins (survive intracellularly in PMNs); β-lactamase producing strains.",
-        disease: "**Urethritis/cervicitis:** purulent discharge (more symptomatic than Chlamydia). **PID:** salpingitis → Fitz-Hugh-Curtis syndrome (perihepatic 'violin-string' adhesions, RUQ pain). **Disseminated gonococcal infection (DGI):** migratory polyarthralgia → septic monoarthritis (knee/wrist) + skin pustules/vesicles + tenosynovitis. **Neonatal ophthalmia neonatorum:** purulent conjunctivitis **<5 days** post-birth.",
-        tx: "**Ceftriaxone 500mg IM single dose** (treat presumptively for Chlamydia co-infection with azithromycin or doxycycline). Disseminated: ceftriaxone IV. Neonatal prophylaxis: **erythromycin eye drops** at birth.",
-        pearl: "**DGI vs Staph septic arthritis:** Gonococcal = young sexually active adult, migratory polyarthralgia then monoarthritis, skin lesions, responds quickly to antibiotics. Staph = any age, usually monoarthritis, no skin lesions. **Thayer-Martin agar:** VCN medium (vancomycin, colistin, nystatin) selects for Neisseria. Oxidase-positive."
-      },
-      {
-        name: "Treponema pallidum",
-        summary: "Syphilis — primary (painless chancre), secondary (maculopapular palms/soles + condyloma lata), tertiary (gumma, aortic aneurysm, tabes dorsalis)",
-        tier: 1,
-        gram: "Spirochete (too thin to Gram stain — darkfield microscopy)",
-        tags: ["Syphilis","Chancre","Condyloma Lata","Tabes Dorsalis","VDRL/RPR","Argyll Robertson"],
-        virulence: "Outer membrane proteins (facilitate adhesion). Cannot be cultured in vitro. Crosses placenta.",
-        disease: "**Primary:** painless indurated chancre (hard chancre) at inoculation site — heals in 3–6 weeks. **Secondary (6wks–6mo post-chancre):** maculopapular rash on **palms and soles**, condyloma lata (flat warts in moist areas), mucous patches, systemic LAD, fever. **Latent:** early (<1yr) vs late (>1yr). **Tertiary:** gumma (granulomatous lesions), cardiovascular (ascending aortic aneurysm, aortic regurgitation — vasa vasorum obliteration), neurosyphilis (tabes dorsalis — dorsal column demyelination → sensory ataxia, positive Romberg, lancinating pain; Argyll Robertson pupil — accommodates but doesn't react to light = 'prostitute's pupil'). **Congenital:** saddle nose, Hutchinson triad (keratitis + deafness + Hutchinson teeth), saber shins.",
-        tx: "**Benzathine penicillin G IM** (all stages). Neurosyphilis: IV aqueous penicillin G × 10–14 days. **Jarisch-Herxheimer reaction:** fever, headache, myalgia within 24h of treatment (release of pyrogens from killed spirochetes) — treat with NSAIDs, do NOT stop penicillin.",
-        pearl: "**Argyll Robertson pupil:** accommodates (near reflex intact) but does NOT react to light (no direct/consensual light reflex) — lesion in dorsal midbrain (pretectal area). **VDRL/RPR** (non-treponemal — sensitive screening, false positives in lupus/pregnancy/viral infections). **FTA-ABS** (treponemal — specific, confirms diagnosis, stays positive for life). **Dark-field microscopy** visualizes live spirochetes from primary chancre."
-      },
-      {
-        name: "Borrelia burgdorferi",
-        summary: "Lyme disease — Ixodes tick (deer tick), ECM rash, bull's eye → facial palsy, heart block, arthritis; treat with doxycycline",
-        tier: 2,
-        gram: "Spirochete (Giemsa or Wright stain — too thin for Gram)",
-        tags: ["Lyme Disease","Bull's Eye Rash","Ixodes Tick","Facial Palsy","Heart Block"],
-        virulence: "OspA/OspC surface proteins (tick-midgut adhesion, immune evasion). No endotoxin.",
-        disease: "**Stage 1 (early localized):** Erythema chronicum migrans (ECM) — bull's eye expanding rash at bite site, 3–30 days after bite. Flu-like symptoms. **Stage 2 (early disseminated, weeks–months):** Bilateral **facial nerve palsy** (Bell's palsy — most common cause of bilateral in young patient), **Lyme carditis** (AV nodal block, Wenckebach), migratory arthralgia, radiculopathy. **Stage 3 (late, months–years):** **Lyme arthritis** (large joints, esp. knee), encephalopathy.",
-        tx: "**Doxycycline** (drug of choice, all stages except CNS/cardiac complications). Amoxicillin (children <8, pregnant). CNS/cardiac: IV **ceftriaxone**. No vaccine currently available (LYMErix was withdrawn). Tick removal within 36h prevents transmission.",
-        pearl: "**Ixodes scapularis** (black-legged/deer tick) — nymph stage most likely to transmit (tiny, often not noticed). Co-infections: Babesia (hemolytic anemia), Anaplasmosis (thrombocytopenia, ↑LFTs). **Bell's palsy in young patient from endemic area** = test for Lyme (ELISA → Western blot for confirmation). AV block without structural disease in endemic area = Lyme carditis until proven otherwise."
+        gram: "Obligate intracellular (no cell wall — no Gram stain, no β-lactam activity)",
+        tags: ["STI","PID","Neonatal Conjunctivitis","Trachoma","LGV","Atypical Pneumonia","Psittacosis"],
+        virulence: "**Elementary body (EB):** infectious, metabolically inactive — survives extracellularly, enters via endocytosis. **Reticulate body (RB):** replicates intracellularly in inclusion vacuole. Cannot synthesize ATP (obligate energy parasite). All species: no cell wall → β-lactams ineffective.",
+        disease: "**C. trachomatis — Serovars D–K:** most common bacterial STI in US. Urethritis/cervicitis (often asymptomatic), PID (→ ectopic pregnancy, infertility), epididymo-orchitis. **Neonatal:** conjunctivitis (5–14 days) + pneumonia ('staccato' cough, eosinophilia, 3–12 weeks). **Reactive arthritis** (Reiter: urethritis + arthritis + conjunctivitis). **Serovars A–C:** trachoma (repeated infection → scarring → entropion → blindness — #1 infectious cause of blindness worldwide). **Serovars L1–L3 (LGV):** painless genital ulcer → tender inguinal buboes → proctitis. **C. pneumoniae:** atypical ('walking') pneumonia in young adults — gradual onset, dry cough, low-grade fever, bilateral interstitial infiltrates. Seroprevalence ~50% by adulthood. **C. psittaci (psittacosis/ornithosis):** exposure to infected birds (parrots, parakeets, pigeons, poultry) → severe atypical pneumonia with systemic features (headache, myalgia, hepatosplenomegaly, relative bradycardia). Reportable disease.",
+        tx: "All species: **doxycycline** (first-line for most) or **azithromycin**. C. trachomatis STI: azithromycin 1g × 1 or doxycycline × 7 days. LGV: doxycycline × 21 days. Neonatal conjunctivitis: oral erythromycin. C. pneumoniae/psittaci: doxycycline or azithromycin. β-lactams: **no role** (no cell wall target).",
+        pearl: "**Neonatal conjunctivitis timeline:** chemical (within 24h) → gonorrhea (<5 days) → **Chlamydia (5–14 days)**. **β-lactams don't work** on any Chlamydia (no PBPs/cell wall). **Trachoma** (A–C) = leading infectious blindness cause — endemic in Africa/Middle East/Asia. **Psittacosis clue:** bird owner (parrot/parakeet), severe pneumonia with relative bradycardia (pulse-temperature dissociation), treat with doxycycline. **C. pneumoniae** = young, healthy adult, gradual-onset pneumonia, bilateral infiltrates on CXR — clinically similar to Mycoplasma."
       },
       {
         name: "Coxiella burnetii",
@@ -672,21 +650,17 @@ viruses: [
         disease: "**Congenital CMV** (most common congenital infection): **periventricular calcifications**, hearing loss (most common cause of non-hereditary sensorineural), chorioretinitis, hepatosplenomegaly, petechiae ('blueberry muffin' baby), microcephaly. **Immunocompromised (HIV, transplant):** CMV retinitis (most common cause of blindness in AIDS — 'pizza pie' fundus), esophagitis (linear ulcers), colitis (bloody diarrhea), pneumonitis (bone marrow/lung transplant). **Mononucleosis-like:** heterophile-negative mono (common in healthy adults).",
         tx: "**Ganciclovir** (or valganciclovir — prodrug). Ganciclovir resistance: **foscarnet** or cidofovir. Prophylaxis in transplant: valganciclovir.",
         pearl: "**CMV vs Toxoplasma calcifications:** CMV = **periventricular** (central). Toxoplasma = **diffuse/scattered** (peripheral). Both cause congenital CNS disease. **Ganciclovir** = guanosine analog, requires phosphorylation by viral UL97 kinase (CMV kinase). Bone marrow toxicity (neutropenia, thrombocytopenia) = main side effect. **Retinitis in AIDS:** bushy hemorrhagic infiltrate following blood vessels — 'pizza pie fundus.' CD4 <50/µL."
-      }
-    ]
-  },
-        pearl: "**CMV vs Toxoplasma calcifications:** CMV = **periventricular** (central). Toxoplasma = **diffuse/scattered** (peripheral). Both cause congenital CNS disease. **Ganciclovir** = guanosine analog, requires phosphorylation by viral UL97 kinase (CMV kinase). Bone marrow toxicity (neutropenia, thrombocytopenia) = main side effect. **Retinitis in AIDS:** bushy hemorrhagic infiltrate following blood vessels — 'pizza pie fundus.' CD4 <50/µL."
       },
       {
         name: "HHV-6 (Roseola — Exanthem Subitum)",
-        summary: "Roseola infantum — high fever 3–5 days → sudden defervescence → rose-colored macular rash; seizures from fever; infants 6–24 months; HHV-6 also causes encephalitis in transplant patients",
+        summary: "Roseola infantum — high fever 3–5 days → sudden defervescence → rose-colored macular rash; febrile seizures; infants 6–24 months; HHV-6 also causes encephalitis in transplant patients",
         tier: 2,
         gram: "dsDNA, enveloped",
         tags: ["Roseola","Exanthem Subitum","Febrile Seizures","Infants","Transplant Encephalitis"],
-        virulence: "Infects CD4+ T cells and monocytes. Latency in monocytes/macrophages. Can reactivate in immunocompromised (especially stem cell transplant).",
-        disease: "**Roseola infantum (exanthem subitum):** most common exanthem in infants <2 years. **High fever (39–40°C) for 3–5 days** — child appears well despite fever. **Sudden defervescence → rose-colored blanching macular rash** (trunk → neck/extremities, spares face). Mild URI symptoms. **Febrile seizures** occur during fever phase (not during rash). **Immunocompromised (transplant):** HHV-6 reactivation → **encephalitis**, hepatitis, pneumonitis.",
+        virulence: "Infects CD4+ T cells and monocytes. Latency in monocytes/macrophages. Can reactivate with immunosuppression (especially stem cell transplant).",
+        disease: "**Roseola infantum (exanthem subitum):** most common exanthem in infants <2 years. **High fever (39–40°C) for 3–5 days** — child appears well despite fever. **Sudden defervescence → rose-colored blanching macular rash** (trunk → neck/extremities, spares face). **Febrile seizures** occur during fever phase (not during rash). **Immunocompromised (transplant):** HHV-6 reactivation → **encephalitis**, hepatitis, pneumonitis.",
         tx: "Roseola: supportive (acetaminophen for fever). Transplant encephalitis: **ganciclovir or foscarnet** (off-label, limited data).",
-        pearl: "**Classic vignette:** 9-month-old infant with 4 days of high fever → fever breaks → rose-colored truncal rash. Parents worried about meningitis but child appears well. **Febrile seizures** are the main complication (occur during fever, not rash phase). HHV-6 uses CD46 as receptor. Reactivation in bone marrow transplant recipients → limbic encephalitis (amnesia, confusion)."
+        pearl: "**Classic vignette:** 9-month-old infant with 4 days of high fever → fever breaks → rose-colored truncal rash. **Febrile seizures** are the main complication (occur during fever, not rash phase). HHV-6 uses CD46 as receptor. Reactivation in bone marrow transplant recipients → limbic encephalitis (amnesia, confusion)."
       },
       {
         name: "HHV-8 (Kaposi Sarcoma Herpesvirus)",
@@ -1225,6 +1199,78 @@ parasites: [
         disease: "**Immunocompetent:** self-limited watery diarrhea (1–3 weeks), nausea, cramps. Common in daycare workers, recreational water. **HIV/AIDS (CD4 <100):** profuse watery diarrhea (3–15 L/day), wasting, biliary cryptosporidiosis (cholangiopathy — sclerosing cholangitis-like).",
         tx: "Immunocompetent: supportive. **AIDS:** nitazoxanide (modest benefit) + **immune reconstitution with HAART** (only cure). No reliable anti-cryptosporidial drug.",
         pearl: "**Acid-fast** staining = key diagnostic feature (along with Cyclospora and Isospora). Oocysts are **4–6 µm** (smaller than RBCs). 'Cryptosporidium parvum = small (parvo) + hidden (crypto).' In AIDS, massive secretory diarrhea leads to wasting. Biliary involvement = AIDS cholangiopathy. Resistant to chlorination of water supplies — common in recreational water outbreaks."
+      }
+    ]
+  },
+  {
+    group: "Protozoa — Blood & Tissue",
+    color: "para",
+    organisms: [
+      {
+        name: "Trypanosoma cruzi (Chagas Disease)",
+        summary: "Reduviid (kissing) bug vector — Chagas disease; South/Central America; trypomastigotes in blood, amastigotes in tissue; dilated cardiomyopathy, megaesophagus, megacolon; treat benznidazole",
+        tier: 2,
+        gram: "Protozoa (Kinetoplastida — kinetoplast visible on Giemsa)",
+        tags: ["Chagas Disease","Kissing Bug","Reduviid Bug","Dilated Cardiomyopathy","Megaesophagus","Megacolon"],
+        virulence: "**Reduviid bug (Triatoma — kissing bug)** bites near mouth/eyes, defecates on skin → trypomastigotes enter through bite wound or mucous membranes. Amastigotes infect cardiac/smooth muscle cells.",
+        disease: "**Acute Chagas:** fever, malaise, **Romaña's sign** (painless periorbital swelling — unilateral, from conjunctival inoculation) or chagoma (skin lesion at bite site). Mild, self-limited or asymptomatic. **Chronic Chagas (years later, 20–30%):** **dilated cardiomyopathy** (ventricular aneurysm at apex, arrhythmias, heart block, sudden death), **megaesophagus** (dysphagia, mimics achalasia), **megacolon** (constipation, obstruction). Chronic disease mediated by autoimmune mechanisms.",
+        tx: "**Acute:** benznidazole or nifurtimox (only effective in acute phase). **Chronic:** supportive (cardiac: ICD, transplant; GI: dilation). Early treatment with benznidazole slows progression.",
+        pearl: "**Romaña's sign** (periorbital edema) = pathognomonic of acute Chagas. **Chagas cardiomyopathy** = dilated + apical aneurysm + arrhythmias (right bundle branch block is classic ECG finding). Megaesophagus mimics achalasia (both show bird-beak esophagus on barium) — differentiate by serology. **Blood transfusion and vertical transmission** are also routes. Endemic in Latin America — important for immigrants presenting with cardiomyopathy."
+      },
+      {
+        name: "Trypanosoma brucei (Sleeping Sickness)",
+        summary: "Tsetse fly vector — African sleeping sickness; T. b. rhodesiense (East Africa, acute) vs T. b. gambiense (West Africa, chronic); CNS invasion → altered sleep-wake cycle; treat suramin/melarsoprol",
+        tier: 2,
+        gram: "Protozoa (Kinetoplastida — trypomastigotes in blood)",
+        tags: ["African Sleeping Sickness","Tsetse Fly","Winterbottom Sign","Chancre","Suramin","Melarsoprol"],
+        virulence: "**Tsetse fly** (Glossina) vector — transmits metacyclic trypomastigotes. **Antigenic variation of VSG (variable surface glycoprotein)** — switches surface coat → evades immune response → waves of parasitemia. Crosses blood-brain barrier → CNS invasion.",
+        disease: "**Stage 1 (hemolymphatic):** chancre at bite site → fever, headache, lymphadenopathy. **Winterbottom's sign:** posterior cervical LAD (T. b. gambiense). **Stage 2 (CNS):** encephalitis → personality change, **disrupted circadian rhythm** (sleeping during day, awake at night), progressive neurological deterioration, coma, death. **T. b. rhodesiense** (East Africa): faster, more acute, severe. **T. b. gambiense** (West Africa): slower, chronic, years.",
+        tx: "Stage 1: **suramin** (T.b. rhodesiense) or pentamidine (T.b. gambiense). Stage 2 (CNS): **melarsoprol** (arsenic derivative — very toxic, causes fatal encephalopathy 5–10%) or eflornithine (T.b. gambiense).",
+        pearl: "**Sleep disorder** (day sleeping, night waking) = classic clue for Stage 2 CNS African sleeping sickness. **Winterbottom's sign** (posterior cervical LAD) = T.b. gambiense. **VSG switching** = why antibodies don't clear the parasite (waves of antigenically different parasitemia). **Melarsoprol** is arsenical — toxic but historically the only option for CNS disease. Distinguish from Chagas (T. cruzi): Latin America, kissing bug, heart/GI disease vs Africa, tsetse fly, CNS disease."
+      },
+      {
+        name: "Babesia",
+        summary: "Ixodes tick vector — RBC parasite, resembles malaria; tetrad 'Maltese cross' form; Northeast US; hemolytic anemia; asplenic patients at risk for severe disease; treat atovaquone + azithromycin",
+        tier: 2,
+        gram: "Protozoa (intraerythrocytic — Giemsa stain)",
+        tags: ["Babesiosis","Ixodes Tick","Maltese Cross","Hemolytic Anemia","Asplenia","Lyme Co-infection"],
+        virulence: "**Ixodes scapularis tick** (same tick as Lyme disease). **Babesia microti** (most common in US). Infects RBCs like malaria — but **NO exoerythrocytic liver stage** (no hypnozoites). **Tetrad form ('Maltese cross' or Merozoite tetrad)** — pathognomonic on blood smear.",
+        disease: "**Asymptomatic** in healthy adults. **Symptomatic:** flu-like illness — fever, chills, sweating, malaise, myalgia, hemolytic anemia, thrombocytopenia, elevated LFTs. **Severe disease** in: **asplenic patients** (overwhelming, life-threatening), elderly, HIV, B-cell immunodeficiency. Hemoglobinuria, jaundice. Can be co-transmitted with Lyme disease (same Ixodes tick).",
+        tx: "Mild-moderate: **atovaquone + azithromycin** × 7–10 days. Severe: **clindamycin + quinine** ± exchange transfusion (for high parasitemia or severe hemolysis).",
+        pearl: "**Maltese cross (tetrad)** on blood smear = pathognomonic for Babesia (no other intraerythrocytic parasite forms tetrads). **Ixodes tick = transmits Lyme + Babesia + Anaplasmosis** — co-infection possible. NO exoerythrocytic phase → no hypnozoites → no relapse (unlike P. vivax/ovale). Asplenia = highest risk for severe/fatal babesiosis. Northeast US (especially New England, upper Midwest). Blood bank screening now required (transfusion-transmitted babesiosis)."
+      },
+      {
+        name: "Naegleria fowleri",
+        summary: "Free-living ameba — warm freshwater (lakes/rivers/hot springs); enters via cribriform plate → primary amebic meningoencephalitis (PAM); rapidly fatal; treat amphotericin B (rarely successful)",
+        tier: 2,
+        gram: "Free-living ameba (trophozoite in CSF, flagellate form in water)",
+        tags: ["Primary Amebic Meningoencephalitis","PAM","Warm Freshwater","Cribriform Plate","Rapidly Fatal","Brain-Eating Ameba"],
+        virulence: "**Thermophilic** (grows at body temperature). Trophozoite form in host tissue. **Flagellate form** in cool water. Enters via olfactory epithelium → **cribriform plate** → olfactory bulbs → brain.",
+        disease: "**Primary Amebic Meningoencephalitis (PAM):** healthy young swimmers in warm freshwater lakes, rivers, hot springs (summer). Incubation 1–7 days. **Rapid onset:** severe headache, fever, nausea → altered mental status, seizures, coma. **Death within 3–7 days in >97% of cases.** CSF: hemorrhagic, elevated WBC (neutrophilic), elevated protein, low glucose, **motile trophozoites on wet mount** (pathognomonic).",
+        tx: "**Amphotericin B** (IV + intrathecal) + miltefosine — rarely successful. Occasional survival with combination including fluconazole, rifampin, dexamethasone. Most die despite treatment.",
+        pearl: "**Healthy child who swam in warm lake → died in 7 days from meningoencephalitis = Naegleria.** 'Brain-eating ameba.' CSF: neutrophilic pleocytosis + motile ameba = PAM. **NOT associated with drinking contaminated water** (stomach acid kills it) — must enter via olfactory route. Contrast with **Acanthamoeba** (granulomatous amebic encephalitis in immunocompromised, slower course) and **Entamoeba histolytica** (fecal-oral, liver abscess, NOT CNS in immunocompetent)."
+      },
+      {
+        name: "Leishmania",
+        summary: "Sandfly vector — three clinical forms: cutaneous (skin ulcer, 'chiclero ulcer'), mucocutaneous (tissue destruction), visceral (kala-azar, splenomegaly, pancytopenia, fever); treat liposomal amphotericin B",
+        tier: 2,
+        gram: "Protozoa (intracellular macrophage parasite — amastigotes; Giemsa stain)",
+        tags: ["Kala-Azar","Sandfly","Amastigotes","Splenomegaly","Pancytopenia","Mucocutaneous","Cutaneous Ulcer"],
+        virulence: "**Phlebotomus sandfly** (Old World) or Lutzomyia (New World) vector. **Promastigotes** (extracellular, flagellated) in sandfly → inoculated into host → **amastigotes** (intracellular, no flagella) infect macrophages. Survive in macrophage phagolysosomes by inhibiting acidification.",
+        disease: "**Cutaneous leishmaniasis (most common):** painless papule → slowly enlarging ulcer ('chiclero ulcer' in Central America — eats ear cartilage; 'oriental sore' in Old World). Self-healing over months-years. **Mucocutaneous (espundia):** L. braziliensis — skin ulcer heals then reactivates in nasopharyngeal mucosa years later → tissue destruction of nose/palate/pharynx. **Visceral (kala-azar, 'black fever'):** L. donovani — disseminated macrophage infection → massive **hepatosplenomegaly**, fever, **pancytopenia**, hypergammaglobulinemia, wasting. **Hyperpigmentation** of skin (kala-azar = 'black fever' in Hindi). Untreated visceral = fatal.",
+        tx: "**Visceral/severe:** **liposomal amphotericin B** (drug of choice in US). Miltefosine (oral). Meglumine antimoniate or sodium stibogluconate (pentavalent antimony — used in developing world). Cutaneous: often self-healing; treat if persistent (miltefosine, amphotericin).",
+        pearl: "**Kala-azar** = visceral leishmaniasis = massive splenomegaly + pancytopenia + fever + hypergammaglobulinemia (IgG) + hyperpigmentation. Diagnose: bone marrow/spleen biopsy shows amastigotes (Leishman-Donovan bodies) in macrophages. **Immunocompromised** (HIV + L. donovani = visceral leishmaniasis is AIDS-defining in endemic regions). **Sandfly vector** — no person-to-person transmission. Dogs are important reservoir (Old World)."
+      },
+      {
+        name: "Trichomonas vaginalis",
+        summary: "Pear-shaped flagellated protozoan STI — malodorous yellow-green frothy vaginal discharge, strawberry cervix; no cyst form; sexual transmission only; treat both partners with metronidazole",
+        tier: 2,
+        gram: "Protozoa (flagellated, no cyst form)",
+        tags: ["STI","Frothy Discharge","Strawberry Cervix","Metronidazole","No Cyst","Wet Mount"],
+        virulence: "**No cyst form** — trophozoite only (fragile outside host → sexual transmission only, not fecal-oral). Pear-shaped, 4 anterior flagella + 1 recurrent flagellum, undulating membrane. Adheres to vaginal/urethral epithelium.",
+        disease: "**Females (symptomatic 50%):** malodorous yellow-green **frothy vaginal discharge**, pruritus, dysuria. **Strawberry cervix** (punctate hemorrhages — colposcopy). Vaginal pH >4.5. **Males:** usually asymptomatic; urethritis (mild), prostatitis. **Neonates:** acquired during delivery → respiratory infection. **Complications:** increased risk of HIV acquisition, preterm labor in pregnancy.",
+        tx: "**Metronidazole 2g PO single dose** (or tinidazole). **Treat both partners simultaneously** (reinfection is the most common cause of treatment failure). Avoid alcohol with metronidazole (disulfiram-like reaction).",
+        pearl: "**Wet mount:** motile trophozoites with jerky movement = diagnostic (sensitivity 60–70%). NAAT is more sensitive (preferred). **No cyst form** = cannot survive environmental exposure (transmitted only sexually). **Strawberry cervix** on colposcopy. **pH >4.5** (like BV but unlike Candida). Compare: BV = Gardnerella + anaerobes, fishy odor, clue cells, NO inflammation; Trich = motile organisms, frothy discharge, WITH inflammation (WBCs on wet mount)."
       }
     ]
   },
