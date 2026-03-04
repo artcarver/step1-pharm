@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<title>Micro Facts — Step 1 Microbiology Reference</title>
+
+<style>
+/* ── MICRO-SPECIFIC OVERRIDES ── */
+
+/* Organism card label colors */
+.info-label.vir    { background: rgba(58,110,122,0.10); color: var(--micro); }
+.info-label.dis    { background: rgba(42,138,106,0.10); color: var(--green); }
+.info-label.tx     { background: rgba(192,140,62,0.10); color: var(--endo); }
+.info-label.gram   { background: rgba(90,68,144,0.10);  color: var(--neuro); }
+
+/* Gram-stain badge on card header */
+.gram-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.gram-gp   { background: rgba(192,48,80,0.10);   color: #c03050; border: 1px solid rgba(192,48,80,0.20); }
+.gram-gn   { background: rgba(184,120,32,0.10);  color: #b87820; border: 1px solid rgba(184,120,32,0.20); }
+.gram-acid { background: rgba(90,68,144,0.10);   color: var(--neuro); border: 1px solid rgba(90,68,144,0.22); }
+.gram-none { background: rgba(58,110,122,0.10);  color: var(--micro); border: 1px solid rgba(58,110,122,0.18); }
+.gram-para { background: rgba(42,138,106,0.10);  color: var(--green); border: 1px solid rgba(42,138,106,0.20); }
+.gram-fung { background: rgba(158,106,61,0.10);  color: var(--gi);    border: 1px solid rgba(158,106,61,0.22); }
+
+/* Tab colors for micro categories */
+:root {
+  --bact:       #3a6e7a; --bact-bg:  #f0f8fa; --bact-light: rgba(58,110,122,0.08);
+  --vir:        #5a4490; --vir-bg:   #f4f0fd; --vir-light:  rgba(90,68,144,0.08);
+  --para:       #2a8a6a; --para-bg:  #f0f9f6; --para-light: rgba(42,138,106,0.08);
+  --fung:       #9e6a3d; --fung-bg:  #fdf5ee; --fung-light: rgba(158,106,61,0.08);
+}
+
+/* Re-use class-label/bg system for micro colors */
+.bg-bact { background: var(--bact-light); color: var(--bact); border-color: rgba(58,110,122,0.25); }
+.bg-vir  { background: var(--vir-light);  color: var(--vir);  border-color: rgba(90,68,144,0.25); }
+.bg-para { background: var(--para-light); color: var(--para); border-color: rgba(42,138,106,0.25); }
+.bg-fung { background: var(--fung-light); color: var(--fung); border-color: rgba(158,106,61,0.25); }
+
+.b-bact { border-color: rgba(58,110,122,0.22); }
+.b-vir  { border-color: rgba(90,68,144,0.22); }
+.b-para { border-color: rgba(42,138,106,0.22); }
+.b-fung { border-color: rgba(158,106,61,0.22); }
+
+.b-bact .drug-card-header { background: linear-gradient(135deg, rgba(58,110,122,0.04) 0%, rgba(240,248,250,0.4) 100%); }
+.b-vir  .drug-card-header { background: linear-gradient(135deg, rgba(90,68,144,0.04) 0%, rgba(244,240,253,0.4) 100%); }
+.b-para .drug-card-header { background: linear-gradient(135deg, rgba(42,138,106,0.04) 0%, rgba(240,249,246,0.4) 100%); }
+.b-fung .drug-card-header { background: linear-gradient(135deg, rgba(158,106,61,0.04) 0%, rgba(253,245,238,0.4) 100%); }
+
+.b-bact.open { border-color: rgba(58,110,122,0.45); box-shadow: 0 4px 20px rgba(58,110,122,0.08), 0 1px 3px rgba(0,0,0,0.04); }
+.b-vir.open  { border-color: rgba(90,68,144,0.45);  box-shadow: 0 4px 20px rgba(90,68,144,0.08),  0 1px 3px rgba(0,0,0,0.04); }
+.b-para.open { border-color: rgba(42,138,106,0.45); box-shadow: 0 4px 20px rgba(42,138,106,0.08), 0 1px 3px rgba(0,0,0,0.04); }
+.b-fung.open { border-color: rgba(158,106,61,0.45); box-shadow: 0 4px 20px rgba(158,106,61,0.08), 0 1px 3px rgba(0,0,0,0.04); }
+
+/* Intro accent colors */
+.bg-bact-intro { background: rgba(58,110,122,0.06); border-left: 3px solid var(--bact); }
+.bg-vir-intro  { background: rgba(90,68,144,0.06);  border-left: 3px solid var(--vir); }
+.bg-para-intro { background: rgba(42,138,106,0.06); border-left: 3px solid var(--para); }
+.bg-fung-intro { background: rgba(158,106,61,0.06); border-left: 3px solid var(--fung); }
+
+.c-bact { color: var(--bact); }
+.c-vir  { color: var(--vir); }
+.c-para { color: var(--para); }
+.c-fung { color: var(--fung); }
+
+/* Organism card name italic for genus */
+.drug-name em { font-style: italic; font-weight: 400; }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <a href="index.html" class="back-link">← Back to Hub</a>
+    <div class="header-top">
+      <div>
+        <p class="brand-super">Step 1 · Microbiology Reference</p>
+        <h1 class="brand-title">Micro Facts</h1>
+        <div class="brand-flourish">
+          <div class="flourish-line"></div>
+          <div class="flourish-dot"></div>
+          <div class="flourish-line right"></div>
+        </div>
+        <p class="brand-sub">Gram Stain · Virulence · Disease · Treatment · Pearls</p>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input class="search-input" type="text" id="search-input" placeholder="Search organism, disease, toxin, treatment..." oninput="handleSearch(this.value)"/>
+        <button id="search-clear" onclick="clearSearch()">×</button>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab-btn active" onclick="switchTab('bacteria', this)"><span class="tab-dot" style="background:var(--bact)"></span>Bacteria</button>
+      <button class="tab-btn" onclick="switchTab('viruses', this)"><span class="tab-dot" style="background:var(--vir)"></span>Viruses</button>
+      <button class="tab-btn" onclick="switchTab('parasites', this)"><span class="tab-dot" style="background:var(--para)"></span>Parasites</button>
+      <button class="tab-btn" onclick="switchTab('fungi', this)"><span class="tab-dot" style="background:var(--fung)"></span>Fungi</button>
+    </nav>
+  </div>
+</div>
+
+<div class="content-wide">
+  <!-- SEARCH RESULTS -->
+  <div id="search-results">
+    <div class="search-count" id="search-count"></div>
+    <div class="drug-grid" id="search-grid"></div>
+    <div class="empty" id="search-empty" style="display:none">
+      <div class="empty-icon">◇</div>
+      <div class="empty-text">No organisms found matching your search</div>
+    </div>
+  </div>
+
+  <!-- BACTERIA TAB -->
+  <div id="tab-bacteria" class="tab-panel active">
+    <div class="sys-intro bg-bact-intro" style="border-color:rgba(58,110,122,0.2)">
+      <div class="sys-intro-icon">🔬</div>
+      <div>
+        <div class="sys-intro-title c-bact">Bacteriology</div>
+        <div class="sys-intro-text">Master the Gram stain first — it halves your differential instantly. Then layer virulence factors, classic clinical syndromes, and treatment. High-yield sequences: cocci → rods; GP → GN; aerobic → anaerobic. Know the one-liner pearl for each organism cold.</div>
+      </div>
+    </div>
+    <div id="bacteria-content"></div>
+  </div>
+
+  <!-- VIRUSES TAB -->
+  <div id="tab-viruses" class="tab-panel">
+    <div class="sys-intro bg-vir-intro" style="border-color:rgba(90,68,144,0.2)">
+      <div class="sys-intro-icon">🧬</div>
+      <div>
+        <div class="sys-intro-title c-vir">Virology</div>
+        <div class="sys-intro-text">Group by genome type: RNA vs DNA, ss vs ds, +sense vs −sense, enveloped vs naked. The Baltimore classification is your scaffold. For each virus know its tropism, classic syndrome, and distinguishing lab finding. Enveloped = ether-labile = killed by alcohol.</div>
+      </div>
+    </div>
+    <div id="viruses-content"></div>
+  </div>
+
+  <!-- PARASITES TAB -->
+  <div id="tab-parasites" class="tab-panel">
+    <div class="sys-intro bg-para-intro" style="border-color:rgba(42,138,106,0.2)">
+      <div class="sys-intro-icon">🪱</div>
+      <div>
+        <div class="sys-intro-title c-para">Parasitology</div>
+        <div class="sys-intro-text">Organize by habitat: intestinal protozoa → blood/tissue protozoa → helminths. Vector associations are heavily tested (mosquito/tick/fly/snail). Eosinophilia = helminth tissue migration. Treatment is narrow: know metronidazole, chloroquine, praziquantel, ivermectin, and albendazole targets.</div>
+      </div>
+    </div>
+    <div id="parasites-content"></div>
+  </div>
+
+  <!-- FUNGI TAB -->
+  <div id="tab-fungi" class="tab-panel">
+    <div class="sys-intro bg-fung-intro" style="border-color:rgba(158,106,61,0.2)">
+      <div class="sys-intro-icon">🍄</div>
+      <div>
+        <div class="sys-intro-title c-fung">Mycology</div>
+        <div class="sys-intro-text">Divide into systemic dimorphic fungi vs opportunistic fungi. Dimorphic rule: mold in cold (environment), yeast in heat (body). Geography matters — Histo (Ohio/Mississippi River Valley), Cocci (Southwest desert), Blasto (Great Lakes/Mississippi). Opportunists = immunocompromised hosts (HIV, transplant, steroids).</div>
+      </div>
+    </div>
+    <div id="fungi-content"></div>
+  </div>
+</div>
+
+<script src="micro_data.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// GRAM STAIN → BADGE CLASS MAPPER
+// ═══════════════════════════════════════════════════════════════
+function gramClass(gram) {
+  if (!gram) return 'gram-none';
+  const g = gram.toLowerCase();
+  if (g.includes('gp') || g.includes('gram-pos') || g.includes('gram pos')) return 'gram-gp';
+  if (g.includes('gn') || g.includes('gram-neg') || g.includes('gram neg')) return 'gram-gn';
+  if (g.includes('acid') || g.includes('afb') || g.includes('mycobact')) return 'gram-acid';
+  if (g.includes('helminth') || g.includes('nematode') || g.includes('cestode') || g.includes('trematode') || g.includes('protozoa') || g.includes('parasite')) return 'gram-para';
+  if (g.includes('fung') || g.includes('yeast') || g.includes('mold') || g.includes('dimorphic')) return 'gram-fung';
+  return 'gram-none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════════════════════
+let cardCounter = 0;
+
+function formatLines(text) {
+  if (!text) return text;
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  let parts = [];
+  const sentenceSplit = text.split(/\.\s+(?=(?:<[^>]+>)*[A-Z↑↓(0-9])/);
+  sentenceSplit.forEach(segment => {
+    const midSplit = segment.split(/(?<=\w)\.\s+(?=(?:<[^>]+>)*[A-Z][a-zA-Z/\-]+(?:<\/[^>]+>)?:)/);
+    if (midSplit.length > 1) {
+      midSplit.forEach((p, i) => {
+        if (i < midSplit.length - 1) parts.push(p + '.');
+        else parts.push(p);
+      });
+    } else {
+      parts.push(segment);
+    }
+  });
+
+  parts = parts.map((p, i) => {
+    p = p.trim();
+    if (i < parts.length - 1 && !p.endsWith('.') && !p.endsWith('>') && !p.endsWith(')')) return p + '.';
+    return p;
+  }).filter(p => p.length > 0);
+
+  if (parts.length <= 1) return text;
+  return parts.map(p => `<div class="info-line">${p}</div>`).join('');
+}
+
+function orgCardHTML(org, colorClass, idx) {
+  const id = `org-${colorClass}-${idx}-${cardCounter++}`;
+  const gc = gramClass(org.gram || '');
+  const gramLabel = org.gram ? `<span class="gram-badge ${gc}">${org.gram}</span>` : '';
+  const tagsHTML = (org.tags || []).map(t => `<span class="drug-tag">${t}</span>`).join('');
+
+  return `
+  <div class="drug-card b-${colorClass}" id="${id}" onclick="toggleCard('${id}')">
+    <div class="drug-card-header">
+      <div style="flex:1;min-width:0">
+        <div class="drug-name">${org.name}</div>
+        ${gramLabel}
+      </div>
+      <span class="expand-arrow" style="flex-shrink:0;margin-left:10px;margin-top:4px">▼</span>
+    </div>
+    ${org.summary ? `<div class="drug-summary">${org.summary}</div>` : ''}
+    <div class="drug-body">
+      ${org.virulence ? `<div class="info-row"><span class="info-label vir">Virulence</span><div class="info-text">${formatLines(org.virulence)}</div></div>` : ''}
+      ${org.disease  ? `<div class="info-row"><span class="info-label dis">Disease</span><div class="info-text">${formatLines(org.disease)}</div></div>` : ''}
+      ${org.tx       ? `<div class="info-row"><span class="info-label tx">Treatment</span><div class="info-text">${formatLines(org.tx)}</div></div>` : ''}
+      ${tagsHTML     ? `<div class="info-row" style="border:none;padding-top:2px"><div style="display:flex;flex-wrap:wrap;gap:4px">${tagsHTML}</div></div>` : ''}
+      ${org.pearl    ? `<div class="pearl-box"><span class="pearl-star">✦</span><div class="pearl-text"><strong>Step 1 Pearl:</strong> ${formatLines(org.pearl)}</div></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderSection(sectionId, sysKey) {
+  const container = document.getElementById(sectionId);
+  const groups = MICRO[sysKey];
+  if (!groups || !container) return;
+
+  let html = '';
+  let globalIdx = 0;
+
+  groups.forEach((group, gi) => {
+    const groupId = `grp-${sysKey}-${gi}`;
+    const sortedOrgs = [...group.organisms].sort((a, b) => {
+      const va = typeof a.tier === 'number' ? a.tier : parseInt(String(a.tier).replace(/\D/g, '')) || 99;
+      const vb = typeof b.tier === 'number' ? b.tier : parseInt(String(b.tier).replace(/\D/g, '')) || 99;
+      return va - vb;
+    });
+
+    html += `
+    <div class="class-group" id="${groupId}">
+      <div class="class-group-header">
+        <span class="class-label bg-${group.color}">${group.group}</span>
+        <button class="group-expand-btn" onclick="toggleGroup('${groupId}', this)">▼ Expand</button>
+      </div>
+      <div class="drug-grid">
+        ${sortedOrgs.map(o => orgCardHTML(o, group.color, globalIdx++)).join('')}
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// Map tab content IDs → MICRO data keys
+const sysMap = {
+  'bacteria-content': 'bacteria',
+  'viruses-content':  'viruses',
+  'parasites-content':'parasites',
+  'fungi-content':    'fungi',
+};
+Object.entries(sysMap).forEach(([id, key]) => renderSection(id, key));
+
+// ═══════════════════════════════════════════════════════════════
+// CARD / GROUP TOGGLING
+// ═══════════════════════════════════════════════════════════════
+function toggleCard(id) {
+  if (window.getSelection().toString().length > 0) return;
+  const card = document.getElementById(id);
+  if (card) card.classList.toggle('open');
+}
+
+function toggleGroup(groupId, btn) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  const cards = group.querySelectorAll('.drug-card');
+  const anyOpen = [...cards].some(c => c.classList.contains('open'));
+  if (anyOpen) {
+    cards.forEach(c => c.classList.remove('open'));
+    btn.textContent = '▼ Expand';
+  } else {
+    cards.forEach(c => c.classList.add('open'));
+    btn.textContent = '▲ Collapse';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.group-expand-btn').forEach(b => b.textContent = '▼ Expand');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').classList.remove('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
+  document.getElementById('tabs').style.opacity = '1';
+  document.getElementById('tabs').style.pointerEvents = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════════════════════
+function allOrgs() {
+  const results = [];
+  Object.entries(MICRO).forEach(([sysKey, groups]) => {
+    groups.forEach(group => {
+      group.organisms.forEach(o => {
+        results.push({ ...o, colorClass: group.color, sysKey });
+      });
+    });
+  });
+  return results;
+}
+
+function handleSearch(q) {
+  const sr       = document.getElementById('search-results');
+  const grid     = document.getElementById('search-grid');
+  const empty    = document.getElementById('search-empty');
+  const count    = document.getElementById('search-count');
+  const clearBtn = document.getElementById('search-clear');
+  clearBtn.style.display = q.length > 0 ? 'block' : 'none';
+
+  if (!q || q.length < 2) {
+    sr.classList.remove('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = '');
+    document.getElementById('tabs').style.opacity = '1';
+    document.getElementById('tabs').style.pointerEvents = '';
+    return;
+  }
+
+  sr.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('tabs').style.opacity = '0.4';
+  document.getElementById('tabs').style.pointerEvents = 'none';
+
+  const ql = q.toLowerCase();
+  const matches = allOrgs().filter(o =>
+    o.name.toLowerCase().includes(ql) ||
+    (o.gram       || '').toLowerCase().includes(ql) ||
+    (o.virulence  || '').toLowerCase().includes(ql) ||
+    (o.disease    || '').toLowerCase().includes(ql) ||
+    (o.tx         || '').toLowerCase().includes(ql) ||
+    (o.pearl      || '').toLowerCase().includes(ql) ||
+    (o.summary    || '').toLowerCase().includes(ql) ||
+    (o.tags || []).some(t => t.toLowerCase().includes(ql))
+  );
+
+  if (matches.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    count.textContent = 'No results for "' + q + '"';
+    return;
+  }
+
+  empty.style.display = 'none';
+  count.textContent = matches.length + ' result' + (matches.length !== 1 ? 's' : '') + ' for "' + q + '"';
+  grid.innerHTML = matches.map((o, i) => orgCardHTML(o, o.colorClass, 'search-' + i)).join('');
+}
+
+function clearSearch() {
+  const input = document.getElementById('search-input');
+  input.value = '';
+  handleSearch('');
+}
+</script>
+</body>
+</html>
