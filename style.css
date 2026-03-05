@@ -1488,3 +1488,87 @@ body::before {
   font-family: 'DM Mono', monospace; font-size: 8.5px;
   letter-spacing: 1.5px; text-transform: uppercase; color: var(--sakura2);
 }
+
+/* ================================================================
+   UWORLD CHART SECTION — csv upload, mapper, charts
+   ================================================================ */
+
+/* CSV Drop Zone */
+.csv-drop-zone {
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+  background: var(--bg);
+  margin-bottom: 4px;
+}
+.csv-drop-zone:hover,
+.csv-drop-zone.drag-over {
+  border-color: var(--sakura);
+  background: var(--sakura-light);
+}
+
+/* Column mapper */
+.csv-mapper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.csv-map-row { display: flex; flex-direction: column; gap: 5px; }
+.csv-map-label {
+  font-family: 'DM Mono', monospace; font-size: 8.5px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+}
+.csv-map-select {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 9px 12px;
+  font-family: 'Jost', sans-serif; font-size: 13px; color: var(--ink);
+  outline: none; transition: border-color 0.18s; width: 100%;
+}
+.csv-map-select:focus { border-color: var(--sakura); }
+
+/* Summary chips */
+.csv-summary-row {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px;
+}
+.csv-chip {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 16px; text-align: center;
+  min-width: 90px;
+}
+.csv-chip-wide { min-width: 200px; }
+.csv-chip-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 700; color: var(--fuji); line-height: 1;
+  margin-bottom: 3px;
+}
+.csv-chip-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+}
+
+/* Chart blocks */
+.chart-block {
+  margin-bottom: 28px;
+}
+.chart-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.chart-tag {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: var(--dim); letter-spacing: 1px; text-transform: lowercase;
+}
+.chart-canvas-wrap {
+  position: relative; height: 220px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+@media (max-width: 600px) {
+  .chart-canvas-wrap { height: 180px; }
+}
