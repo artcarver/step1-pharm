@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Quicksand:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style.css"/>
 <title>Step 1 Study Hub</title>
 
@@ -17,13 +17,13 @@
 <div class="header">
   <div class="header-inner">
     <div class="global-nav">
-      <a href="index.html" style="font-size:18px; font-weight:600; color:var(--sakura2);">🌸 Step 1 Hub</a>
-      <div style="display:flex; gap:16px; align-items:center;">
+      <a href="index.html" style="font-size:18px; font-weight:700; color:var(--sakura2);">🌸 Step 1 Hub</a>
+      <div class="global-nav-links">
         <a href="uworld_tracker.html">UWorld</a>
         <a href="step1_dashboard.html">Dashboard</a>
         <a href="drugfacts.html">Pharm</a>
         <a href="microfacts.html">Micro</a>
-        <button id="auth-btn" class="auth-btn" style="position:static; margin-left:8px;">Log in</button>
+        <button id="auth-btn" class="auth-btn">Log in</button>
       </div>
     </div>
   </div>
@@ -31,554 +31,239 @@
 
 <div class="petals" aria-hidden="true">
   <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
-  <div class="petal p4"></div><div class="petal p5"></div><div class="petal p6"></div>
-  <div class="petal p7"></div><div class="petal p8"></div><div class="petal p9"></div>
-  <div class="petal p10"></div><div class="petal p11"></div><div class="petal p12"></div>
-  <div class="petal p13"></div><div class="petal p14"></div><div class="petal p15"></div>
+  <div class="petal p4"></div><div class="petal p5"></div>
 </div>
 
 <div class="fuji-bg" aria-hidden="true">
   <svg viewBox="0 0 1440 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice" style="width:100%;height:100%;">
-    <path d="M0 380 Q200 300 400 340 Q600 370 800 320 Q1000 280 1200 330 Q1340 355 1440 340 L1440 400 L0 400Z" fill="#c8b0c0" opacity="0.4"/>
-    <path d="M520 400 L720 80 L920 400Z" fill="#3d2e6e"/>
-    <path d="M680 140 L720 80 L760 140 Q740 130 720 125 Q700 130 680 140Z" fill="#fdf5f7" opacity="0.9"/>
-    <path d="M600 280 Q720 250 840 280 L920 400 L520 400Z" fill="#2e2254" opacity="0.6"/>
-    <path d="M0 400 Q100 340 250 360 Q400 375 550 350 Q700 330 850 355 Q1000 370 1150 345 Q1300 325 1440 360 L1440 400Z" fill="#e8d0d8" opacity="0.5"/>
+    <path d="M0 380 Q200 300 400 340 Q600 370 800 320 Q1000 280 1200 330 Q1340 355 1440 340 L1440 400 L0 400Z" fill="#f2e1e9" opacity="0.6"/>
+    <path d="M520 400 L720 80 L920 400Z" fill="#5a4490"/>
+    <path d="M680 140 L720 80 L760 140 Q740 130 720 125 Q700 130 680 140Z" fill="#fff" opacity="0.9"/>
+    <path d="M600 280 Q720 250 840 280 L920 400 L520 400Z" fill="#4a3d52" opacity="0.3"/>
+    <path d="M0 400 Q100 340 250 360 Q400 375 550 350 Q700 330 850 355 Q1000 370 1150 345 Q1300 325 1440 360 L1440 400Z" fill="#e8d5df" opacity="0.5"/>
   </svg>
 </div>
 
 <div class="wrap">
   <header class="hero">
-    <div class="hero-eyebrow">Step 1 Study Hub</div>
+    <div class="hero-eyebrow">USMLE Step 1</div>
     <h1 class="hero-name">Your <em>Study Resources,</em><br/>All in One Place</h1>
-    <div class="blossom-div">
-      <div class="bdl l"></div>
-      <span style="font-size:16px;letter-spacing:5px;">🌸🌸🌸</span>
-      <div class="bdl r"></div>
+    <div class="brand-flourish" style="justify-content:center; max-width: 400px; margin: 0 auto;">
+        <div class="flourish-line"></div>
+        <div class="flourish-dot"></div>
+        <div class="flourish-line right"></div>
     </div>
-    <div class="countdown-wrap">
+    
+    <div class="countdown-wrap" style="background: white; border: 2px solid var(--border); border-radius: 20px; padding: 25px; margin-top: 20px; display: inline-flex; gap: 30px; box-shadow: var(--card-shadow);">
       <div>
-        <div class="cd-label">Days Remaining</div>
-        <div class="cd-days" id="cd-days">—</div>
-        <div class="cd-unit">days</div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 700;">Days Remaining</div>
+        <div id="cd-days" style="font-size: 48px; font-weight: 700; color: var(--sakura2); line-height: 1;">—</div>
       </div>
-      <div class="cd-divider"></div>
-      <div>
-        <div class="cd-date-lbl">Target Exam Date</div>
-        <div class="cd-date" id="cd-date">Not set</div>
+      <div style="width: 2px; background: var(--border);"></div>
+      <div style="text-align: left;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 700; margin-bottom: 5px;">Exam Date</div>
+        <div id="cd-date" style="font-size: 20px; font-weight: 600; color: var(--ink);">Not set</div>
+        <button onclick="openModal()" style="background: none; border: none; color: var(--fuji); font-size: 12px; font-weight: 700; cursor: pointer; padding: 0; margin-top: 5px;">✎ Edit Date</button>
       </div>
-      <button class="cd-edit" onclick="openModal()">Set Date ✦</button>
     </div>
   </header>
 
-  <div class="sec-label">📝 &nbsp;UWorld Progress</div>
-  <a href="uworld_tracker.html" class="widget-card" style="text-decoration: none; color: inherit; display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; transition: border-color 0.15s; margin-bottom:44px; position:relative; z-index:10; box-shadow: var(--card-shadow);">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
-      <h3 style="margin: 0; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);">UWorld Step 1</h3>
-      <span id="widget-uw-pct" style="font-family: 'Jost', sans-serif; font-size: 24px; font-weight: 600; color: var(--fuji);">0%</span>
+  <div class="sec-label" style="font-weight: 700; color: var(--muted); margin-bottom: 15px;">UWorld Overview</div>
+  <a href="uworld_tracker.html" class="tool-card" style="display: block; padding: 30px; margin-bottom: 40px; --card-theme: var(--theme-3);">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px;">
+      <h3 style="margin: 0; font-size: 24px; color: var(--ink);">QBank Completion</h3>
+      <span id="widget-uw-pct" style="font-size: 28px; font-weight: 700; color: var(--fuji);">0%</span>
     </div>
-
-    <div style="height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 20px;">
-      <div id="widget-uw-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--fuji), var(--sakura2)); border-radius: 99px; transition: width 0.5s ease;"></div>
+    <div style="height: 10px; background: var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px;">
+      <div id="widget-uw-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--fuji), var(--sakura2)); transition: width 1s ease;"></div>
     </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; text-align: center;">
       <div>
-        <div id="widget-uw-done" style="font-family: 'Jost', sans-serif; font-size: 24px; font-weight: 600; color: var(--fuji); line-height: 1;">0</div>
-        <div style="font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 6px;">Unique Done</div>
+        <div id="widget-uw-done" style="font-size: 26px; font-weight: 700; color: var(--ink);">0</div>
+        <div style="font-size: 10px; text-transform: uppercase; color: var(--muted); font-weight: 700;">Unique Done</div>
       </div>
-      <div style="border-left: 1px solid var(--border);">
-        <div id="widget-uw-remain" style="font-family: 'Jost', sans-serif; font-size: 24px; font-weight: 600; color: var(--ink2); line-height: 1;">0</div>
-        <div style="font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 6px;">Remaining</div>
+      <div>
+        <div id="widget-uw-remain" style="font-size: 26px; font-weight: 700; color: var(--ink);">0</div>
+        <div style="font-size: 10px; text-transform: uppercase; color: var(--muted); font-weight: 700;">Remaining</div>
       </div>
-      <div style="border-left: 1px solid var(--border);">
-        <div id="widget-uw-needed" style="font-family: 'Jost', sans-serif; font-size: 24px; font-weight: 600; color: var(--ink2); line-height: 1;">N/A</div>
-        <div style="font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 6px;">Needed / Day</div>
+      <div>
+        <div id="widget-uw-needed" style="font-size: 26px; font-weight: 700; color: var(--ink);">N/A</div>
+        <div style="font-size: 10px; text-transform: uppercase; color: var(--muted); font-weight: 700;">Needed / Day</div>
       </div>
     </div>
   </a>
 
-  <div class="sec-label">🌸 &nbsp;My Study Tools</div>
+  <div class="sec-label" style="font-weight: 700; color: var(--muted); margin-bottom: 15px;">Core Study Tools</div>
   <div class="tool-grid">
     
-    <div class="tool-card card-dotd" onclick="openDrugModal()" style="--card-theme: var(--theme-5); --card-theme-light: rgba(138,110,16,0.1);">
+    <a href="drugfacts.html" class="tool-card" style="--card-theme: var(--theme-5);">
       <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">💊</div>
-          <div class="card-meta">
-            <span class="card-tag" id="dotd-tag">Daily High Yield</span>
-            <span class="card-arrow">↗</span>
-          </div>
-        </div>
-        <h2 class="card-title" id="dotd-name">Loading...</h2>
-        <p class="card-desc" id="dotd-pearl" style="font-style: italic; color: var(--ink2);"></p>
-        <div class="card-pills">
-          <span class="pill">View Full Card</span>
-        </div>
-      </div>
-    </div>
-
-    <a class="tool-card card-pharm" href="drugfacts.html" style="--card-theme: var(--theme-1); --card-theme-light: rgba(192,88,120,0.1);">
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">💊</div>
-          <div class="card-meta"><span class="card-tag">Pharmacology</span><span class="card-arrow">↗</span></div>
-        </div>
-        <h2 class="card-title">Drug Facts Reference</h2>
-        <p class="card-desc">Complete Step 1 pharmacology - MOA, side effects, clinical pearls, and tier ratings across all systems.</p>
-        <div class="card-pills"><span class="pill">8 Systems</span><span class="pill">90+ Drugs</span><span class="pill">Searchable</span></div>
+        <span class="card-icon">💊</span>
+        <h2 class="card-title">Pharmacology</h2>
+        <p class="card-desc">High-yield reference guide for mechanism of action, clinical uses, and toxicities.</p>
       </div>
     </a>
     
-    <a class="tool-card card-micro" href="microfacts.html" style="--card-theme: var(--theme-8); --card-theme-light: rgba(42,138,106,0.1);">
+    <a href="microfacts.html" class="tool-card" style="--card-theme: var(--theme-8);">
       <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">🦠</div>
-          <div class="card-meta"><span class="card-tag">Microbiology</span><span class="card-arrow">↗</span></div>
-        </div>
-        <h2 class="card-title">Micro Facts Reference</h2>
-        <p class="card-desc">Complete Step 1 microbiology — gram stain, virulence factors, classic syndromes, treatment, and pearls.</p>
-        <div class="card-pills"><span class="pill">Bacteria</span><span class="pill">Viruses</span><span class="pill">Parasites</span><span class="pill">Fungi</span></div>
+        <span class="card-icon">🦠</span>
+        <h2 class="card-title">Microbiology</h2>
+        <p class="card-desc">Complete guide to gram stains, virulence factors, and antimicrobial treatments.</p>
       </div>
     </a>
     
-    <a class="tool-card card-sketchy" href="sketchypharm.html" style="--card-theme: var(--theme-4); --card-theme-light: rgba(192,140,62,0.1);">
+    <a href="sketchypharm.html" class="tool-card" style="--card-theme: var(--theme-1);">
       <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">🎨</div>
-          <div class="card-meta"><span class="card-tag">Progress Tracker</span><span class="card-arrow">↗</span></div>
-        </div>
+        <span class="card-icon">🎨</span>
         <h2 class="card-title">Sketchy Pharm</h2>
-        <p class="card-desc">Track which Sketchy Pharm you've watched and reviewed across all of the organ systems.</p>
-        <div class="card-pills"><span class="pill">Pharm</span><span class="pill">Progress %</span></div>
+        <p class="card-desc">Track your progress through Sketchy Pharmacology videos by category.</p>
       </div>
     </a>
     
-    <a class="tool-card card-sketchy" href="sketchymicro.html" style="--card-theme: var(--theme-12); --card-theme-light: rgba(90,68,144,0.1);">
+    <a href="sketchymicro.html" class="tool-card" style="--card-theme: var(--theme-12);">
       <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">🦠</div>
-          <div class="card-meta"><span class="card-tag">Progress Tracker</span><span class="card-arrow">↗</span></div>
-        </div>
+        <span class="card-icon">🧬</span>
         <h2 class="card-title">Sketchy Micro</h2>
-        <p class="card-desc">Track your progress through bacteria, viruses, fungi, and parasites.</p>
-        <div class="card-pills"><span class="pill">Bacteria</span><span class="pill">Viruses</span><span class="pill">Fungi</span><span class="pill">Parasites</span></div>
+        <p class="card-desc">Monitor which bacteria, viruses, fungi, and parasites you've mastered.</p>
       </div>
     </a>
     
-    <a class="tool-card card-pixorize" href="pixorize.html" style="--card-theme: var(--theme-14); --card-theme-light: rgba(122,58,138,0.1);">
+    <a href="pixorize.html" class="tool-card" style="--card-theme: var(--theme-13);">
       <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">🎨</div>
-          <div class="card-meta"><span class="card-tag">Progress Tracker</span><span class="card-arrow">↗</span></div>
-        </div>
+        <span class="card-icon">💎</span>
         <h2 class="card-title">Pixorize</h2>
-        <p class="card-desc">Track all 312 Pixorize videos across biochemistry, immunology, embryology, and more.</p>
-        <div class="card-pills"><span class="pill">Biochem</span><span class="pill">Immunology</span><span class="pill">312 Videos</span></div>
+        <p class="card-desc">Visual mnemonics for biochemistry, immunology, and metabolic pathways.</p>
       </div>
     </a>
     
-    <a class="tool-card card-dash" href="step1_dashboard.html" style="--card-theme: var(--theme-11); --card-theme-light: rgba(61,110,138,0.1);">
+    <a href="step1_dashboard.html" class="tool-card" style="--card-theme: var(--theme-11);">
       <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">📊</div>
-          <div class="card-meta"><span class="card-tag">Dashboard</span><span class="card-arrow">↗</span></div>
-        </div>
-        <h2 class="card-title">Step 1 Dashboard</h2>
-        <p class="card-desc">Track daily goals, review scores, and monitor your progress across all subjects.</p>
-        <div class="card-pills"><span class="pill">All Subjects</span><span class="pill">Score Tracking</span></div>
+        <span class="card-icon">📊</span>
+        <h2 class="card-title">Dashboard</h2>
+        <p class="card-desc">View overall performance, exam countdown, and targeted study plan.</p>
       </div>
     </a>
   </div>
 
-  <div class="sec-label" style="margin-top:44px;">🌸 &nbsp;External Resources</div>
-  <div class="tool-grid">
-    <a class="tool-card card-path" href="https://www.pathoma.com/login" target="_blank" rel="noopener" style="--card-theme: var(--theme-16); --card-theme-light: rgba(192,48,80,0.1);">
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">🫀</div>
-          <div class="card-meta"><span class="card-tag">Pathology</span><span class="card-arrow">↗</span></div>
-        </div>
-        <h2 class="card-title">Pathoma</h2>
-        <p class="card-desc">Dr. Husain Sattar's high-yield pathology videos and textbook. Essential foundation for Step 1 Path.</p>
-        <div class="card-pills"><span class="pill">Videos</span><span class="pill">Textbook</span><span class="pill">High-Yield</span></div>
-      </div>
-    </a>
-    <a class="tool-card card-uworld" href="https://www.uworld.com/app/index.html#/login/" target="_blank" rel="noopener" style="--card-theme: var(--theme-10); --card-theme-light: rgba(58,90,110,0.1);">
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">📝</div>
-          <div class="card-meta"><span class="card-tag">Question Bank</span><span class="card-arrow">↗</span></div>
-        </div>
-        <h2 class="card-title">UWorld</h2>
-        <p class="card-desc">The gold standard Step 1 question bank. Detailed explanations and high-yield diagrams.</p>
-        <div class="card-pills"><span class="pill">QBank</span><span class="pill">Gold Standard</span></div>
-      </div>
-    </a>
-    <a class="tool-card card-bootcamp" href="https://www.bootcamp.com" target="_blank" rel="noopener" style="--card-theme: var(--theme-19); --card-theme-light: rgba(61,46,110,0.1);">
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon">🏕️</div>
-          <div class="card-meta"><span class="card-tag">Question Bank</span><span class="card-arrow">↗</span></div>
-        </div>
-        <h2 class="card-title">Bootcamp</h2>
-        <p class="card-desc">High-yield Step 1 question bank with daily practice and focused subject reviews.</p>
-        <div class="card-pills"><span class="pill">QBank</span><span class="pill">Daily Q</span></div>
-      </div>
-    </a>
-  </div>
-
-  <div class="sec-label" style="margin-top:44px;">🌸 &nbsp;Daily Practice</div>
-  <a href="https://bootcamp.com/med-school/usmle-step-1-question-of-the-day" target="_blank" rel="noopener" class="qotd-banner">
-    <div class="qotd-left">
-      <div class="qotd-icon">✦</div>
-      <div>
-        <div class="qotd-label">Bootcamp · Daily</div>
-        <div class="qotd-title">Question of the Day</div>
-        <div class="qotd-sub">Keep your streak alive - one question every day adds up.</div>
-      </div>
-    </div>
-    <div class="qotd-cta">Open Today's Q ↗</div>
-  </a>
-
-  <div class="quote-strip">
-    <div>
-      <p class="q-text" id="daily-quote"></p>
-      <span class="q-attr" id="quote-attr"></span>
-    </div>
-  </div>
-
-  <div class="japan-callout">
-    <div style="font-size:22px;flex-shrink:0;">🗻</div>
-    <div class="jc-text"><strong>Japan after Step 1 -</strong> Cherry blossoms, Mount Fuji, ramen at 2am. Every page you study now is a step closer. 頑張って (Ganbatte) - you've got this.</div>
-  </div>
-
-  <footer class="footer">
-    <div class="footer-left">Step 1 Study Hub &nbsp;·&nbsp; 🌸</div>
-    <div class="footer-right" id="footer-date"></div>
+  <footer class="footer" style="margin-top: 80px; padding-top: 30px; border-top: 2px solid var(--border); display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--dim);">
+    <span>Step 1 Study Hub</span>
+    <span id="footer-date"></span>
   </footer>
 </div>
 
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="modal-title">Set Your Exam Date</div>
-    <div class="modal-sub">The countdown will update automatically each day.</div>
-    <label>Exam Date</label>
-    <input type="date" id="date-input"/>
+    <h2 class="modal-title">Set Your Exam Date</h2>
+    <p class="modal-sub">The countdown will update automatically.</p>
+    <input type="date" id="date-input" style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); margin-bottom: 20px; font-family: inherit;"/>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="saveDate()">Save ✦</button>
+      <button class="btn-save" onclick="saveDate()">Save Date ✦</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="drug-modal">
-  <div class="modal" style="max-width: 500px;">
-    <div class="modal-header">
-      <div>
-        <div class="modal-sub" id="dm-group" style="margin-bottom:4px;color:var(--sakura2);text-transform:uppercase;letter-spacing:1px;font-size:12px;"></div>
-        <div class="modal-title" id="dm-name" style="font-size:26px; font-family:'Jost', sans-serif;"></div>
-        <div id="dm-aka" style="font-size:12px;color:var(--muted);font-style:italic;"></div>
-      </div>
-      <button onclick="closeDrugModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--dim);">&times;</button>
-    </div>
-    
-    <div id="dm-content" style="max-height:60vh;overflow-y:auto;padding-right:8px;"></div>
-
-    <div class="modal-btns" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
-      <button class="btn-cancel" onclick="closeDrugModal()">Close</button>
-      <a href="drugfacts.html" class="btn-save" style="text-decoration:none;display:inline-block;">Go to Drug Facts ↗</a>
-    </div>
-  </div>
-</div>
-
-<script src="drug_data.js"></script>
 <script>
-// Wait for auth.js to process authentication
+// Authentication State Management
 window.addEventListener('appAuthStateChanged', async (e) => {
   const user = e.detail.user;
-  const authBtn = document.getElementById('auth-btn');
-  if (!authBtn) return;
-  
+  const btn = document.getElementById('auth-btn');
+  if (!btn) return;
+
   if (user) {
-    authBtn.textContent = 'Log out';
-    authBtn.classList.add('is-logged-in');
-    await fetchUserConfig(user.uid);
-    await initUWorldWidget(user.uid);
+    btn.textContent = 'Log out';
+    btn.classList.add('is-logged-in');
+    fetchUserConfig(user.uid);
+    initUWorldWidget(user.uid);
   } else {
-    authBtn.textContent = 'Log in';
-    authBtn.classList.remove('is-logged-in');
-    updateCountdown(null);
+    btn.textContent = 'Log in';
+    btn.classList.remove('is-logged-in');
+    resetCountdown();
     initUWorldWidget(null);
   }
 });
 
-// Setup Auth Button click behavior
 const authBtn = document.getElementById('auth-btn');
 if (authBtn) {
   authBtn.addEventListener('click', () => {
     if (!auth) return;
-    if (auth.currentUser) {
-      auth.signOut();
-    } else {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(console.error);
-    }
+    if (auth.currentUser) auth.signOut();
+    else auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(console.error);
   });
 }
 
-// Secure Tool Guards
-document.querySelectorAll('.tool-card').forEach(card => {
-  card.addEventListener('click', (e) => {
-    if(card.classList.contains('card-dotd')) return;
-
-    const isSecure = card.classList.contains('card-pharm') || 
-                     card.classList.contains('card-micro') ||
-                     card.classList.contains('card-sketchy') || 
-                     card.classList.contains('card-pixorize') || 
-                     card.classList.contains('card-dash');
-    
-    if (isSecure && (!auth || !auth.currentUser)) {
-      e.preventDefault();
-      alert("Access Restricted: Please log in to view your personalized study data.");
-    }
-  });
-});
-
-// Decorate Daily Quotes
-const QUOTES=[
-  {q:"The art of medicine consists of <strong>amusing the patient</strong> while nature cures the disease.",a:"- Voltaire"},
-  {q:"Medicine is a science of uncertainty and an <strong>art of probability</strong>.",a:"- William Osler"},
-  {q:"The good physician treats the disease; the <strong>great physician treats the patient</strong> who has the disease.",a:"- William Osler"},
-  {q:"Wherever the art of medicine is loved, there is also a love of <strong>humanity</strong>.",a:"- Hippocrates"},
-  {q:"The practice of medicine is an art, not a trade; a <strong>calling</strong>, not a business.",a:"- William Osler"},
-  {q:"In nothing do men more nearly approach the gods than in <strong>giving health to men</strong>.",a:"- Cicero"},
-  {q:"The secret of the care of the patient is in <strong>caring for the patient</strong>.",a:"- Francis Peabody"},
-  {q:"It is more important to know what sort of person <strong>has a disease</strong> than to know what sort of disease a person has.",a:"- Hippocrates"},
-  {q:"After climbing a great hill, one only finds that there are <strong>many more hills to climb</strong>.",a:"- Nelson Mandela"},
-  {q:"Fall down seven times, <strong>stand up eight</strong>.",a:"- Japanese Proverb (七転び八起き)"},
-  {q:"The cherry blossom is beloved because it is <strong>here and then gone</strong> - a reminder to live fully now.",a:"- Japanese Tradition"},
-];
-
-const today=new Date();
-const qi=today.getDate()%QUOTES.length;
-const qEl = document.getElementById('daily-quote');
-const aEl = document.getElementById('quote-attr');
-const dEl = document.getElementById('footer-date');
-
-if (qEl) qEl.innerHTML='"'+QUOTES[qi].q+'"';
-if (aEl) aEl.textContent=QUOTES[qi].a;
-if (dEl) dEl.textContent=today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
-// Countdown logic powered strictly by Firestore
+// Countdown Logic
 async function fetchUserConfig(uid) {
   if (!db) return;
   try {
     const doc = await db.collection('users').doc(uid).get();
-    if (doc.exists && doc.data().examDate) {
-      updateCountdown(doc.data().examDate);
-    } else {
-      updateCountdown(null);
-    }
-  } catch(e) {
-    console.error("Error fetching exam date:", e);
-  }
+    if (doc.exists && doc.data().examDate) updateCountdown(doc.data().examDate);
+    else resetCountdown();
+  } catch (err) { console.error(err); }
 }
 
-function updateCountdown(dateString) {
+function updateCountdown(dateStr) {
   const daysEl = document.getElementById('cd-days');
   const dateEl = document.getElementById('cd-date');
   if (!daysEl || !dateEl) return;
 
-  if(!dateString){
-    daysEl.textContent='—';
-    dateEl.textContent='Not set';
-    daysEl.style.color='var(--dim)';
-    return;
-  }
-
-  const exam=new Date(dateString+'T12:00:00');
-  const now=new Date();
+  const exam = new Date(dateStr + 'T12:00:00'), now = new Date();
   now.setHours(0,0,0,0);
-  const diff=Math.round((exam-now)/(1000*60*60*24));
+  const diff = Math.round((exam - now) / 86400000);
   
   daysEl.textContent = diff >= 0 ? diff : '0';
   dateEl.textContent = exam.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
-
-  if(diff <= 30) daysEl.style.color = 'var(--sakura2)';
-  else if(diff <= 60) daysEl.style.color = 'var(--yellow)';
-  else daysEl.style.color = 'var(--fuji)';
 }
 
-function openModal(){
-  const modal = document.getElementById('modal');
-  if (modal) modal.classList.add('open');
+function resetCountdown() {
+  const daysEl = document.getElementById('cd-days');
+  const dateEl = document.getElementById('cd-date');
+  if (daysEl) daysEl.textContent = '—';
+  if (dateEl) dateEl.textContent = 'Not set';
 }
 
-function closeModal(){ 
-  const modal = document.getElementById('modal');
-  if (modal) modal.classList.remove('open'); 
-}
+function openModal() { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
-async function saveDate(){
-  const inputEl = document.getElementById('date-input');
-  if (!inputEl) return;
-  const v = inputEl.value;
-  
-  if(v) {
+async function saveDate() {
+  const v = document.getElementById('date-input').value;
+  if (v && currentUser) {
+    await db.collection('users').doc(currentUser.uid).set({ examDate: v }, { merge: true });
     updateCountdown(v);
-    try {
-      if (currentUser && db) {
-        await db.collection('users').doc(currentUser.uid).set({ examDate: v }, { merge: true });
-      }
-    } catch (e) {
-      console.error("Error saving exam date:", e);
-    }
   }
   closeModal();
 }
 
-const modalOverlay = document.getElementById('modal');
-if (modalOverlay) {
-  modalOverlay.addEventListener('click', e => {
-    if(e.target === modalOverlay) closeModal();
-  });
-}
-
-// UWorld Widget logic (Refactored to pull defensively from Firestore Subcollections)
+// UWorld Widget Integration
 async function initUWorldWidget(uid) {
-  const elDone = document.getElementById('widget-uw-done');
-  const elRemain = document.getElementById('widget-uw-remain');
-  const elNeeded = document.getElementById('widget-uw-needed');
-  const elPct = document.getElementById('widget-uw-pct');
-  const elFill = document.getElementById('widget-uw-fill');
-  
-  if (!elDone || !elRemain || !elNeeded || !elPct || !elFill) return;
-
+  const el = (id) => document.getElementById(id);
   if (!uid || !db) {
-    elDone.textContent = "0"; elRemain.textContent = "3661";
-    elNeeded.textContent = "N/A"; elPct.textContent = "0%"; elFill.style.width = "0%";
+    if (el('widget-uw-done')) el('widget-uw-done').textContent = '0';
+    if (el('widget-uw-pct')) el('widget-uw-pct').textContent = '0%';
+    if (el('widget-uw-fill')) el('widget-uw-fill').style.width = '0%';
     return;
   }
-
   try {
-    let settings = { total: 3661, finishBy: '', studyDays: [0,1,2,3,4,5], uniqueOffset: 0 };
+    const config = await db.collection('users').doc(uid).collection('uworld').doc('config').get();
+    const settings = config.exists ? config.data() : { total: 3661 };
     
-    const configDoc = await db.collection('users').doc(uid).collection('uworld').doc('config').get();
-    if (configDoc.exists) settings = { ...settings, ...configDoc.data() };
-
-    const logsSnapshot = await db.collection('users').doc(uid).collection('uworld_logs').get();
+    const logs = await db.collection('users').doc(uid).collection('uworld_logs').get();
     let loggedQs = 0;
-    logsSnapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.qs) loggedQs += data.qs;
-    });
+    logs.forEach(d => { if (d.data().qs) loggedQs += d.data().qs; });
 
-    let done = Math.max(0, loggedQs + (settings.uniqueOffset || 0));
+    const done = loggedQs + (settings.uniqueOffset || 0);
     const total = settings.total || 3661;
-    const remaining = Math.max(0, total - done);
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const pct = Math.round((done / total) * 100);
 
-    let needed = "N/A";
-    if (settings.finishBy && remaining > 0) {
-      const now = new Date(); now.setHours(0,0,0,0);
-      const finish = new Date(settings.finishBy + 'T12:00:00');
-      finish.setHours(0,0,0,0);
-      
-      let daysLeft = 0;
-      let cur = new Date(now);
-      while (cur <= finish) {
-        if ((settings.studyDays || []).includes(cur.getDay())) daysLeft++;
-        cur.setDate(cur.getDate() + 1);
-      }
-      needed = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : remaining;
-    }
-
-    elDone.textContent = done.toLocaleString();
-    elRemain.textContent = remaining.toLocaleString();
-    elNeeded.textContent = needed;
-    elPct.textContent = pct + '%';
-    elFill.style.width = pct + '%';
-
-  } catch (err) {
-    console.error('Error rendering UWorld widget:', err);
-  }
+    if (el('widget-uw-done')) el('widget-uw-done').textContent = done.toLocaleString();
+    if (el('widget-uw-remain')) el('widget-uw-remain').textContent = (total - done).toLocaleString();
+    if (el('widget-uw-pct')) el('widget-uw-pct').textContent = pct + '%';
+    if (el('widget-uw-fill')) el('widget-uw-fill').style.width = pct + '%';
+  } catch (err) { console.error(err); }
 }
 
-// Drug of the Day Widget
-let currentDrug = null;
-
-function initDrugOfTheDay() {
-  if (typeof DRUGS === 'undefined') return;
-
-  const allDrugs = [];
-  Object.keys(DRUGS).forEach(cat => {
-    DRUGS[cat].forEach(group => {
-      const tier1 = group.drugs.filter(d => {
-        const tierVal = typeof d.tier === 'number' ? d.tier : parseInt(String(d.tier).replace(/\D/g,'')) || 99;
-        return tierVal === 1;
-      });
-      tier1.forEach(d => allDrugs.push({ ...d, groupName: group.group }));
-    });
-  });
-
-  if (allDrugs.length === 0) return;
-
-  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-  currentDrug = allDrugs[seed % allDrugs.length];
-
-  const nameEl = document.getElementById('dotd-name');
-  const pearlEl = document.getElementById('dotd-pearl');
-  
-  if (nameEl) nameEl.textContent = currentDrug.name;
-  
-  if (pearlEl) {
-    const pearlText = currentDrug.pearl ? "💡 " + currentDrug.pearl.replace(/\*\*/g, '') : "Review this high-yield concept.";
-    pearlEl.textContent = pearlText.length > 85 ? pearlText.substring(0, 85) + "..." : pearlText;
-  }
-}
-
-function openDrugModal() {
-  if (!currentDrug) return;
-  
-  const nameEl = document.getElementById('dm-name');
-  const akaEl = document.getElementById('dm-aka');
-  const grpEl = document.getElementById('dm-group');
-  const contentEl = document.getElementById('dm-content');
-  const modalEl = document.getElementById('drug-modal');
-  
-  if (!nameEl || !contentEl || !modalEl) return;
-  
-  nameEl.textContent = currentDrug.name;
-  if (akaEl) akaEl.textContent = currentDrug.aka || '';
-  if (grpEl) grpEl.textContent = currentDrug.groupName || 'Pharmacology';
-
-  const fmt = (text) => text ? text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : 'See full reference.';
-
-  const html = `
-    <div class="info-row" style="border:none; padding-bottom:0;"><span class="info-label" style="background:var(--sakura-light);color:var(--sakura2);">Mechanism</span><div class="info-text">${fmt(currentDrug.moa)}</div></div>
-    <div class="info-row" style="border:none; padding-bottom:0;"><span class="info-label" style="background:var(--sakura-light);color:var(--sakura2);">Clinical Uses</span><div class="info-text">${fmt(currentDrug.use)}</div></div>
-    <div class="info-row" style="border:none;"><span class="info-label" style="background:var(--sakura-light);color:var(--sakura2);">Side Effects</span><div class="info-text">${fmt(currentDrug.se)}</div></div>
-    ${currentDrug.pearl ? `<div class="pearl-box"><span class="pearl-star">✦</span><div class="pearl-text"><strong>Step 1 Pearl:</strong> ${fmt(currentDrug.pearl)}</div></div>` : ''}
-  `;
-
-  contentEl.innerHTML = html;
-  modalEl.classList.add('open');
-}
-
-function closeDrugModal() {
-  const modalEl = document.getElementById('drug-modal');
-  if (modalEl) modalEl.classList.remove('open');
-}
-
-const drugModalOverlay = document.getElementById('drug-modal');
-if (drugModalOverlay) {
-  drugModalOverlay.addEventListener('click', (e) => {
-    if (e.target === drugModalOverlay) closeDrugModal();
-  });
-}
-
-initDrugOfTheDay();
+const today = new Date();
+document.getElementById('footer-date').textContent = today.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 </script>
 </body>
 </html>
