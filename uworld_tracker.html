@@ -252,11 +252,14 @@ const firebaseConfig = {
   projectId: "sketchy-tracker",
   storageBucket: "sketchy-tracker.firebasestorage.app",
   messagingSenderId: "970470066509",
-  appId: "1:970410066509:web:14c7300fb1dd882a038f04"
+  appId: "1:970470066509:web:14c7300fb1dd882a038f04"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+
+// Set persistence to LOCAL so auth survives page navigation
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.error);
 
 let currentUser = null;
 const TOTAL_DEFAULT = 3661;
@@ -308,11 +311,18 @@ async function loadFromFirebase() {
   } catch(e) { console.error(e); }
 }
 
+// Keep auth banner hidden until Firebase resolves — avoids flash of "not logged in"
+document.getElementById('auth-banner').classList.add('hidden');
+
 auth.onAuthStateChanged(async (user) => {
   currentUser = user;
+  // Only show the banner if definitely not logged in (after Firebase confirms)
   document.getElementById('auth-banner').classList.toggle('hidden', !!user);
-  if (user) await loadFromFirebase();
-  renderAll();
+  if (user) {
+    await loadFromFirebase();
+  } else {
+    renderAll();
+  }
 });
 
 function initSetupUI() {
@@ -984,6 +994,7 @@ function resetUpload() {
 
 document.getElementById('log-date').value  = todayStr();
 document.getElementById('exam-date').value = todayStr();
+// Render from localStorage immediately so the page isn't blank while Firebase resolves
 loadLocal();
 renderAll();
 </script>
