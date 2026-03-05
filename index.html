@@ -63,13 +63,13 @@
 
   <!-- ══ UWORLD TRACKER WIDGET ══════════════════════════════════════════ -->
   <div class="sec-label">📝 &nbsp;UWorld Progress</div>
-  <a href="uworld_tracker.html" class="uw-widget" id="uw-widget" style="text-decoration:none;display:block;">
+  <a href="uworld_tracker.html" class="uw-widget">
     <div class="uw-widget-inner">
 
-      <!-- Left: big progress ring area -->
-      <div class="uw-left">
+      <!-- Ring -->
+      <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
         <div class="uw-ring-wrap">
-          <svg class="uw-ring" viewBox="0 0 80 80">
+          <svg class="uw-ring-svg" viewBox="0 0 80 80">
             <circle cx="40" cy="40" r="34" fill="none" stroke="var(--surface2)" stroke-width="7"/>
             <circle cx="40" cy="40" r="34" fill="none" stroke="url(#uwGrad)" stroke-width="7"
               stroke-linecap="round" stroke-dasharray="213.6"
@@ -84,120 +84,40 @@
           </svg>
           <div class="uw-ring-pct" id="uw-ring-pct">0%</div>
         </div>
-        <div class="uw-pct-label">Complete</div>
+        <div class="uw-ring-label">Complete</div>
       </div>
 
-      <!-- Middle: stats -->
-      <div class="uw-stats">
-        <div class="uw-stat">
-          <div class="uw-stat-val" id="uw-done">—</div>
-          <div class="uw-stat-lbl">Done</div>
+      <!-- Stats -->
+      <div class="uw-widget-stats">
+        <div>
+          <div class="uw-widget-stat-num" id="uw-done">—</div>
+          <div class="uw-widget-stat-lbl">Done</div>
         </div>
-        <div class="uw-stat">
-          <div class="uw-stat-val" id="uw-remain">—</div>
-          <div class="uw-stat-lbl">Left</div>
+        <div>
+          <div class="uw-widget-stat-num" id="uw-remain">—</div>
+          <div class="uw-widget-stat-lbl">Left</div>
         </div>
-        <div class="uw-stat">
-          <div class="uw-stat-val" id="uw-today">—</div>
-          <div class="uw-stat-lbl">Today's Goal</div>
+        <div>
+          <div class="uw-widget-stat-num" id="uw-today">—</div>
+          <div class="uw-widget-stat-lbl">Today's Goal</div>
         </div>
-        <div class="uw-stat">
-          <div class="uw-stat-val" id="uw-needed" style="font-size:17px;">—</div>
-          <div class="uw-stat-lbl">Needed/Day</div>
+        <div>
+          <div class="uw-widget-stat-num" id="uw-needed">—</div>
+          <div class="uw-widget-stat-lbl">Needed / Day</div>
         </div>
       </div>
 
-      <!-- Right: pace + CTA -->
-      <div class="uw-right">
-        <div class="uw-pace" id="uw-pace">
+      <!-- Pace + CTA -->
+      <div class="uw-widget-right">
+        <div class="uw-widget-pace">
           <div class="uw-pace-dot" id="uw-pace-dot"></div>
-          <div class="uw-pace-msg" id="uw-pace-msg">Set up tracker →</div>
+          <div class="uw-widget-pace-msg" id="uw-pace-msg">Set up tracker →</div>
         </div>
-        <div class="uw-cta">Open Tracker ↗</div>
+        <div class="uw-widget-cta">Open Tracker ↗</div>
       </div>
 
     </div>
   </a>
-
-  <style>
-  .uw-widget {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin-bottom: 32px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-  }
-  .uw-widget:hover {
-    border-color: var(--border2);
-    box-shadow: 0 4px 20px rgba(61,46,110,0.08);
-  }
-  .uw-widget-inner {
-    display: flex; align-items: center; gap: 24px;
-    padding: 20px 24px;
-  }
-  @media(max-width:640px){
-    .uw-widget-inner { flex-wrap: wrap; gap: 16px; padding: 16px; }
-    .uw-right { display: none; }
-  }
-  /* Ring */
-  .uw-left { display: flex; flex-direction: column; align-items: center; flex-shrink:0; }
-  .uw-ring-wrap { position: relative; width: 80px; height: 80px; }
-  .uw-ring { width: 80px; height: 80px; }
-  .uw-ring-pct {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500;
-    color: var(--fuji);
-  }
-  .uw-pct-label {
-    font-size: 10px; font-family: 'DM Mono', monospace;
-    color: var(--dim); text-transform: uppercase; letter-spacing: 1px;
-    margin-top: 5px;
-  }
-  /* Stats */
-  .uw-stats {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px;
-    flex: 1;
-  }
-  .uw-stat { }
-  .uw-stat-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px; font-weight: 600;
-    color: var(--ink); line-height: 1;
-  }
-  .uw-stat-lbl {
-    font-size: 10px; font-family: 'DM Mono', monospace;
-    color: var(--dim); text-transform: uppercase; letter-spacing: 0.8px;
-    margin-top: 2px;
-  }
-  /* Right */
-  .uw-right {
-    display: flex; flex-direction: column; align-items: flex-end;
-    gap: 10px; flex-shrink: 0; min-width: 130px;
-  }
-  .uw-pace {
-    display: flex; align-items: center; gap: 6px;
-  }
-  .uw-pace-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    background: var(--muted);
-  }
-  .uw-pace-dot.ok { background: #4a9060; }
-  .uw-pace-dot.warn { background: #c0804a; }
-  .uw-pace-dot.behind { background: #c04050; }
-  .uw-pace-msg {
-    font-size: 12px; color: var(--ink2);
-    font-family: 'Jost', sans-serif;
-    text-align: right; line-height: 1.3;
-    max-width: 120px;
-  }
-  .uw-cta {
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    color: var(--sakura2); letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  </style>
   <!-- ══ END UWORLD WIDGET ═══════════════════════════════════════════════ -->
 
   <div class="sec-label">🌸 &nbsp;My Study Tools</div>
