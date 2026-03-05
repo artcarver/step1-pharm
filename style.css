@@ -206,11 +206,20 @@ a { text-decoration: none; color: inherit; }
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
-  color: var(--muted);
+  color: #6b5070;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: color 0.2s;
   position: relative;
+}
+
+.global-nav-brand {
+  font-family: var(--font-display);
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--sakura2) !important;
+  letter-spacing: 0;
+  text-transform: none !important;
 }
 
 .global-nav a::after {
@@ -255,9 +264,9 @@ a { text-decoration: none; color: inherit; }
 
 .brand-title {
   font-family: var(--font-display);
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 600;
-  color: var(--ink);
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  color: #2a1a2e;
   line-height: 1.05;
   letter-spacing: -0.01em;
 }
@@ -337,16 +346,16 @@ a { text-decoration: none; color: inherit; }
 
 .tab-btn {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 8px 18px;
+  padding: 9px 20px;
   border-radius: 12px 12px 0 0;
   border: 1.5px solid var(--border);
   border-bottom: none;
   background: rgba(255,255,255,0.5);
-  color: var(--muted);
+  color: #9b7fa0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -367,6 +376,7 @@ a { text-decoration: none; color: inherit; }
   box-shadow: 0 -2px 12px rgba(180,100,140,0.07);
   position: relative;
   z-index: 1;
+  font-weight: 700;
 }
 
 .tab-dot {
@@ -439,16 +449,16 @@ a { text-decoration: none; color: inherit; }
 
 .sys-intro-title {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 4px;
+  font-size: 23px;
+  font-weight: 700;
+  color: #2a1a2e;
+  margin-bottom: 5px;
 }
 
 .sys-intro-text {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.65;
+  font-size: 13.5px;
+  color: #6b5070;
+  line-height: 1.7;
 }
 
 /* ── Card Grids ──────────────────────────────────────────── */
@@ -519,9 +529,9 @@ a { text-decoration: none; color: inherit; }
 
 .drug-name {
   font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--ink);
+  font-size: 21px;
+  font-weight: 700;
+  color: #2a1a2e;
   line-height: 1.2;
   margin-bottom: 5px;
 }
@@ -534,9 +544,9 @@ a { text-decoration: none; color: inherit; }
 }
 
 .drug-summary {
-  font-size: 12.5px;
-  color: var(--muted);
-  line-height: 1.5;
+  font-size: 13px;
+  color: #6b5070;
+  line-height: 1.55;
   margin-top: 6px;
   font-weight: 400;
 }
@@ -577,20 +587,20 @@ a { text-decoration: none; color: inherit; }
 
 .info-label {
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--theme-color, var(--sakura2));
-  min-width: 68px;
+  min-width: 72px;
   padding-top: 2px;
   flex-shrink: 0;
 }
 
 .info-text {
-  font-size: 12.5px;
-  color: var(--ink);
-  line-height: 1.6;
+  font-size: 13.5px;
+  color: #3a2840;
+  line-height: 1.65;
   flex: 1;
 }
 
@@ -640,24 +650,24 @@ a { text-decoration: none; color: inherit; }
 .pearl-box {
   display: flex;
   gap: 10px;
-  background: linear-gradient(135deg, var(--petal) 0%, rgba(255,255,255,0.9) 100%);
-  border: 1.5px solid color-mix(in srgb, var(--theme-color, var(--sakura2)) 30%, transparent);
+  background: #fff8fb;
+  border: 1.5px solid color-mix(in srgb, var(--theme-color, var(--sakura2)) 35%, transparent);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 13px 16px;
   margin-top: 10px;
 }
 
 .pearl-star {
   color: var(--theme-color, var(--sakura2));
-  font-size: 14px;
+  font-size: 15px;
   flex-shrink: 0;
   margin-top: 1px;
 }
 
 .pearl-text {
-  font-size: 12px;
-  color: var(--ink);
-  line-height: 1.6;
+  font-size: 13px;
+  color: #3a2840;
+  line-height: 1.65;
 }
 
 .pearl-text strong { color: var(--theme-color, var(--sakura2)); }
@@ -698,11 +708,11 @@ a { text-decoration: none; color: inherit; }
 
 .class-label {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--ink);
-  border-left: 4px solid var(--theme-color);
-  padding-left: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--theme-color, var(--sakura2));
+  border-left: 4px solid var(--theme-color, var(--sakura2));
+  padding-left: 14px;
   line-height: 1.2;
 }
 
@@ -1515,7 +1525,8 @@ a { text-decoration: none; color: inherit; }
 }
 
 .cat-why { font-size: 12px; color: var(--muted); font-style: italic; padding: 0 22px 14px; }
-.cat-body { padding: 8px 22px 20px; }
+/* cat-body default: hidden — opened via .cat-section.open below */
+.cat-body { display: none; padding: 8px 22px 20px; }
 
 /* ── Video Rows (Sketchy) ────────────────────────────────── */
 .video-row {
@@ -1551,22 +1562,8 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
 }
 
-.check-btn {
-  width: 22px; height: 22px;
-  border-radius: 6px;
-  border: 1.5px solid var(--border);
-  background: var(--cream);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  transition: all 0.2s;
-  color: transparent;
-}
+/* check-btn styles defined in shared additions below */
 
-.check-btn.watched  { background: var(--petal);      border-color: var(--sakura2); color: var(--sakura2); }
-.check-btn.reviewed { background: var(--fuji-light); border-color: var(--fuji);   color: var(--fuji);    }
 
 /* ── Pharma List ─────────────────────────────────────────── */
 .pharma-list { display: flex; flex-direction: column; gap: 6px; }
@@ -2103,10 +2100,74 @@ a { text-decoration: none; color: inherit; }
   gap: 4px;
 }
 
+/* Tags row floats to top of drug-body (above info rows) */
+.drug-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.tags-row {
+  order: -1;
+  border-bottom: none !important;
+  padding: 6px 0 2px !important;
+}
+
+/* ── Tracker: categories collapsed by default ────────────── */
+.cat-body {
+  display: none;
+  padding: 8px 22px 20px;
+}
+
+.cat-section.open .cat-body {
+  display: block;
+  animation: fadeUp 0.25s ease both;
+}
+
+.cat-header .cat-toggle-arrow {
+  font-size: 11px;
+  color: var(--dim);
+  transition: transform 0.25s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.cat-section.open .cat-header .cat-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* ── Tracker checkboxes: fix visibility ──────────────────── */
+.check-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 2px solid #d8c0d4;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+  color: transparent;
+  flex-shrink: 0;
+}
+
+.check-btn.watched {
+  background: var(--petal);
+  border-color: var(--sakura2);
+  color: var(--sakura2);
+}
+
+.check-btn.reviewed {
+  background: var(--fuji-light);
+  border-color: var(--fuji);
+  color: var(--fuji);
+}
+
 /* ── Tab Color Modifiers ─────────────────────────────────── */
 /* Each tab's theme color is set via a modifier class rather
    than inline styles, keeping all color decisions in CSS.    */
-.tab-btn--bacteria { --theme-color: var(--theme-12); }
+.tab-btn--bacteria  { --theme-color: var(--theme-12); }
 .tab-btn--viruses   { --theme-color: var(--theme-2);  }
 .tab-btn--parasites { --theme-color: var(--theme-8);  }
 .tab-btn--fungi     { --theme-color: var(--theme-18); }
