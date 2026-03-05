@@ -56,7 +56,7 @@ body {
 }
 
 /* ══════════════════════════════════════════════════
-   PAGE HEADER — shared across all tool pages
+   GLOBAL NAVIGATION / PAGE HEADER
    ══════════════════════════════════════════════════ */
 
 .header {
@@ -75,6 +75,28 @@ body {
   padding: 20px 24px 0;
 }
 
+.global-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.global-nav a {
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink2);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.global-nav a:hover {
+  color: var(--fuji);
+}
+
 .header-top {
   display: flex;
   justify-content: space-between;
@@ -84,26 +106,10 @@ body {
   margin-bottom: 4px;
 }
 
-/* Back link */
-.back-link {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
-  transition: color 0.15s;
-}
-.back-link:hover { color: var(--ink2); }
-
 /* Brand */
 .brand-super {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--sakura2);
@@ -111,7 +117,7 @@ body {
 }
 .eyebrow {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--sakura2);
@@ -119,9 +125,9 @@ body {
 }
 
 .brand-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: clamp(30px, 5vw, 44px);
-  font-weight: 300;
+  font-weight: 600;
   color: var(--ink);
   line-height: 1.05;
   margin-bottom: 4px;
@@ -173,7 +179,7 @@ body {
   min-width: 80px;
 }
 .stat-chip .num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 22px;
   font-weight: 600;
   line-height: 1;
@@ -181,7 +187,7 @@ body {
 }
 .stat-chip .lbl {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
@@ -200,7 +206,7 @@ body {
 
 .tab-btn {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -233,7 +239,7 @@ body {
 }
 
 /* ══════════════════════════════════════════════════
-   CONTENT AREAS
+   CONTENT AREAS & TABLES
    ══════════════════════════════════════════════════ */
 
 .content {
@@ -250,6 +256,14 @@ body {
 
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
+
+/* Table Wrapper for Mobile Overflow */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 16px;
+}
 
 /* ══════════════════════════════════════════════════
    ALERT / INFO BANNER
@@ -313,7 +327,7 @@ body {
 
 .stat-label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -321,7 +335,7 @@ body {
 }
 
 .stat-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 32px;
   font-weight: 600;
   line-height: 1;
@@ -329,13 +343,13 @@ body {
 }
 
 .stat-sub {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--dim);
 }
 
 .section-label {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -361,13 +375,13 @@ body {
 }
 .op-label {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
 }
 .op-pct {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 22px;
   font-weight: 600;
   color: var(--fuji);
@@ -449,7 +463,7 @@ body {
 .drug-card-header:hover { background: var(--sakura-light); }
 
 .drug-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: var(--ink);
@@ -459,7 +473,7 @@ body {
 .drug-name em { font-style: italic; font-weight: 400; }
 
 .drug-aka {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--muted);
   font-style: italic;
 }
@@ -490,7 +504,7 @@ body {
 
 .drug-label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -502,31 +516,13 @@ body {
 }
 .drug-text strong { color: var(--ink); font-weight: 600; }
 
-/* Tier badge */
-.tier-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: 0.04em;
-  padding: 2px 7px;
-  border-radius: 4px;
-  flex-shrink: 0;
-  text-transform: uppercase;
-}
-.tier-1 { background: rgba(192,48,80,0.08);  color: var(--red); border: 1px solid rgba(192,48,80,0.18); }
-.tier-2 { background: rgba(184,120,32,0.08); color: var(--yellow); border: 1px solid rgba(184,120,32,0.18); }
-.tier-3 { background: rgba(42,138,106,0.08); color: var(--green); border: 1px solid rgba(42,138,106,0.18); }
-.tier-4 { background: rgba(138,120,146,0.08);color: var(--muted); border: 1px solid rgba(138,120,146,0.18); }
-
 /* System group header */
 .sys-group {
   margin-bottom: 28px;
 }
 .sys-label {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
@@ -557,7 +553,7 @@ body {
 .sys-intro-icon { font-size: 18px; flex-shrink: 0; }
 .sys-intro-title {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   margin-bottom: 6px;
@@ -572,7 +568,7 @@ body {
   display: inline-flex;
   align-items: center;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 6px;
@@ -627,7 +623,7 @@ body {
 
 .search-count {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -657,7 +653,7 @@ body {
 .cat-header:hover { background: var(--bg); }
 
 .cat-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 17px;
   font-weight: 600;
   color: var(--ink);
@@ -670,7 +666,7 @@ body {
 }
 .cat-meta {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
@@ -698,7 +694,7 @@ body {
 
 .video-num {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   color: var(--dim);
   width: 28px;
   flex-shrink: 0;
@@ -711,12 +707,12 @@ body {
 }
 .video-time {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   color: var(--dim);
   flex-shrink: 0;
 }
 .video-reason {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
 }
@@ -732,7 +728,7 @@ body {
   align-items: center;
   gap: 5px;
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 12px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -772,7 +768,7 @@ body {
 }
 .tracker-cat { font-size: 14px; color: var(--ink); font-weight: 500; }
 .tracker-pct-val {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: var(--fuji);
@@ -794,20 +790,20 @@ body {
 }
 .score-block { text-align: center; }
 .score-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 32px;
   font-weight: 600;
   line-height: 1;
 }
 .score-label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
   margin-top: 3px;
 }
-.score-sub { font-size: 11px; color: var(--muted); }
+.score-sub { font-size: 12px; color: var(--muted); }
 .score-arrow { font-size: 20px; color: var(--dim); }
 .gain-badge {
   background: rgba(42,138,106,0.08);
@@ -817,7 +813,7 @@ body {
   text-align: center;
 }
 .gain-badge .num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: var(--green);
@@ -825,7 +821,7 @@ body {
 }
 .gain-badge .lbl {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--green);
@@ -845,7 +841,7 @@ body {
 }
 .jp-item { font-size: 13px; color: var(--ink2); }
 .jp-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: var(--fuji);
@@ -896,7 +892,7 @@ body {
 }
 .ds-weight {
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 12px;
   letter-spacing: 1px;
   color: var(--dim);
 }
@@ -913,21 +909,21 @@ body {
 }
 .ds-score-box:last-child { border-right: none; }
 .ds-score-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 22px;
   font-weight: 600;
   line-height: 1;
 }
 .ds-score-lbl {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--dim);
 }
 .bar-avg-label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   color: var(--dim);
   margin-top: 3px;
   letter-spacing: 0.5px;
@@ -936,7 +932,7 @@ body {
 .priority {
   display: inline-block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 7px;
@@ -950,7 +946,7 @@ body {
 
 .delta {
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   flex-shrink: 0;
 }
@@ -972,7 +968,7 @@ body {
 }
 .prob-lbl { font-size: 12.5px; color: var(--ink2); }
 .prob-pct {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 22px;
   font-weight: 600;
 }
@@ -1001,13 +997,13 @@ body {
 .pharma-name { font-size: 14px; color: var(--ink); font-weight: 500; }
 .pharma-done {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.5px;
   color: var(--muted);
   margin-top: 2px;
 }
 .pharma-pct {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 24px;
   font-weight: 600;
   width: 56px;
@@ -1019,7 +1015,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   color: var(--dim);
   margin-top: 4px;
 }
@@ -1048,7 +1044,7 @@ body {
 }
 .focus-box-sub {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1066,12 +1062,12 @@ body {
 .focus-item-name { font-size: 13.5px; color: var(--ink); font-weight: 500; }
 .focus-item-meta {
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
 }
 .focus-item-score {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 24px;
   font-weight: 600;
   text-align: right;
@@ -1079,7 +1075,7 @@ body {
 }
 .focus-item-avg {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   color: var(--dim);
   text-align: right;
   margin-top: 2px;
@@ -1095,7 +1091,7 @@ body {
 }
 .action-row:last-child { border-bottom: none; }
 .action-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 28px;
   font-weight: 300;
   color: var(--dim);
@@ -1107,7 +1103,7 @@ body {
 .urgency {
   display: inline-block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 8px;
@@ -1138,16 +1134,16 @@ body {
 }
 .hero-eyebrow {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--sakura2);
   margin-bottom: 12px;
 }
 .hero-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: clamp(38px, 7vw, 62px);
-  font-weight: 300;
+  font-weight: 600;
   color: var(--ink);
   line-height: 1.1;
   margin-bottom: 16px;
@@ -1183,22 +1179,22 @@ body {
 }
 .cd-label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 4px;
 }
 .cd-days {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 44px;
-  font-weight: 300;
+  font-weight: 600;
   color: var(--fuji);
   line-height: 1;
 }
 .cd-unit {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--dim);
@@ -1212,14 +1208,14 @@ body {
 }
 .cd-date-lbl {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 4px;
 }
 .cd-date {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 20px;
   font-weight: 400;
   color: var(--ink);
@@ -1227,7 +1223,7 @@ body {
 }
 .cd-edit {
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--fuji);
@@ -1243,7 +1239,7 @@ body {
 /* Section label */
 .sec-label {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1288,7 +1284,7 @@ body {
 .card-meta { display: flex; align-items: center; gap: 8px; }
 .card-tag {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1296,7 +1292,7 @@ body {
 .card-arrow { color: var(--dim); font-size: 14px; }
 
 .card-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--ink);
@@ -1312,7 +1308,7 @@ body {
 .card-pills { display: flex; flex-wrap: wrap; gap: 5px; }
 .pill {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1333,7 +1329,7 @@ body {
 }
 .card-add-text {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--dim);
@@ -1360,14 +1356,14 @@ body {
 .qotd-icon { font-size: 22px; }
 .qotd-label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--sakura2);
   margin-bottom: 3px;
 }
 .qotd-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 19px;
   font-weight: 600;
   color: var(--ink);
@@ -1375,7 +1371,7 @@ body {
 .qotd-sub { font-size: 12.5px; color: var(--muted); }
 .qotd-cta {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--fuji);
@@ -1392,7 +1388,7 @@ body {
   text-align: center;
 }
 .q-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 18px;
   font-style: italic;
   color: var(--ink2);
@@ -1401,7 +1397,7 @@ body {
 }
 .q-attr {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1431,7 +1427,7 @@ body {
   padding-top: 24px;
   border-top: 1px solid var(--border);
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--dim);
@@ -1439,10 +1435,8 @@ body {
 
 /* Auth button */
 .auth-btn {
-  position: fixed;
-  top: 14px; right: 20px;
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   background: var(--surface);
@@ -1490,7 +1484,7 @@ body {
   margin-bottom: 16px;
 }
 .modal-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 24px;
   font-weight: 600;
   color: var(--ink);
@@ -1503,7 +1497,7 @@ body {
 }
 .modal label {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1528,7 +1522,7 @@ body {
 
 .btn-cancel {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   background: var(--bg);
@@ -1543,7 +1537,7 @@ body {
 
 .btn-save {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   background: var(--fuji);
@@ -1625,7 +1619,7 @@ body {
   .focus-grid { grid-template-columns: 1fr; }
   .card-grid-2 { grid-template-columns: 1fr; }
   .tabs { gap: 0; }
-  .tab-btn { padding: 9px 10px 11px; font-size: 8px; }
+  .tab-btn { padding: 9px 10px 11px; font-size: 12px; }
 }
 
 /* ══════════════════════════════════════════════════
@@ -1650,7 +1644,7 @@ body {
 .sys-intro-icon  { font-size: 18px; flex-shrink: 0; }
 .sys-intro-title {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--sakura2);
@@ -1668,7 +1662,7 @@ body {
 }
 .class-label {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   padding: 4px 10px;
@@ -1679,7 +1673,7 @@ body {
 }
 .group-expand-btn {
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
@@ -1707,6 +1701,21 @@ body {
   line-height: 1.65;
   flex: 1;
 }
+
+/* Updated bullet list styles for the reference cards */
+.info-text ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.info-text li {
+  margin-bottom: 4px;
+}
+.info-text li:last-child {
+  margin-bottom: 0;
+}
+
 .info-text strong { color: var(--ink); font-weight: 600; }
 .info-line { display: block; }
 .info-line + .info-line { margin-top: 3px; }
@@ -1716,7 +1725,7 @@ body {
   display: inline-flex;
   align-items: center;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 6px;
@@ -1731,7 +1740,7 @@ body {
 /* Card expand arrow */
 .expand-arrow {
   color: var(--dim);
-  font-size: 10px;
+  font-size: 12px;
   flex-shrink: 0;
   margin-left: 10px;
   margin-top: 4px;
@@ -1767,7 +1776,7 @@ body {
 .drug-tag {
   display: inline-block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   padding: 2px 7px;
@@ -1783,7 +1792,7 @@ body {
   align-items: center;
   gap: 4px;
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   padding: 2px 7px;
@@ -1800,7 +1809,7 @@ body {
 .empty { text-align: center; padding: 40px 20px; }
 .empty-icon { font-size: 28px; color: var(--dim); margin-bottom: 8px; }
 .empty-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Jost', sans-serif;
   font-size: 17px;
   font-style: italic;
   color: var(--dim);
@@ -1810,7 +1819,7 @@ body {
 #search-results.active { display: block; }
 .search-count {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
