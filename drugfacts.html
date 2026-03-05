@@ -43,23 +43,22 @@
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
         <input class="search-input" type="text" id="search-input"
-               placeholder="Search drug, class, mechanism..."
-               oninput="handleSearch(this.value)"/>
-        <button id="search-clear" onclick="clearSearch()">×</button>
+               placeholder="Search drug, class, mechanism..."/>
+        <button id="search-clear">×</button>
       </div>
     </div>
 
     <nav class="tabs" id="tabs">
-      <button class="tab-btn active" onclick="switchTab('micro', this)"      style="--theme-color: var(--theme-8);" ><span class="tab-dot"></span>Microbiology</button>
-      <button class="tab-btn"        onclick="switchTab('autonomic', this)"  style="--theme-color: var(--theme-1);" ><span class="tab-dot"></span>Autonomics</button>
-      <button class="tab-btn"        onclick="switchTab('cv', this)"         style="--theme-color: var(--theme-11);"><span class="tab-dot"></span>Cardio &amp; Renal</button>
-      <button class="tab-btn"        onclick="switchTab('blood', this)"      style="--theme-color: var(--theme-16);"><span class="tab-dot"></span>Hematology</button>
-      <button class="tab-btn"        onclick="switchTab('gi', this)"         style="--theme-color: var(--theme-5);" ><span class="tab-dot"></span>GI &amp; Motility</button>
-      <button class="tab-btn"        onclick="switchTab('endo', this)"       style="--theme-color: var(--theme-13);"><span class="tab-dot"></span>Endo &amp; Repro</button>
-      <button class="tab-btn"        onclick="switchTab('neuro', this)"      style="--theme-color: var(--theme-19);"><span class="tab-dot"></span>Neuro &amp; Psych</button>
-      <button class="tab-btn"        onclick="switchTab('onco', this)"       style="--theme-color: var(--theme-9);" ><span class="tab-dot"></span>Oncology</button>
-      <button class="tab-btn"        onclick="switchTab('toxicology', this)" style="--theme-color: var(--theme-3);" ><span class="tab-dot"></span>Toxicology</button>
-      <button class="tab-btn"        onclick="switchTab('pulm', this)"       style="--theme-color: var(--theme-7);" ><span class="tab-dot"></span>Pulmonary</button>
+      <button class="tab-btn tab-btn--df-micro     active"><span class="tab-dot"></span>Microbiology</button>
+      <button class="tab-btn tab-btn--df-autonomic">       <span class="tab-dot"></span>Autonomics</button>
+      <button class="tab-btn tab-btn--df-cv">              <span class="tab-dot"></span>Cardio &amp; Renal</button>
+      <button class="tab-btn tab-btn--df-blood">           <span class="tab-dot"></span>Hematology</button>
+      <button class="tab-btn tab-btn--df-gi">              <span class="tab-dot"></span>GI &amp; Motility</button>
+      <button class="tab-btn tab-btn--df-endo">            <span class="tab-dot"></span>Endo &amp; Repro</button>
+      <button class="tab-btn tab-btn--df-neuro">           <span class="tab-dot"></span>Neuro &amp; Psych</button>
+      <button class="tab-btn tab-btn--df-onco">            <span class="tab-dot"></span>Oncology</button>
+      <button class="tab-btn tab-btn--df-toxicology">      <span class="tab-dot"></span>Toxicology</button>
+      <button class="tab-btn tab-btn--df-pulm">            <span class="tab-dot"></span>Pulmonary</button>
     </nav>
 
   </div>
@@ -202,60 +201,14 @@
 
 <script src="drug_data.js"></script>
 <script>
-// ── Auth ───────────────────────────────────────────────────
-window.addEventListener('appAuthStateChanged', (e) => {
-  const user = e.detail.user;
-  const btn  = document.getElementById('auth-btn');
-  if (!btn) return;
-  btn.textContent = user ? 'Log out' : 'Log in';
-  btn.classList.toggle('is-logged-in', !!user);
-});
-
-document.getElementById('auth-btn').addEventListener('click', () => {
-  if (!auth) return;
-  if (auth.currentUser) auth.signOut();
-  else auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(console.error);
-});
-
-// ── Render Engine ──────────────────────────────────────────
-function drugCardHTML(drug, id, themeNum) {
-  if (!drug) return '';
-  const themeColor = `var(--theme-${themeNum})`;
-  const themeLight = `color-mix(in srgb, ${themeColor} 12%, transparent)`;
-  const styleAttr  = `style="--theme-color:${themeColor};--theme-color-light:${themeLight};"`;
-
-  const akaHTML = drug.aka
-    ? drug.aka.replace(/·/g, '<span class="aka-dot">·</span>')
-    : '';
-
-  return `
-  <div class="drug-card" id="${id}" onclick="toggleCard('${id}')" ${styleAttr}>
-    <div class="drug-card-header">
-      <div class="drug-card-meta">
-        <div class="drug-name">${drug.name || 'Unknown'}</div>
-        ${akaHTML ? `<div class="drug-aka">${akaHTML}</div>` : ''}
-      </div>
-      <span class="expand-arrow">▼</span>
-    </div>
-    ${drug.summary ? `<div class="drug-summary">${drug.summary}</div>` : ''}
-    <div class="drug-body">
-      ${drug.moa   ? `<div class="info-row"><span class="info-label">Mechanism</span><div class="info-text">${formatLines(drug.moa)}</div></div>`   : ''}
-      ${drug.use   ? `<div class="info-row"><span class="info-label">Uses</span><div class="info-text">${formatLines(drug.use)}</div></div>`          : ''}
-      ${drug.se    ? `<div class="info-row"><span class="info-label">Side Effects</span><div class="info-text">${formatLines(drug.se)}</div></div>`   : ''}
-      ${drug.ci    ? `<div class="info-row"><span class="info-label">Contra</span><div class="info-text">${formatLines(drug.ci)}</div></div>`         : ''}
-      ${drug.pk    ? `<div class="info-row"><span class="info-label">PK</span><div class="info-text">${formatLines(drug.pk)}</div></div>`             : ''}
-      ${(drug.tags || []).length ? `<div class="info-row" style="border:none;padding-top:2px"><div class="drug-tags-row">${(drug.tags).map(t=>`<span class="drug-tag">${t}</span>`).join('')}</div></div>` : ''}
-      ${drug.pearl ? `<div class="pearl-box"><span class="pearl-star">✦</span><div class="pearl-text"><strong>Step 1 Pearl:</strong> ${formatLines(drug.pearl)}</div></div>` : ''}
-    </div>
-  </div>`;
-}
-
+// ── Format Helper ──────────────────────────────────────────
 function formatLines(text) {
   if (!text) return '';
   try {
     let processed = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     let parts = [];
-    const sentenceSplit = processed.split(/\.\s+(?=(?:<[^>]+>)*[A-Z↑↓(0-9])/);
+    // FIX: negative lookbehind prevents splitting on abbreviations like "S. aureus"
+    const sentenceSplit = processed.split(/(?<![A-Z])\.\s+(?=(?:<[^>]+>)*[A-Z↑↓(0-9])/);
 
     sentenceSplit.forEach(segment => {
       const midSplit = segment.split(/(?<=\w)\.\s+(?=(?:<[^>]+>)*[A-Z][a-zA-Z/\-]+(?:<\/[^>]+>)?:)/);
@@ -281,7 +234,71 @@ function formatLines(text) {
   }
 }
 
-// Systematic color offset per system for visual variety
+// ── Card Sub-renderers ─────────────────────────────────────
+function renderTagsRow(drug) {
+  if (!drug.tags || !drug.tags.length) return '';
+  const tagsHTML = drug.tags.map(t => `<span class="drug-tag">${t}</span>`).join('');
+  return `<div class="info-row tags-row"><div class="drug-tags-row">${tagsHTML}</div></div>`;
+}
+
+function renderInfoRows(drug) {
+  const rows = [
+    { label: 'Mechanism',    value: drug.moa  },
+    { label: 'Uses',         value: drug.use  },
+    { label: 'Side Effects', value: drug.se   },
+    { label: 'Contra',       value: drug.ci   },
+    { label: 'PK',           value: drug.pk   },
+  ];
+  return rows
+    .filter(r => r.value)
+    .map(r => `
+      <div class="info-row">
+        <span class="info-label">${r.label}</span>
+        <div class="info-text">${formatLines(r.value)}</div>
+      </div>`)
+    .join('');
+}
+
+function renderPearlBox(drug) {
+  if (!drug.pearl) return '';
+  return `
+    <div class="pearl-box">
+      <span class="pearl-star">✦</span>
+      <div class="pearl-text"><strong>Step 1 Pearl:</strong> ${formatLines(drug.pearl)}</div>
+    </div>`;
+}
+
+// ── Card HTML ──────────────────────────────────────────────
+function drugCardHTML(drug, id, themeNum) {
+  if (!drug) return '';
+  const themeColor = `var(--theme-${themeNum})`;
+  const themeLight = `color-mix(in srgb, ${themeColor} 12%, transparent)`;
+  const styleAttr  = `style="--theme-color:${themeColor};--theme-color-light:${themeLight};"`;
+
+  const akaHTML = drug.aka
+    ? drug.aka.replace(/·/g, '<span class="aka-dot">·</span>')
+    : '';
+
+  return `
+  <div class="drug-card" id="${id}" ${styleAttr}>
+    <div class="drug-card-header">
+      <div class="drug-card-meta">
+        <div class="drug-name">${drug.name || 'Unknown'}</div>
+        ${akaHTML ? `<div class="drug-aka">${akaHTML}</div>` : ''}
+      </div>
+      <span class="expand-arrow">▼</span>
+    </div>
+    ${drug.summary ? `<div class="drug-summary">${drug.summary}</div>` : ''}
+    <div class="drug-body">
+      ${renderTagsRow(drug)}
+      ${renderInfoRows(drug)}
+      ${renderPearlBox(drug)}
+    </div>
+  </div>`;
+}
+
+// ── Render Engine ──────────────────────────────────────────
+// Theme color rotation offsets — each system starts on a distinct palette group
 const sysOffsets = {
   autonomic: 0, cv: 2, blood: 4, neuro: 6, micro: 8,
   gi: 10, endo: 12, pulm: 14, onco: 16, toxicology: 18
@@ -313,7 +330,7 @@ function renderSection(sectionId, sysKey) {
       <div class="class-group" id="${groupId}" style="--theme-color:${themeColor};--theme-color-light:${themeLight};">
         <div class="class-group-header">
           <span class="class-label">${group.group}</span>
-          <button class="group-expand-btn" onclick="toggleGroup('${groupId}', this)">▼ Expand</button>
+          <button class="group-expand-btn" data-group="${groupId}">▼ Expand</button>
         </div>
         <div class="drug-grid">
           ${sortedDrugs.map(d => drugCardHTML(d, `drug-${globalIdx++}`, themeNum)).join('')}
@@ -322,11 +339,38 @@ function renderSection(sectionId, sysKey) {
     });
 
     container.innerHTML = html;
+    attachCardListeners(container);
+    attachGroupListeners(container);
   } catch (err) {
     console.error(`renderSection(${sectionId}) error:`, err);
   }
 }
 
+// ── Event Listener Attachment ──────────────────────────────
+function attachCardListeners(container) {
+  container.querySelectorAll('.drug-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (window.getSelection().toString().length > 0) return;
+      card.classList.toggle('open');
+    });
+  });
+}
+
+function attachGroupListeners(container) {
+  container.querySelectorAll('.group-expand-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const group   = document.getElementById(btn.dataset.group);
+      if (!group) return;
+      const cards   = group.querySelectorAll('.drug-card');
+      const anyOpen = [...cards].some(c => c.classList.contains('open'));
+      cards.forEach(c => c.classList.toggle('open', !anyOpen));
+      btn.textContent = anyOpen ? '▼ Expand' : '▲ Collapse';
+    });
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────
 const sysMap = {
   'autonomic-content':  'autonomic',
   'cv-content':         'cv',
@@ -346,32 +390,18 @@ if (typeof DRUGS !== 'undefined') {
   console.error('drug_data.js failed to load — DRUGS is undefined.');
 }
 
-// ── UI Interactions ────────────────────────────────────────
-function toggleCard(id) {
-  if (window.getSelection().toString().length > 0) return;
-  const card = document.getElementById(id);
-  if (card) card.classList.toggle('open');
-}
-
-function toggleGroup(groupId, btn) {
-  const group = document.getElementById(groupId);
-  if (!group) return;
-  const cards  = group.querySelectorAll('.drug-card');
-  const anyOpen = [...cards].some(c => c.classList.contains('open'));
-  cards.forEach(c => c.classList.toggle('open', !anyOpen));
-  btn.textContent = anyOpen ? '▼ Expand' : '▲ Collapse';
-}
-
-function switchTab(name, btn) {
+// ── Tab switching ──────────────────────────────────────────
+function switchTab(name) {
   document.querySelectorAll('.group-expand-btn').forEach(b => b.textContent = '▼ Expand');
   document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.style.display = ''; });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   const target = document.getElementById('tab-' + name);
+  const tabBtn = document.querySelector(`.tab-btn--df-${name}`);
   if (target) target.classList.add('active');
-  if (btn)    btn.classList.add('active');
-  const searchInput = document.getElementById('search-input');
+  if (tabBtn) tabBtn.classList.add('active');
+  const searchInput   = document.getElementById('search-input');
   const searchResults = document.getElementById('search-results');
-  const tabs = document.getElementById('tabs');
+  const tabs          = document.getElementById('tabs');
   if (searchInput)   searchInput.value = '';
   if (searchResults) searchResults.classList.remove('active');
   if (tabs) { tabs.style.opacity = '1'; tabs.style.pointerEvents = ''; }
@@ -390,11 +420,11 @@ function allDrugs() {
 }
 
 function handleSearch(q) {
-  const sr     = document.getElementById('search-results');
-  const grid   = document.getElementById('search-grid');
-  const empty  = document.getElementById('search-empty');
-  const count  = document.getElementById('search-count');
-  const tabs   = document.getElementById('tabs');
+  const sr    = document.getElementById('search-results');
+  const grid  = document.getElementById('search-grid');
+  const empty = document.getElementById('search-empty');
+  const count = document.getElementById('search-count');
+  const tabs  = document.getElementById('tabs');
   if (!sr || !grid || !empty || !count || !tabs) return;
 
   if (!q || q.length < 2) {
@@ -410,7 +440,7 @@ function handleSearch(q) {
   tabs.style.opacity = '0.4';
   tabs.style.pointerEvents = 'none';
 
-  const ql = q.toLowerCase();
+  const ql      = q.toLowerCase();
   const matches = allDrugs().filter(d =>
     (d.name  && d.name.toLowerCase().includes(ql))  ||
     (d.aka   && d.aka.toLowerCase().includes(ql))   ||
@@ -422,41 +452,59 @@ function handleSearch(q) {
   );
 
   if (matches.length === 0) {
-    grid.innerHTML = '';
+    grid.innerHTML      = '';
     empty.style.display = 'block';
-    count.textContent = `No results for "${q}"`;
+    count.textContent   = `No results for "${q}"`;
     return;
   }
 
   empty.style.display = 'none';
-  count.textContent = `${matches.length} result${matches.length !== 1 ? 's' : ''} for "${q}"`;
-  grid.innerHTML = matches.map((d, i) => drugCardHTML(d, `search-${i}`, (i % 20) + 1)).join('');
+  count.textContent   = `${matches.length} result${matches.length !== 1 ? 's' : ''} for "${q}"`;
+  grid.innerHTML      = matches.map((d, i) => drugCardHTML(d, `search-${i}`, (i % 20) + 1)).join('');
+  attachCardListeners(grid);
 }
 
 function clearSearch() {
   const input = document.getElementById('search-input');
   if (input) { input.value = ''; handleSearch(''); }
 }
+
+// ── DOM-ready ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Auth state
+  window.addEventListener('appAuthStateChanged', (e) => {
+    const btn = document.getElementById('auth-btn');
+    if (!btn) return;
+    btn.textContent = e.detail.user ? 'Log out' : 'Log in';
+    btn.classList.toggle('is-logged-in', !!e.detail.user);
+  });
+
+  document.getElementById('auth-btn').addEventListener('click', () => {
+    if (!auth) return;
+    if (auth.currentUser) auth.signOut();
+    else auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(console.error);
+  });
+
+  // Tab buttons — derive tab name from modifier class
+  document.querySelectorAll('.tab-btn[class*="tab-btn--df-"]').forEach(btn => {
+    const name = [...btn.classList]
+      .find(c => c.startsWith('tab-btn--df-'))
+      ?.replace('tab-btn--df-', '');
+    if (name) btn.addEventListener('click', () => switchTab(name));
+  });
+
+  // Search
+  document.getElementById('search-input')
+    .addEventListener('input', (e) => handleSearch(e.target.value));
+  document.getElementById('search-clear')
+    .addEventListener('click', clearSearch);
+});
 </script>
 
 <style>
-  /* ── Drugfacts-specific extras ───────────────────── */
-  .global-nav-brand {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--sakura2);
-  }
-
-  .drug-card-meta {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .drug-tags-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
+  /* ── Drugfacts-only overrides ────────────────────────
+     Shared styles live in style.css.                   */
 
   .aka-dot {
     color: var(--dim);
@@ -464,10 +512,20 @@ function clearSearch() {
     margin: 0 3px;
   }
 
-  /* Subtle oncology pearl highlight */
-  #tab-onco .sys-intro-text strong {
-    color: var(--sakura2);
-  }
+  /* Tab color modifiers for drugfacts tabs */
+  .tab-btn--df-micro      { --theme-color: var(--theme-8);  }
+  .tab-btn--df-autonomic  { --theme-color: var(--theme-1);  }
+  .tab-btn--df-cv         { --theme-color: var(--theme-11); }
+  .tab-btn--df-blood      { --theme-color: var(--theme-16); }
+  .tab-btn--df-gi         { --theme-color: var(--theme-5);  }
+  .tab-btn--df-endo       { --theme-color: var(--theme-13); }
+  .tab-btn--df-neuro      { --theme-color: var(--theme-19); }
+  .tab-btn--df-onco       { --theme-color: var(--theme-9);  }
+  .tab-btn--df-toxicology { --theme-color: var(--theme-3);  }
+  .tab-btn--df-pulm       { --theme-color: var(--theme-7);  }
+
+  /* Oncology pearl highlight */
+  #tab-onco .sys-intro-text strong { color: var(--sakura2); }
 </style>
 
 </body>
