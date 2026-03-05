@@ -10,6 +10,274 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <title>UWorld Tracker · Step 1</title>
+<style>
+/* ── Page shell ── */
+.uw-wrap { max-width: 860px; margin: 0 auto; padding: 28px 24px 80px; }
+
+/* ── Auth banner ── */
+.uw-auth-banner {
+  background: #fdf6e8; border: 1px solid #e8d08a; border-radius: 10px;
+  padding: 11px 16px; font-size: 12.5px; color: #7a6020;
+  margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
+}
+.uw-auth-banner a { color: #7a6020; font-weight: 600; }
+.uw-auth-banner.hidden { display: none; }
+
+/* ── Page header ── */
+.uw-back { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--muted); text-decoration:none;
+  display:inline-flex; align-items:center; gap:6px; margin-bottom:20px; }
+.uw-back:hover { color:var(--ink2); }
+.uw-eyebrow { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--sakura2); margin-bottom:6px;
+  display:flex; align-items:center; gap:8px; }
+.uw-page-title { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,52px);
+  font-weight:300; color:var(--ink); line-height:1.05; margin:0 0 28px; }
+.uw-page-title em { font-style:italic; color:var(--sakura2); font-weight:400; }
+
+/* ── Log card ── */
+.log-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 22px; margin-bottom: 20px;
+}
+.log-tabs { display:flex; gap:0; margin-bottom:18px; border-bottom:1px solid var(--border); }
+.log-tab {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--muted); background:none; border:none;
+  padding:8px 14px 10px; cursor:pointer; position:relative; transition:color .15s;
+}
+.log-tab.active { color:var(--ink2); }
+.log-tab.active::after {
+  content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px;
+  background:var(--sakura2); border-radius:2px 2px 0 0;
+}
+.log-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
+.log-field { display:flex; flex-direction:column; gap:5px; }
+.log-field label { font-family:'DM Mono',monospace; font-size:8px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.log-field input, .log-field select {
+  background:var(--bg); border:1px solid var(--border2);
+  border-radius:8px; padding:9px 12px; font-family:'Jost',sans-serif;
+  font-size:13px; color:var(--ink); outline:none; transition:border-color .15s;
+}
+.log-field input:focus, .log-field select:focus { border-color:var(--sakura); }
+.log-field input[type=date] { width:148px; }
+.log-field input[type=number] { width:100px; }
+.log-field select { min-width:180px; }
+.log-btn {
+  background:var(--fuji); color:#fff; border:none; border-radius:8px;
+  padding:10px 22px; font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;
+  transition:opacity .15s; white-space:nowrap; align-self:flex-end;
+}
+.log-btn:hover { opacity:.85; }
+
+/* ── Progress strip ── */
+.prog-strip {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:18px 22px; margin-bottom:20px;
+  display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0;
+}
+.prog-stat { text-align:center; padding:4px 8px; }
+.prog-stat + .prog-stat { border-left:1px solid var(--border); }
+.prog-stat-num {
+  font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600;
+  color:var(--fuji); line-height:1; margin-bottom:3px;
+}
+.prog-stat-num.ok    { color: #4a8c6a; }
+.prog-stat-num.warn  { color: #b87a2a; }
+.prog-stat-num.alert { color: #b84040; }
+.prog-stat-lbl { font-family:'DM Mono',monospace; font-size:8px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+
+/* ── Progress bar ── */
+.prog-bar-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:16px 22px; margin-bottom:20px;
+}
+.prog-bar-head { display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:10px; }
+.prog-bar-title { font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.prog-bar-pct { font-family:'Cormorant Garamond',serif; font-size:20px;
+  font-weight:600; color:var(--fuji); }
+.prog-bar-bg { height:7px; background:var(--border); border-radius:99px; overflow:hidden; }
+.prog-bar-fill { height:100%; background:linear-gradient(90deg,var(--fuji),var(--sakura2));
+  border-radius:99px; transition:width .5s ease; }
+.prog-bar-sub { display:flex; justify-content:space-between; margin-top:7px;
+  font-size:11.5px; color:var(--muted); }
+.pace-row { display:flex; align-items:center; gap:8px; margin-top:10px;
+  padding-top:10px; border-top:1px solid var(--border); font-size:12.5px; color:var(--ink2); }
+.pace-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.pace-dot.ok    { background:#4a8c6a; }
+.pace-dot.warn  { background:#b87a2a; }
+.pace-dot.behind { background:#b84040; }
+
+/* ── Charts section ── */
+.charts-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:20px 22px; margin-bottom:20px;
+}
+.charts-head { display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+.charts-title { font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.view-tabs { display:flex; gap:2px; background:var(--bg);
+  border:1px solid var(--border); border-radius:8px; padding:3px; }
+.view-tab { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1px;
+  text-transform:uppercase; color:var(--muted); background:none; border:none;
+  padding:5px 12px; border-radius:6px; cursor:pointer; transition:all .15s; }
+.view-tab.active { background:var(--fuji); color:#fff; }
+.chart-label { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:8px; }
+.chart-canvas-wrap { position:relative; height:190px;
+  border-radius:10px; padding:12px; background:var(--bg); margin-bottom:18px; }
+.chart-canvas-wrap:last-child { margin-bottom:0; }
+.charts-empty { text-align:center; padding:40px 20px;
+  font-family:'Cormorant Garamond',serif; font-size:18px; font-style:italic;
+  color:var(--dim); }
+.import-link { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); background:none; border:none;
+  cursor:pointer; text-decoration:underline; text-underline-offset:3px;
+  padding:0; transition:color .15s; }
+.import-link:hover { color:var(--muted); }
+
+/* ── History table ── */
+.history-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:20px 22px; margin-bottom:20px;
+}
+.history-head { display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:14px; }
+.history-title { font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.uw-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+.uw-table th { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1px;
+  text-transform:uppercase; color:var(--dim); padding:6px 10px 10px;
+  text-align:left; border-bottom:1px solid var(--border); }
+.uw-table td { padding:9px 10px; border-bottom:1px solid var(--border);
+  color:var(--ink2); vertical-align:middle; }
+.uw-table tr:last-child td { border-bottom:none; }
+.uw-table tr:hover td { background:var(--bg); }
+.uw-badge { display:inline-block; padding:2px 8px; border-radius:99px;
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.5px;
+  border:1px solid transparent; }
+.uw-badge.qs   { background:rgba(61,46,110,.08); color:var(--fuji2); border-color:rgba(61,46,110,.15); }
+.uw-badge.good { background:rgba(74,140,106,.1);  color:#2e6b50; border-color:rgba(74,140,106,.25); }
+.uw-badge.warn { background:rgba(184,122,42,.1);  color:#7a4e10; border-color:rgba(184,122,42,.25); }
+.uw-badge.bad  { background:rgba(184,64,64,.1);   color:#7a2020; border-color:rgba(184,64,64,.25); }
+.uw-badge.csv  { background:rgba(61,46,110,.06);  color:var(--fuji2); border-color:rgba(61,46,110,.12); font-size:8px; }
+.uw-badge.pred { background:rgba(212,96,122,.1);  color:var(--sakura2); border-color:rgba(212,96,122,.2); }
+.del-btn { background:none; border:none; color:var(--dim); cursor:pointer;
+  font-size:11px; padding:3px 6px; border-radius:4px; transition:all .15s; }
+.del-btn:hover { background:rgba(184,64,64,.1); color:#b84040; }
+.uw-empty { text-align:center; padding:28px; font-family:'Cormorant Garamond',serif;
+  font-size:16px; font-style:italic; color:var(--dim); }
+
+/* ── Setup (collapsible) ── */
+.setup-toggle {
+  display:flex; align-items:center; gap:8px; background:none; border:none;
+  cursor:pointer; font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--dim);
+  padding:0; margin-bottom:16px; transition:color .15s;
+}
+.setup-toggle:hover { color:var(--muted); }
+.setup-toggle svg { transition:transform .2s; }
+.setup-toggle.open svg { transform:rotate(180deg); }
+.setup-panel {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:20px 22px; margin-bottom:20px;
+  display:none;
+}
+.setup-panel.open { display:block; }
+.setup-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.setup-field { display:flex; flex-direction:column; gap:5px; }
+.setup-field label { font-family:'DM Mono',monospace; font-size:8px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.setup-field input { background:var(--bg); border:1px solid var(--border2);
+  border-radius:8px; padding:9px 12px; font-family:'Jost',sans-serif;
+  font-size:13px; color:var(--ink); outline:none; width:100%;
+  box-sizing:border-box; transition:border-color .15s; }
+.setup-field input:focus { border-color:var(--sakura); }
+.day-chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+.day-chip { font-family:'DM Mono',monospace; font-size:8.5px; letter-spacing:1px;
+  padding:6px 12px; border-radius:99px; border:1px solid var(--border2);
+  cursor:pointer; background:var(--bg); color:var(--muted); transition:all .15s; }
+.day-chip.active { background:var(--fuji); color:#fff; border-color:var(--fuji); }
+.save-btn { background:var(--fuji); color:#fff; border:none; border-radius:8px;
+  padding:10px 22px; font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;
+  margin-top:16px; transition:opacity .15s; }
+.save-btn:hover { opacity:.85; }
+
+/* ── Import modal ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(26,20,40,.5);
+  display:flex; align-items:center; justify-content:center;
+  z-index:1000; padding:20px; opacity:0; pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:28px; width:100%; max-width:520px;
+  max-height:85vh; overflow-y:auto;
+  transform:translateY(12px); transition:transform .2s;
+}
+.modal-overlay.open .modal { transform:translateY(0); }
+.modal-title { font-family:'Cormorant Garamond',serif; font-size:22px;
+  font-weight:600; color:var(--ink); margin:0 0 4px; }
+.modal-sub { font-size:12.5px; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+.modal-close { float:right; background:none; border:none; cursor:pointer;
+  color:var(--dim); font-size:18px; line-height:1; padding:0; margin-left:12px; }
+.modal-close:hover { color:var(--ink2); }
+.drop-zone {
+  border:2px dashed var(--border2); border-radius:10px;
+  padding:28px 20px; text-align:center; cursor:pointer;
+  transition:border-color .18s, background .18s; margin-bottom:16px;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color:var(--sakura); background:rgba(236,180,195,.06);
+}
+.drop-zone-icon { font-size:24px; margin-bottom:6px; }
+.drop-zone-text { font-size:13px; color:var(--ink2); font-weight:500; }
+.drop-zone-sub { font-size:11px; color:var(--dim); margin-top:4px; }
+.mapper-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px; }
+.map-row { display:flex; flex-direction:column; gap:5px; }
+.map-label { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1px;
+  text-transform:uppercase; color:var(--muted); }
+.map-select { background:var(--bg); border:1px solid var(--border2);
+  border-radius:7px; padding:8px 10px; font-family:'Jost',sans-serif;
+  font-size:12px; color:var(--ink); outline:none; width:100%; }
+.map-select:focus { border-color:var(--sakura); }
+.modal-actions { display:flex; gap:10px; margin-top:16px; }
+.modal-btn-primary { background:var(--fuji); color:#fff; border:none; border-radius:8px;
+  padding:10px 20px; font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:opacity .15s; }
+.modal-btn-primary:hover { opacity:.85; }
+.modal-btn-ghost { background:none; border:1px solid var(--border2); color:var(--muted);
+  border-radius:8px; padding:10px 16px; font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all .15s; }
+.modal-btn-ghost:hover { border-color:var(--muted); color:var(--ink2); }
+.file-info { font-size:11.5px; color:var(--dim); margin-bottom:12px; }
+
+/* ── Toast ── */
+.uw-toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(12px);
+  background:rgba(26,20,40,.9); color:#fff; padding:10px 20px; border-radius:99px;
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px;
+  pointer-events:none; opacity:0; transition:all .25s; z-index:2000; white-space:nowrap;
+}
+.uw-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+@media (max-width:640px) {
+  .prog-strip { grid-template-columns:1fr 1fr; }
+  .prog-stat:nth-child(3) { border-left:none; border-top:1px solid var(--border); }
+  .setup-grid { grid-template-columns:1fr; }
+  .mapper-grid { grid-template-columns:1fr; }
+  .log-field input[type=date] { width:130px; }
+}
+</style>
 </head>
 <body>
 
@@ -21,126 +289,89 @@
 
 <div class="uw-wrap">
 
-  <a class="back-nav" href="index.html">← Back to Study Hub</a>
+  <a class="uw-back" href="index.html">← Back to Study Hub</a>
 
   <div class="uw-eyebrow">📝 Question Bank</div>
   <h1 class="uw-page-title">UWorld <em>Tracker</em></h1>
 
-  <div class="uw-auth-banner" id="auth-banner">
+  <div class="uw-auth-banner hidden" id="auth-banner">
     ⚠️ Not logged in — data saves to this device only.
     <a href="index.html">Log in on the hub</a> to sync across devices.
   </div>
 
-  <!-- SETUP -->
-  <div class="sec-label">⚙️ &nbsp;Setup &amp; Preferences</div>
-  <div class="card" style="margin-bottom:18px;">
-    <div class="uw-setup-grid">
-      <div class="uw-field">
+  <!-- SETTINGS TOGGLE -->
+  <button class="setup-toggle" id="setup-toggle" onclick="toggleSetup()">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Settings
+  </button>
+  <div class="setup-panel" id="setup-panel">
+    <div class="setup-grid">
+      <div class="setup-field">
         <label>Questions Already Completed</label>
         <input type="number" id="setup-done" min="0" max="3661" placeholder="e.g. 800"/>
       </div>
-      <div class="uw-field">
+      <div class="setup-field">
         <label>Total QBank Size</label>
         <input type="number" id="setup-total" value="3661" min="1"/>
       </div>
-      <div class="uw-field">
+      <div class="setup-field">
         <label>Daily Goal (questions / day)</label>
         <input type="number" id="setup-daily" min="1" max="120" placeholder="e.g. 40"/>
       </div>
-      <div class="uw-field">
+      <div class="setup-field">
         <label>Finish QBank By</label>
         <input type="date" id="setup-finish"/>
       </div>
     </div>
-    <div class="uw-field" style="margin-top:16px;">
+    <div class="setup-field">
       <label>Study Days Per Week</label>
-      <div class="uw-day-chips" id="day-chips">
-        <div class="uw-day-chip active" data-day="0">Sun</div>
-        <div class="uw-day-chip active" data-day="1">Mon</div>
-        <div class="uw-day-chip active" data-day="2">Tue</div>
-        <div class="uw-day-chip active" data-day="3">Wed</div>
-        <div class="uw-day-chip active" data-day="4">Thu</div>
-        <div class="uw-day-chip active" data-day="5">Fri</div>
-        <div class="uw-day-chip" data-day="6">Sat</div>
+      <div class="day-chips" id="day-chips">
+        <div class="day-chip active" data-day="0">Sun</div>
+        <div class="day-chip active" data-day="1">Mon</div>
+        <div class="day-chip active" data-day="2">Tue</div>
+        <div class="day-chip active" data-day="3">Wed</div>
+        <div class="day-chip active" data-day="4">Thu</div>
+        <div class="day-chip active" data-day="5">Fri</div>
+        <div class="day-chip" data-day="6">Sat</div>
       </div>
     </div>
-    <button class="uw-save-btn" onclick="saveSetup()">Save Settings ✦</button>
-  </div>
-
-  <!-- STATS -->
-  <div class="sec-label">📊 &nbsp;Current Progress</div>
-  <div class="uw-stats-grid">
-    <div class="uw-stat-box">
-      <div class="uw-stat-num" id="stat-done">—</div>
-      <div class="uw-stat-lbl">Done</div>
-    </div>
-    <div class="uw-stat-box">
-      <div class="uw-stat-num" id="stat-remain">—</div>
-      <div class="uw-stat-lbl">Remaining</div>
-    </div>
-    <div class="uw-stat-box">
-      <div class="uw-stat-num" id="stat-pct">—</div>
-      <div class="uw-stat-lbl">Complete</div>
-    </div>
-    <div class="uw-stat-box">
-      <div class="uw-stat-num" id="stat-needed">—</div>
-      <div class="uw-stat-lbl">Needed / Day</div>
-    </div>
-  </div>
-
-  <div class="uw-prog-card" style="margin-top:13px;">
-    <div class="uw-prog-head">
-      <span class="uw-prog-title">QBank Completion</span>
-      <span class="uw-prog-pct" id="prog-pct">0%</span>
-    </div>
-    <div class="uw-bar-bg">
-      <div class="uw-bar-fill" id="prog-fill" style="width:0%"></div>
-    </div>
-    <div class="uw-prog-sub">
-      <span id="prog-sub-left"></span>
-      <span id="prog-sub-right"></span>
-    </div>
-    <div class="uw-pace" id="pace-row" style="display:none;">
-      <div class="uw-pace-dot" id="pace-dot"></div>
-      <div class="uw-pace-text" id="pace-text"></div>
-    </div>
+    <button class="save-btn" onclick="saveSetup()">Save Settings ✦</button>
   </div>
 
   <!-- LOG TODAY -->
-  <div class="sec-label" style="margin-top:32px;">✏️ &nbsp;Log Today</div>
-  <div class="uw-log-card">
-    <div class="uw-mode-toggle">
-      <button class="uw-mode-btn active" id="mode-qs"   onclick="setMode('questions')">Log Questions</button>
-      <button class="uw-mode-btn"        id="mode-exam" onclick="setMode('exam')">Log Practice Exam</button>
+  <div class="log-card">
+    <div class="log-tabs">
+      <button class="log-tab active" id="mode-qs" onclick="setMode('questions')">Log Questions</button>
+      <button class="log-tab" id="mode-exam" onclick="setMode('exam')">Log Practice Exam</button>
     </div>
-
     <div id="log-questions-panel">
-      <div class="uw-log-row">
-        <div class="uw-input-grp">
+      <div class="log-row">
+        <div class="log-field">
           <label>Date</label>
-          <input type="date" id="log-date" style="width:150px;"/>
+          <input type="date" id="log-date"/>
         </div>
-        <div class="uw-input-grp">
+        <div class="log-field">
           <label>Questions Done</label>
-          <input type="number" id="log-qs" min="1" max="120" placeholder="e.g. 40" style="width:130px;"/>
+          <input type="number" id="log-qs" min="1" max="120" placeholder="e.g. 40"/>
         </div>
-        <div class="uw-input-grp">
+        <div class="log-field">
           <label>% Correct</label>
-          <input type="number" id="log-score" min="0" max="100" placeholder="optional" style="width:110px;"/>
+          <input type="number" id="log-score" min="0" max="100" placeholder="optional"/>
         </div>
-        <button class="uw-log-btn primary" onclick="logEntry()">Log ✦</button>
+        <button class="log-btn" onclick="logEntry()">Log ✦</button>
       </div>
     </div>
-
     <div id="log-exam-panel" style="display:none;">
-      <div class="uw-log-row">
-        <div class="uw-input-grp">
+      <div class="log-row">
+        <div class="log-field">
           <label>Date</label>
-          <input type="date" id="exam-date" style="width:150px;"/>
+          <input type="date" id="exam-date"/>
         </div>
-        <div class="uw-input-grp" style="flex:2;min-width:160px;">
+        <div class="log-field" style="flex:2;">
           <label>Exam Name</label>
-          <select id="exam-name" style="min-width:180px;">
+          <select id="exam-name">
             <option value="">Select exam…</option>
             <option>NBME 18</option><option>NBME 19</option><option>NBME 20</option>
             <option>NBME 21</option><option>NBME 25</option><option>NBME 26</option>
@@ -148,110 +379,143 @@
             <option>Free 120</option>
             <option>UWorld Self-Assessment 1</option>
             <option>UWorld Self-Assessment 2</option>
-            <option>Amboss SA</option>
-            <option>Other</option>
+            <option>Amboss SA</option><option>Other</option>
           </select>
         </div>
-        <div class="uw-input-grp">
+        <div class="log-field">
           <label>% Correct</label>
-          <input type="number" id="exam-pct" min="0" max="100" placeholder="e.g. 72" style="width:110px;"/>
+          <input type="number" id="exam-pct" min="0" max="100" placeholder="e.g. 72"/>
         </div>
-        <div class="uw-input-grp">
+        <div class="log-field">
           <label>3-Digit Score</label>
-          <input type="number" id="exam-3digit" min="140" max="300" placeholder="optional" style="width:130px;"/>
+          <input type="number" id="exam-3digit" min="140" max="300" placeholder="optional"/>
         </div>
-        <button class="uw-log-btn primary" onclick="logExam()">Log ✦</button>
+        <button class="log-btn" onclick="logExam()">Log ✦</button>
       </div>
     </div>
   </div>
 
-  <!-- QUESTION LOG -->
-  <div class="sec-label" style="margin-top:32px;">📅 &nbsp;Question Log</div>
-  <div class="uw-table-card">
-    <div class="uw-card-title">Daily UWorld Log</div>
+  <!-- PROGRESS STRIP -->
+  <div class="prog-strip">
+    <div class="prog-stat">
+      <div class="prog-stat-num" id="stat-done">—</div>
+      <div class="prog-stat-lbl">Done</div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-num" id="stat-remain">—</div>
+      <div class="prog-stat-lbl">Remaining</div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-num" id="stat-pct">—</div>
+      <div class="prog-stat-lbl">Complete</div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-num" id="stat-needed">—</div>
+      <div class="prog-stat-lbl">Needed / Day</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog-bar-wrap">
+    <div class="prog-bar-head">
+      <span class="prog-bar-title">QBank Completion</span>
+      <span class="prog-bar-pct" id="prog-pct">0%</span>
+    </div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+    <div class="prog-bar-sub">
+      <span id="prog-sub-left"></span>
+      <span id="prog-sub-right"></span>
+    </div>
+    <div class="pace-row" id="pace-row" style="display:none;">
+      <div class="pace-dot" id="pace-dot"></div>
+      <div id="pace-text"></div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-wrap">
+    <div class="charts-head">
+      <span class="charts-title">Activity Charts</span>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button class="import-link" onclick="openImportModal()">↑ Import past data</button>
+        <div class="view-tabs" id="chart-view-toggle">
+          <button class="view-tab active" data-view="daily"   onclick="setChartView('daily')">Daily</button>
+          <button class="view-tab"        data-view="weekly"  onclick="setChartView('weekly')">Weekly</button>
+          <button class="view-tab"        data-view="monthly" onclick="setChartView('monthly')">Monthly</button>
+        </div>
+      </div>
+    </div>
+    <div id="charts-body">
+      <div class="charts-empty">Log your first session to start tracking 🌸</div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-wrap">
+    <div class="history-head">
+      <span class="history-title">Session Log</span>
+    </div>
     <div id="history-container">
-      <div class="uw-empty">No entries yet — log your first session above 🌸</div>
+      <div class="uw-empty">No entries yet 🌸</div>
     </div>
   </div>
 
   <!-- PRACTICE EXAMS -->
-  <div class="sec-label" style="margin-top:32px;">🎯 &nbsp;Practice Exams</div>
-  <div class="uw-table-card">
-    <div class="uw-card-title">Practice Exam Scores</div>
+  <div class="history-wrap">
+    <div class="history-head">
+      <span class="history-title">Practice Exams</span>
+    </div>
     <div id="exam-container">
       <div class="uw-empty">No practice exams logged yet 🌸</div>
     </div>
   </div>
 
-  <!-- HISTORY CHARTS -->
-  <div class="sec-label" style="margin-top:32px;">📈 &nbsp;Progress Charts</div>
-  <div class="uw-table-card" id="chart-section">
+</div><!-- /.uw-wrap -->
 
-    <div id="csv-upload-area">
-      <div class="uw-card-title">Import Past Data</div>
-      <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:18px;">
-        Upload a CSV of your past UWorld sessions to visualize your history.
-        Your file needs at least a <strong>date</strong> column and a <strong>questions</strong> column.
-        A <strong>score/percent</strong> column is optional but recommended.
-      </p>
-      <div class="csv-drop-zone" id="drop-zone" onclick="document.getElementById('csv-file-input').click()">
-        <div style="font-size:28px;margin-bottom:8px;">📂</div>
-        <div style="font-size:13.5px;color:var(--ink2);font-weight:500;">Drop your CSV here or <span style="color:var(--sakura2);">click to browse</span></div>
-        <div style="font-size:11.5px;color:var(--dim);margin-top:5px;">Supports UWorld exports, custom spreadsheets, any CSV format</div>
-        <input type="file" id="csv-file-input" accept=".csv,.txt" style="display:none"/>
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="import-modal" onclick="handleModalClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeImportModal()">✕</button>
+    <div class="modal-title">Import Past Data</div>
+    <p class="modal-sub">Upload a CSV to load your history. Needs a <strong>date</strong> and <strong>questions</strong> column — score is optional. Maps to your log automatically.</p>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file-input').click()">
+      <div class="drop-zone-icon">📂</div>
+      <div class="drop-zone-text">Drop CSV here or <span style="color:var(--sakura2);">click to browse</span></div>
+      <div class="drop-zone-sub">UWorld exports, spreadsheets, any CSV</div>
+      <input type="file" id="csv-file-input" accept=".csv,.txt" style="display:none"/>
+    </div>
+    <div id="col-mapper" style="display:none;">
+      <div class="file-info" id="csv-file-info"></div>
+      <div class="mapper-grid" id="col-mapper-grid"></div>
+      <div id="csv-preview"></div>
+      <div class="modal-actions">
+        <button class="modal-btn-primary" onclick="importCSV()">Import ✦</button>
+        <button class="modal-btn-ghost" onclick="resetImport()">Clear</button>
       </div>
-      <div id="col-mapper" style="display:none;margin-top:22px;">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Map Your Columns</div>
-        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;" id="csv-file-info"></div>
-        <div class="csv-mapper-grid" id="col-mapper-grid"></div>
-        <div id="csv-preview" style="margin-top:16px;"></div>
-        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
-          <button class="uw-save-btn" onclick="importCSV()">Import &amp; Build Charts ✦</button>
-          <button class="uw-log-btn secondary" onclick="resetUpload()">Reset</button>
+    </div>
+    <div id="import-success" style="display:none;">
+      <div style="text-align:center;padding:16px 0;">
+        <div style="font-size:28px;margin-bottom:8px;">✦</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink);margin-bottom:4px;" id="import-success-msg"></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Your stats, progress, and charts have been updated.</div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="modal-btn-primary" onclick="closeImportModal()">Done</button>
+          <button class="modal-btn-ghost" onclick="resetImport()">Re-import</button>
         </div>
       </div>
     </div>
-
-    <div id="chart-display" style="display:none;">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
-        <div class="uw-card-title" style="margin-bottom:0;">Activity Charts</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <div class="uw-mode-toggle" style="margin-bottom:0;" id="chart-view-toggle">
-            <button class="uw-mode-btn active" data-view="daily"   onclick="setChartView('daily')">Daily</button>
-            <button class="uw-mode-btn"        data-view="weekly"  onclick="setChartView('weekly')">Weekly</button>
-            <button class="uw-mode-btn"        data-view="monthly" onclick="setChartView('monthly')">Monthly</button>
-          </div>
-          <button class="uw-log-btn secondary" onclick="resetUpload()" style="padding:7px 12px;font-size:9px;">Re-upload</button>
-        </div>
-      </div>
-      <div class="csv-summary-row" id="csv-summary"></div>
-      <div class="chart-block">
-        <div class="chart-label">Questions Completed <span class="chart-tag" id="qs-tag"></span></div>
-        <div class="chart-canvas-wrap"><canvas id="chart-qs"></canvas></div>
-      </div>
-      <div class="chart-block" id="score-chart-block" style="display:none;">
-        <div class="chart-label">Average % Correct <span class="chart-tag" id="sc-tag"></span></div>
-        <div class="chart-canvas-wrap"><canvas id="chart-score"></canvas></div>
-      </div>
-      <div class="chart-block">
-        <div class="chart-label">Cumulative Questions Done</div>
-        <div class="chart-canvas-wrap"><canvas id="chart-cumul"></canvas></div>
-      </div>
-    </div>
-
   </div>
-
 </div>
 
 <div class="uw-toast" id="toast"></div>
 
 <script>
-// Firebase init — identical pattern to sketchypharm.html (working)
-let auth = null;
-let db   = null;
-
+// ── Firebase ──────────────────────────────────────────
+let auth = null, db = null;
 try {
-  const firebaseConfig = {
+  firebase.initializeApp({
     apiKey: "AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",
     authDomain: "sketchy-tracker.firebaseapp.com",
     projectId: "sketchy-tracker",
@@ -259,20 +523,15 @@ try {
     messagingSenderId: "970470066509",
     appId: "1:970470066509:web:14c7300fb1dd882a038f04",
     measurementId: "G-2KVBCP4THR"
-  };
-  firebase.initializeApp(firebaseConfig);
+  });
   auth = firebase.auth();
   db   = firebase.firestore();
-} catch(e) {
-  console.log('Firebase not available, using localStorage only');
-}
+} catch(e) { console.log('Firebase unavailable'); }
 
 let currentUser = null;
 const TOTAL_DEFAULT = 3661;
-
 let settings = { done:0, total:TOTAL_DEFAULT, finishBy:'', dailyGoal:40, studyDays:[0,1,2,3,4,5] };
-let entries  = [];
-let exams    = [];
+let entries = [], exams = [];
 
 const todayStr = () => new Date().toISOString().slice(0,10);
 
@@ -282,12 +541,12 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ── Persistence ───────────────────────────────────────
 function saveLocal() {
   localStorage.setItem('uw-settings', JSON.stringify(settings));
   localStorage.setItem('uw-entries',  JSON.stringify(entries));
   localStorage.setItem('uw-exams',    JSON.stringify(exams));
 }
-
 function loadLocal() {
   try {
     const s = localStorage.getItem('uw-settings'); if (s) settings = {...settings, ...JSON.parse(s)};
@@ -295,15 +554,12 @@ function loadLocal() {
     const x = localStorage.getItem('uw-exams');    if (x) exams    = JSON.parse(x);
   } catch(e) {}
 }
-
 async function syncToFirebase() {
   if (!currentUser || !db) return;
-  try {
-    await db.collection('users').doc(currentUser.uid).set(
-      { uwSettings:settings, uwEntries:entries, uwExams:exams }, { merge:true });
-  } catch(e) { console.error(e); }
+  try { await db.collection('users').doc(currentUser.uid).set(
+    { uwSettings:settings, uwEntries:entries, uwExams:exams }, { merge:true }); }
+  catch(e) { console.error(e); }
 }
-
 async function loadFromFirebase() {
   if (!currentUser || !db) return;
   try {
@@ -315,48 +571,53 @@ async function loadFromFirebase() {
       if (d.uwExams)    exams    = d.uwExams;
       saveLocal();
     }
-  } catch(e) { console.error('Firebase load error:', e); }
+  } catch(e) { console.error(e); }
 }
 
-// Auth — no setPersistence (Firebase compat already defaults to LOCAL).
-// Matches the exact pattern in sketchypharm.html which persists correctly.
 if (auth) {
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     document.getElementById('auth-banner').classList.toggle('hidden', !!user);
-    if (user) {
-      await loadFromFirebase();
-    }
+    if (user) { await loadFromFirebase(); }
     renderAll();
   });
 } else {
   document.getElementById('auth-banner').classList.remove('hidden');
 }
 
+// ── Setup ─────────────────────────────────────────────
+function toggleSetup() {
+  const panel = document.getElementById('setup-panel');
+  const btn   = document.getElementById('setup-toggle');
+  panel.classList.toggle('open');
+  btn.classList.toggle('open');
+}
 function initSetupUI() {
   document.getElementById('setup-done').value   = settings.done      || '';
   document.getElementById('setup-total').value  = settings.total     || TOTAL_DEFAULT;
   document.getElementById('setup-daily').value  = settings.dailyGoal || '';
   document.getElementById('setup-finish').value = settings.finishBy  || '';
-  document.querySelectorAll('.uw-day-chip').forEach(chip => {
+  document.querySelectorAll('.day-chip').forEach(chip => {
     const day = parseInt(chip.dataset.day);
     chip.classList.toggle('active', (settings.studyDays||[0,1,2,3,4,5]).includes(day));
     chip.onclick = () => chip.classList.toggle('active');
   });
 }
-
 function saveSetup() {
   settings = {
     done:      parseInt(document.getElementById('setup-done').value)  || 0,
     total:     parseInt(document.getElementById('setup-total').value) || TOTAL_DEFAULT,
     dailyGoal: parseInt(document.getElementById('setup-daily').value) || 40,
     finishBy:  document.getElementById('setup-finish').value,
-    studyDays: [...document.querySelectorAll('.uw-day-chip.active')].map(c=>parseInt(c.dataset.day))
+    studyDays: [...document.querySelectorAll('.day-chip.active')].map(c=>parseInt(c.dataset.day))
   };
-  saveLocal(); syncToFirebase(); renderStats();
+  saveLocal(); syncToFirebase(); renderAll();
+  document.getElementById('setup-panel').classList.remove('open');
+  document.getElementById('setup-toggle').classList.remove('open');
   showToast('Settings saved ✦');
 }
 
+// ── Stats ─────────────────────────────────────────────
 function calcTotalDone() {
   return (settings.done||0) + entries.reduce((s,e) => s+(e.qs||0), 0);
 }
@@ -366,643 +627,458 @@ function calcNeededPerDay() {
   if (!settings.finishBy) return settings.dailyGoal;
   const now = new Date(); now.setHours(0,0,0,0);
   const finish = new Date(settings.finishBy+'T12:00:00');
-  let daysLeft = 0;
-  const cur = new Date(now);
+  let daysLeft = 0, cur = new Date(now);
   while (cur <= finish) {
     if ((settings.studyDays||[]).includes(cur.getDay())) daysLeft++;
     cur.setDate(cur.getDate()+1);
   }
   return daysLeft > 0 ? Math.ceil(remaining/daysLeft) : remaining;
 }
-
 function renderStats() {
-  const done      = calcTotalDone();
+  const done = calcTotalDone();
   const remaining = Math.max(0, settings.total - done);
-  const pct       = settings.total > 0 ? Math.round((done/settings.total)*100) : 0;
-  const needed    = calcNeededPerDay();
-  const goal      = settings.dailyGoal || 40;
+  const pct  = settings.total > 0 ? Math.round((done/settings.total)*100) : 0;
+  const needed = calcNeededPerDay();
+  const goal   = settings.dailyGoal || 40;
 
-  document.getElementById('stat-done').textContent   = done.toLocaleString();
-  document.getElementById('stat-remain').textContent = remaining.toLocaleString();
-  document.getElementById('stat-pct').textContent    = pct+'%';
-
-  const neededEl = document.getElementById('stat-needed');
-  neededEl.textContent = needed;
-  neededEl.className = 'uw-stat-num' + (needed > goal*1.5 ? ' alert' : needed > goal ? ' warn' : ' ok');
+  document.getElementById('stat-done').textContent    = done.toLocaleString();
+  document.getElementById('stat-remain').textContent  = remaining.toLocaleString();
+  document.getElementById('stat-pct').textContent     = pct+'%';
+  const nel = document.getElementById('stat-needed');
+  nel.textContent = needed;
+  nel.className = 'prog-stat-num' + (needed > goal*1.5 ? ' alert' : needed > goal ? ' warn' : ' ok');
 
   document.getElementById('prog-pct').textContent  = pct+'%';
   document.getElementById('prog-fill').style.width = pct+'%';
   document.getElementById('prog-sub-left').textContent =
     `${done.toLocaleString()} / ${(settings.total||TOTAL_DEFAULT).toLocaleString()} questions`;
-  if (settings.finishBy) {
-    const fin = new Date(settings.finishBy+'T12:00:00');
-    document.getElementById('prog-sub-right').textContent =
-      `Finish by ${fin.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
-  } else {
-    document.getElementById('prog-sub-right').textContent = '';
-  }
+  document.getElementById('prog-sub-right').textContent = settings.finishBy
+    ? `Finish by ${new Date(settings.finishBy+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}`
+    : '';
 
   const paceRow = document.getElementById('pace-row');
-  const dot = document.getElementById('pace-dot');
-  const text = document.getElementById('pace-text');
   if (settings.finishBy) {
     paceRow.style.display = 'flex';
+    const dot = document.getElementById('pace-dot');
+    const txt = document.getElementById('pace-text');
+    const ratio = needed/goal;
     if (remaining <= 0) {
-      dot.className = 'uw-pace-dot ok';
-      text.innerHTML = '🎉 <strong>QBank complete!</strong>';
+      dot.className='pace-dot ok'; txt.innerHTML='🎉 <strong>QBank complete!</strong>';
+    } else if (ratio <= 1) {
+      dot.className='pace-dot ok';
+      txt.innerHTML=`<strong>On track.</strong> ${goal} q/day covers the remaining ${remaining.toLocaleString()} questions.`;
+    } else if (ratio <= 1.5) {
+      dot.className='pace-dot warn';
+      txt.innerHTML=`<strong>Slightly behind.</strong> Need <strong>${needed} q/day</strong> vs. your goal of ${goal}.`;
     } else {
-      const ratio = needed/goal;
-      if (ratio <= 1) {
-        dot.className = 'uw-pace-dot ok';
-        text.innerHTML = `<strong>On track.</strong> Your goal of ${goal} q/day covers the remaining ${remaining.toLocaleString()} questions.`;
-      } else if (ratio <= 1.5) {
-        dot.className = 'uw-pace-dot warn';
-        text.innerHTML = `<strong>Slightly behind.</strong> Need <strong>${needed} q/day</strong> to finish on time vs. your goal of ${goal}.`;
-      } else {
-        dot.className = 'uw-pace-dot behind';
-        text.innerHTML = `<strong>Behind pace.</strong> Need <strong>${needed} q/day</strong> — consider adjusting your finish date or goal.`;
-      }
+      dot.className='pace-dot behind';
+      txt.innerHTML=`<strong>Behind pace.</strong> Need <strong>${needed} q/day</strong> — consider adjusting your goal.`;
     }
-  } else {
-    paceRow.style.display = 'none';
-  }
+  } else { paceRow.style.display = 'none'; }
 }
 
-function renderHistory() {
-  const el = document.getElementById('history-container');
-  if (!entries.length) {
-    el.innerHTML = '<div class="uw-empty">No entries yet — log your first session above 🌸</div>';
-    return;
-  }
-  const asc = [...entries].sort((a,b) => a.date.localeCompare(b.date));
-  const totalsMap = {};
-  let cum = settings.done||0;
-  asc.forEach(e => { cum += (e.qs||0); totalsMap[e._id] = cum; });
+// ── Charts (always live from entries) ────────────────
+let activeCharts = {}, chartView = 'daily';
 
-  const sorted = [...entries].sort((a,b) => b.date.localeCompare(a.date));
-  let html = `<table class="uw-table"><thead><tr>
-    <th>Date</th><th>Questions</th><th>% Correct</th><th>Running Total</th><th></th>
-  </tr></thead><tbody>`;
-  sorted.forEach(e => {
-    const dateStr = new Date(e.date+'T12:00:00').toLocaleDateString('en-US',
-      {weekday:'short',month:'short',day:'numeric'});
-    let scoreCell = '—';
-    if (e.score !== undefined && e.score !== null && e.score !== '') {
-      const s = Number(e.score);
-      scoreCell = `<span class="uw-badge ${s>=70?'good':s>=55?'warn':'bad'}">${s}%</span>`;
-    }
-    html += `<tr>
-      <td class="uw-date-cell">${dateStr}</td>
-      <td><span class="uw-badge qs">+${e.qs} Qs</span></td>
-      <td>${scoreCell}</td>
-      <td class="uw-running">${(totalsMap[e._id]||0).toLocaleString()} done</td>
-      <td><button class="uw-del-btn" onclick="deleteEntry('${e._id}')">✕</button></td>
-    </tr>`;
-  });
-  el.innerHTML = html + '</tbody></table>';
+function buildLiveChartData() {
+  // Build from entries directly — no separate chartData object needed
+  const rows = entries.map(e => ({
+    dt: new Date(e.date + 'T12:00:00'),
+    qs: e.qs || 0,
+    score: (e.score !== undefined && e.score !== null) ? Number(e.score) : null
+  })).filter(r => !isNaN(r.dt.getTime()));
+  if (!rows.length) return null;
+  return aggregate(rows);
 }
 
-function renderExams() {
-  const el = document.getElementById('exam-container');
-  if (!exams.length) {
-    el.innerHTML = '<div class="uw-empty">No practice exams logged yet 🌸</div>';
-    return;
-  }
-  const sorted = [...exams].sort((a,b) => b.date.localeCompare(a.date));
-  let html = `<table class="uw-table"><thead><tr>
-    <th>Date</th><th>Exam</th><th>% Correct</th><th>3-Digit</th><th></th>
-  </tr></thead><tbody>`;
-  sorted.forEach(e => {
-    const dateStr = new Date(e.date+'T12:00:00').toLocaleDateString('en-US',
-      {weekday:'short',month:'short',day:'numeric'});
-    let pctCell = '—';
-    if (e.pct !== undefined && e.pct !== '') {
-      const p = Number(e.pct);
-      pctCell = `<span class="uw-badge ${p>=70?'good':p>=55?'warn':'bad'}">${p}%</span>`;
-    }
-    const predCell = e.score3 ? `<span class="uw-badge pred">${e.score3}</span>` : '—';
-    html += `<tr>
-      <td class="uw-date-cell">${dateStr}</td>
-      <td style="font-weight:500;">${e.name||'—'}</td>
-      <td>${pctCell}</td>
-      <td>${predCell}</td>
-      <td><button class="uw-del-btn" onclick="deleteExam('${e._id}')">✕</button></td>
-    </tr>`;
-  });
-  el.innerHTML = html + '</tbody></table>';
-}
-
-function renderAll() { initSetupUI(); renderStats(); renderHistory(); renderExams(); }
-
-function setMode(mode) {
-  document.getElementById('log-questions-panel').style.display = mode==='questions' ? '' : 'none';
-  document.getElementById('log-exam-panel').style.display      = mode==='exam'      ? '' : 'none';
-  document.getElementById('mode-qs').classList.toggle('active',   mode==='questions');
-  document.getElementById('mode-exam').classList.toggle('active', mode==='exam');
-}
-
-function logEntry() {
-  const date  = document.getElementById('log-date').value  || todayStr();
-  const qs    = parseInt(document.getElementById('log-qs').value);
-  const score = document.getElementById('log-score').value;
-  if (!qs || qs < 1) { showToast('Enter number of questions ✦'); return; }
-  entries.push({ _id:Date.now().toString(), date, qs,
-    score: score!=='' ? Number(score) : undefined });
-  saveLocal(); syncToFirebase(); renderStats(); renderHistory();
-  document.getElementById('log-qs').value = '';
-  document.getElementById('log-score').value = '';
-  showToast(`Logged ${qs} questions ✦`);
-}
-
-function logExam() {
-  const date   = document.getElementById('exam-date').value   || todayStr();
-  const name   = document.getElementById('exam-name').value;
-  const pct    = document.getElementById('exam-pct').value;
-  const score3 = document.getElementById('exam-3digit').value;
-  if (!name) { showToast('Select an exam name ✦'); return; }
-  exams.push({ _id:Date.now().toString(), date, name,
-    pct:    pct!==''    ? Number(pct)    : undefined,
-    score3: score3!=='' ? Number(score3) : undefined });
-  saveLocal(); syncToFirebase(); renderExams();
-  document.getElementById('exam-name').value   = '';
-  document.getElementById('exam-pct').value    = '';
-  document.getElementById('exam-3digit').value = '';
-  showToast(`${name} logged ✦`);
-}
-
-function deleteEntry(id) {
-  entries = entries.filter(e => e._id!==id);
-  saveLocal(); syncToFirebase(); renderStats(); renderHistory();
-  showToast('Entry removed');
-}
-function deleteExam(id) {
-  exams = exams.filter(e => e._id!==id);
-  saveLocal(); syncToFirebase(); renderExams();
-  showToast('Exam removed');
-}
-
-
-// ══════════════════════════════════════════════════════
-// CSV IMPORT & CHART ENGINE
-// ══════════════════════════════════════════════════════
-
-let csvRawRows   = [];   // raw parsed rows [{col: val, ...}]
-let csvHeaders   = [];   // column header names
-let chartData    = null; // aggregated {daily, weekly, monthly}
-let activeCharts = {};   // Chart.js instances keyed by canvas id
-let chartView    = 'daily';
-let colMap       = { date: '', questions: '', score: '' };
-
-// ── Drop zone / file input ─────────────────────────────
-const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
-});
-document.getElementById('csv-file-input').addEventListener('change', e => {
-  if (e.target.files[0]) handleFile(e.target.files[0]);
-});
-
-function handleFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      parseCSV(e.target.result, file.name);
-    } catch(err) {
-      showToast('Could not read file — check format');
-    }
-  };
-  reader.readAsText(file);
-}
-
-// ── CSV Parser ─────────────────────────────────────────
-function parseCSV(text, filename) {
-  const lines = text.trim().split(/\r?\n/);
-  if (lines.length < 2) { showToast('File appears empty'); return; }
-
-  // Parse header
-  csvHeaders = splitCSVLine(lines[0]);
-
-  // Parse rows
-  csvRawRows = [];
-  for (let i = 1; i < lines.length; i++) {
-    const vals = splitCSVLine(lines[i]);
-    if (vals.every(v => v.trim() === '')) continue;
-    const row = {};
-    csvHeaders.forEach((h, idx) => { row[h] = (vals[idx] || '').trim().replace(/^["']|["']$/g, ''); });
-    csvRawRows.push(row);
-  }
-
-  document.getElementById('csv-file-info').textContent =
-    `${filename} · ${csvRawRows.length} rows · ${csvHeaders.length} columns`;
-
-  // Auto-detect column mapping
-  autoDetectCols();
-  renderColMapper();
-  document.getElementById('col-mapper').style.display = '';
-}
-
-function splitCSVLine(line) {
-  const result = [];
-  let cur = '', inQuote = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"' && (i === 0 || line[i-1] === ',')) { inQuote = true; continue; }
-    if (ch === '"' && inQuote) { inQuote = false; continue; }
-    if (ch === ',' && !inQuote) { result.push(cur.trim()); cur = ''; continue; }
-    cur += ch;
-  }
-  result.push(cur.trim());
-  return result;
-}
-
-function autoDetectCols() {
-  const lower = csvHeaders.map(h => h.toLowerCase());
-  const find = (keywords) => {
-    for (const kw of keywords) {
-      const i = lower.findIndex(h => h.includes(kw));
-      if (i >= 0) return csvHeaders[i];
-    }
-    return '';
-  };
-  colMap.date      = find(['date','day','time','when']);
-  colMap.questions = find(['question','qs','count','num','total','completed','done']);
-  colMap.score     = find(['score','correct','pct','percent','accuracy','perf','grade','result']);
-}
-
-function renderColMapper() {
-  const grid = document.getElementById('col-mapper-grid');
-  const fields = [
-    { key: 'date',      label: 'Date Column',      required: true  },
-    { key: 'questions', label: 'Questions Column',  required: true  },
-    { key: 'score',     label: 'Score/% Column',    required: false },
-  ];
-  grid.innerHTML = fields.map(f => `
-    <div class="csv-map-row">
-      <div class="csv-map-label">${f.label}${f.required ? ' <span style="color:var(--red)">*</span>' : ' <span style="color:var(--dim);font-size:10px;">(optional)</span>'}</div>
-      <select class="csv-map-select" id="map-${f.key}" onchange="updateColMap('${f.key}',this.value)">
-        <option value="">— not mapped —</option>
-        ${csvHeaders.map(h => `<option value="${h}" ${colMap[f.key]===h?'selected':''}>${h}</option>`).join('')}
-      </select>
-    </div>
-  `).join('');
-  renderPreview();
-}
-
-function updateColMap(key, val) {
-  colMap[key] = val;
-  renderPreview();
-}
-
-function renderPreview() {
-  const preview = document.getElementById('csv-preview');
-  const sample = csvRawRows.slice(0, 4);
-  if (!colMap.date || !colMap.questions) {
-    preview.innerHTML = '<div style="font-size:12px;color:var(--dim);margin-top:8px;">Map Date and Questions columns to see a preview.</div>';
-    return;
-  }
-  let html = `<div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Preview (first 4 rows)</div>`;
-  html += '<table class="uw-table" style="font-size:12px;"><thead><tr>';
-  html += `<th>Date (${colMap.date})</th><th>Questions (${colMap.questions})</th>`;
-  if (colMap.score) html += `<th>Score (${colMap.score})</th>`;
-  html += '</tr></thead><tbody>';
-  sample.forEach(r => {
-    html += `<tr><td class="uw-date-cell">${r[colMap.date]||'—'}</td><td>${r[colMap.questions]||'—'}</td>`;
-    if (colMap.score) html += `<td>${r[colMap.score]||'—'}</td>`;
-    html += '</tr>';
-  });
-  html += '</tbody></table>';
-  preview.innerHTML = html;
-}
-
-// ── Import & aggregate ─────────────────────────────────
-function importCSV() {
-  if (!colMap.date || !colMap.questions) {
-    showToast('Map at least Date and Questions columns ✦');
-    return;
-  }
-
-  const parsed = [];
-  let failCount = 0;
-
-  csvRawRows.forEach(row => {
-    const rawDate = row[colMap.date];
-    const rawQs   = row[colMap.questions];
-    const rawSc   = colMap.score ? row[colMap.score] : null;
-
-    const dt = parseFlexDate(rawDate);
-    const qs = parseFloat(rawQs);
-
-    if (!dt || isNaN(qs)) { failCount++; return; }
-
-    const score = rawSc !== null && rawSc !== '' ? parseFloat(rawSc) : null;
-    parsed.push({ dt, qs, score: isNaN(score) ? null : score });
-  });
-
-  if (parsed.length === 0) {
-    showToast(`No valid rows found — check column mapping`);
-    return;
-  }
-  if (failCount > 0) showToast(`Imported ${parsed.length} rows (${failCount} skipped)`);
-
-  chartData = aggregate(parsed);
-  localStorage.setItem('uw-chart-data', JSON.stringify({ colMap, rows: parsed.map(r => ({
-    dt: r.dt.toISOString(), qs: r.qs, score: r.score
-  })) }));
-
-  showCharts();
-  showToast(`${parsed.length} sessions imported ✦`);
-}
-
-// ── Flexible date parser ───────────────────────────────
-function parseFlexDate(str) {
-  if (!str) return null;
-  str = str.trim().replace(/^["']|["']$/g, '');
-
-  // Try native first (handles ISO, MM/DD/YYYY, etc.)
-  let d = new Date(str);
-  if (!isNaN(d.getTime())) return d;
-
-  // "Aug 30, 2025" / "30 Aug 2025" / "Aug 30 2025"
-  const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-  const m1 = str.match(/^([A-Za-z]{3})\.?\s+(\d{1,2}),?\s+(\d{4})/);
-  if (m1) return new Date(+m1[3], months[m1[1].toLowerCase()], +m1[2]);
-  const m2 = str.match(/^(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})/);
-  if (m2) return new Date(+m2[3], months[m2[2].toLowerCase()], +m2[1]);
-
-  // DD/MM/YYYY or MM/DD/YYYY — try both, prefer future-safe
-  const parts = str.split(/[\/\-\.]/);
-  if (parts.length === 3) {
-    const [a,b,c] = parts.map(Number);
-    if (c > 31) return new Date(c, a-1, b); // YYYY last
-    if (a > 12) return new Date(c, b-1, a); // DD first
-    return new Date(c, a-1, b);             // assume MM/DD/YYYY
-  }
-  return null;
-}
-
-// ── Aggregation ────────────────────────────────────────
 function aggregate(rows) {
-  // Sort by date
   rows.sort((a,b) => a.dt - b.dt);
-
   const fmtKey = {
     daily:   d => d.toISOString().slice(0,10),
-    weekly:  d => {
-      const start = new Date(d);
-      start.setDate(d.getDate() - d.getDay());
-      return start.toISOString().slice(0,10);
-    },
+    weekly:  d => { const s=new Date(d); s.setDate(d.getDate()-d.getDay()); return s.toISOString().slice(0,10); },
     monthly: d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`
   };
-
   const result = {};
   ['daily','weekly','monthly'].forEach(view => {
     const map = {};
     rows.forEach(r => {
       const key = fmtKey[view](r.dt);
-      if (!map[key]) map[key] = { qs: 0, scores: [], label: '' };
+      if (!map[key]) map[key] = { qs:0, scores:[] };
       map[key].qs += r.qs;
       if (r.score !== null) map[key].scores.push(r.score);
     });
-
-    // Generate readable labels
     const keys = Object.keys(map).sort();
     keys.forEach(k => {
-      const d = new Date(k + (view === 'monthly' ? '-01' : '') + 'T12:00:00');
-      if (view === 'daily')   map[k].label = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      if (view === 'weekly')  map[k].label = 'Wk of ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      if (view === 'monthly') map[k].label = d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
+      const d = new Date(k+(view==='monthly'?'-01':'')+'T12:00:00');
+      map[k].label = view==='daily'   ? d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+                   : view==='weekly'  ? 'Wk '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+                   :                    d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
       map[k].avgScore = map[k].scores.length
-        ? Math.round(map[k].scores.reduce((a,b)=>a+b,0) / map[k].scores.length)
-        : null;
+        ? Math.round(map[k].scores.reduce((a,b)=>a+b,0)/map[k].scores.length) : null;
     });
     result[view] = { keys, map };
   });
-
-  // Cumulative (always daily)
-  let cum = 0;
-  result.cumul = { labels: [], values: [] };
+  let cum = settings.done||0;
+  result.cumul = { labels:[], values:[] };
   result.daily.keys.forEach(k => {
     cum += result.daily.map[k].qs;
     result.cumul.labels.push(result.daily.map[k].label);
     result.cumul.values.push(cum);
   });
-
-  // Summary stats
-  const totalQs    = rows.reduce((s,r) => s+r.qs, 0);
-  const allScores  = rows.filter(r=>r.score!==null).map(r=>r.score);
-  const avgScore   = allScores.length ? Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length) : null;
-  const studyDays  = new Set(rows.map(r=>r.dt.toISOString().slice(0,10))).size;
-  const firstDate  = rows[0].dt;
-  const lastDate   = rows[rows.length-1].dt;
-  result.summary   = { totalQs, avgScore, studyDays, firstDate, lastDate, hasScore: allScores.length > 0 };
-
+  const allScores = rows.filter(r=>r.score!==null).map(r=>r.score);
+  result.hasScore = allScores.length > 0;
   return result;
 }
 
-// ── Render charts ──────────────────────────────────────
-function showCharts() {
-  document.getElementById('csv-upload-area').style.display = 'none';
-  document.getElementById('chart-display').style.display   = '';
-  renderSummary();
-  setChartView('daily');
+function renderCharts() {
+  const data = buildLiveChartData();
+  const body = document.getElementById('charts-body');
+  if (!data) {
+    body.innerHTML = '<div class="charts-empty">Log your first session to start tracking 🌸</div>';
+    Object.keys(activeCharts).forEach(k => { activeCharts[k].destroy(); delete activeCharts[k]; });
+    return;
+  }
+  // Build DOM if not already present
+  if (!document.getElementById('chart-qs')) {
+    body.innerHTML = `
+      <div class="chart-label" id="qs-label">Questions Completed</div>
+      <div class="chart-canvas-wrap"><canvas id="chart-qs"></canvas></div>
+      <div id="score-chart-block" style="display:none;">
+        <div class="chart-label" id="sc-label">Average % Correct</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-score"></canvas></div>
+      </div>
+      <div class="chart-label">Cumulative Questions Done</div>
+      <div class="chart-canvas-wrap"><canvas id="chart-cumul"></canvas></div>
+    `;
+  }
+  setChartView(chartView, data);
 }
 
-function renderSummary() {
-  const s = chartData.summary;
-  const dateRange = s.firstDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
-    + ' → ' + s.lastDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-  let chips = [
-    { val: s.totalQs.toLocaleString(), lbl: 'Total Questions' },
-    { val: s.studyDays, lbl: 'Study Days' },
-    { val: Math.round(s.totalQs / s.studyDays), lbl: 'Avg / Study Day' },
-  ];
-  if (s.avgScore !== null) chips.push({ val: s.avgScore+'%', lbl: 'Avg Score' });
-  chips.push({ val: dateRange, lbl: 'Date Range', wide: true });
-
-  document.getElementById('csv-summary').innerHTML = chips.map(c =>
-    `<div class="csv-chip${c.wide?' csv-chip-wide':''}">
-      <div class="csv-chip-val">${c.val}</div>
-      <div class="csv-chip-lbl">${c.lbl}</div>
-    </div>`
-  ).join('');
-}
-
-function setChartView(view) {
+function setChartView(view, data) {
   chartView = view;
-  document.querySelectorAll('#chart-view-toggle .uw-mode-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === view);
-  });
+  data = data || buildLiveChartData();
+  if (!data) return;
+  document.querySelectorAll('#chart-view-toggle .view-tab').forEach(b =>
+    b.classList.toggle('active', b.dataset.view === view));
 
-  const d = chartData[view];
+  const d = data[view];
   const labels = d.keys.map(k => d.map[k].label);
   const qsVals = d.keys.map(k => d.map[k].qs);
   const scVals = d.keys.map(k => d.map[k].avgScore);
-  const hasScores = scVals.some(v => v !== null);
+  const tagText = view==='daily' ? '(per day)' : view==='weekly' ? '(per week)' : '(per month)';
 
-  const tagText = view === 'daily' ? '(per day)' : view === 'weekly' ? '(per week)' : '(per month)';
-  document.getElementById('qs-tag').textContent = tagText;
-  if (document.getElementById('sc-tag')) document.getElementById('sc-tag').textContent = tagText;
+  const qlEl = document.getElementById('qs-label');
+  if (qlEl) qlEl.textContent = 'Questions Completed ' + tagText;
+  const slEl = document.getElementById('sc-label');
+  if (slEl) slEl.textContent = 'Average % Correct ' + tagText;
 
-  buildBarChart('chart-qs', labels, qsVals, 'Questions', 'rgba(61,46,110,0.75)', 'rgba(61,46,110,0.15)');
-  buildCumulChart('chart-cumul', chartData.cumul.labels, chartData.cumul.values);
-
-  const scoreBlock = document.getElementById('score-chart-block');
-  if (hasScores && chartData.summary.hasScore) {
-    scoreBlock.style.display = '';
-    buildLineChart('chart-score', labels, scVals, '% Correct', 'var(--sakura2)');
-  } else {
-    scoreBlock.style.display = 'none';
+  buildBarChart('chart-qs', labels, qsVals, 'Questions');
+  buildCumulChart('chart-cumul', data.cumul.labels, data.cumul.values);
+  const sb = document.getElementById('score-chart-block');
+  if (sb) {
+    if (data.hasScore && scVals.some(v => v !== null)) {
+      sb.style.display = '';
+      buildLineChart('chart-score', labels, scVals);
+    } else { sb.style.display = 'none'; }
   }
 }
 
-function getChart(id) { return activeCharts[id] || null; }
 function destroyChart(id) { if (activeCharts[id]) { activeCharts[id].destroy(); delete activeCharts[id]; } }
 
 function chartDefaults() {
   return {
-    responsive: true, maintainAspectRatio: false,
-    animation: { duration: 400 },
+    responsive:true, maintainAspectRatio:false, animation:{duration:300},
     plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(26,20,40,0.88)',
-        titleFont: { family: "'DM Mono', monospace", size: 10 },
-        bodyFont:  { family: "'Jost', sans-serif", size: 12 },
-        padding: 10, cornerRadius: 6
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'rgba(26,20,40,.88)',
+        titleFont:{family:"'DM Mono',monospace",size:9},
+        bodyFont:{family:"'Jost',sans-serif",size:12},
+        padding:10, cornerRadius:6
       }
     },
-    scales: {
-      x: {
-        grid: { color: 'rgba(236,216,222,0.35)' },
-        ticks: { font: { family: "'DM Mono', monospace", size: 9 }, color: '#c0a8b4',
-                 maxRotation: 45, autoSkip: true, maxTicksLimit: 18 }
-      },
-      y: {
-        grid: { color: 'rgba(236,216,222,0.35)' },
-        ticks: { font: { family: "'DM Mono', monospace", size: 9 }, color: '#c0a8b4' },
-        beginAtZero: true
-      }
+    scales:{
+      x:{grid:{color:'rgba(236,216,222,.3)'},ticks:{font:{family:"'DM Mono',monospace",size:8},color:'#c0a8b4',maxRotation:45,autoSkip:true,maxTicksLimit:16}},
+      y:{grid:{color:'rgba(236,216,222,.3)'},ticks:{font:{family:"'DM Mono',monospace",size:8},color:'#c0a8b4'},beginAtZero:true}
     }
   };
 }
-
-function buildBarChart(id, labels, data, label, barColor, bgColor) {
+function buildBarChart(id, labels, data) {
   destroyChart(id);
-  const ctx = document.getElementById(id).getContext('2d');
-  const opts = chartDefaults();
-  activeCharts[id] = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{ label, data, backgroundColor: barColor, borderRadius: 4, borderSkipped: false }]
-    },
-    options: opts
+  const ctx = document.getElementById(id); if (!ctx) return;
+  activeCharts[id] = new Chart(ctx.getContext('2d'), {
+    type:'bar', data:{labels, datasets:[{data, backgroundColor:'rgba(61,46,110,.7)', borderRadius:3, borderSkipped:false}]},
+    options:chartDefaults()
   });
 }
-
-function buildLineChart(id, labels, data, label, color) {
+function buildLineChart(id, labels, data) {
   destroyChart(id);
-  const ctx = document.getElementById(id).getContext('2d');
+  const ctx = document.getElementById(id); if (!ctx) return;
   const opts = chartDefaults();
-  opts.scales.y.max = 100;
-  opts.scales.y.ticks.callback = v => v + '%';
-  opts.plugins.tooltip.callbacks = { label: ctx => ctx.parsed.y !== null ? ctx.parsed.y + '%' : 'N/A' };
-  // Draw a 60% reference line
-  opts.plugins.annotation = undefined; // skip annotation plugin for now
-  activeCharts[id] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label, data,
-        borderColor: color,
-        backgroundColor: 'rgba(212,96,122,0.08)',
-        pointBackgroundColor: color,
-        pointRadius: labels.length > 60 ? 2 : 4,
-        pointHoverRadius: 6,
-        fill: true, tension: 0.35,
-        spanGaps: true
-      }]
-    },
-    options: opts
+  opts.scales.y.max=100; opts.scales.y.ticks.callback = v=>v+'%';
+  opts.plugins.tooltip.callbacks = {label: c => c.parsed.y!==null ? c.parsed.y+'%':'N/A'};
+  activeCharts[id] = new Chart(ctx.getContext('2d'), {
+    type:'line', data:{labels, datasets:[{data, borderColor:'var(--sakura2)', backgroundColor:'rgba(212,96,122,.07)',
+      pointBackgroundColor:'var(--sakura2)', pointRadius:labels.length>60?1:3,
+      fill:true, tension:0.35, spanGaps:true}]},
+    options:opts
   });
 }
-
 function buildCumulChart(id, labels, data) {
   destroyChart(id);
-  const ctx = document.getElementById(id).getContext('2d');
+  const ctx = document.getElementById(id); if (!ctx) return;
   const opts = chartDefaults();
-  const total = (settings && settings.total) || 3661;
+  const total = settings.total || TOTAL_DEFAULT;
   opts.scales.y.max = total;
   opts.scales.y.ticks.callback = v => v.toLocaleString();
-
-  // Gradient fill
-  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-  gradient.addColorStop(0, 'rgba(61,46,110,0.22)');
-  gradient.addColorStop(1, 'rgba(61,46,110,0.01)');
-
-  activeCharts[id] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Done', data,
-          borderColor: 'var(--fuji)',
-          backgroundColor: gradient,
-          pointRadius: labels.length > 60 ? 0 : 3,
-          fill: true, tension: 0.2
-        },
-        {
-          label: 'Total', data: labels.map(() => total),
-          borderColor: 'rgba(212,96,122,0.3)',
-          borderDash: [5,4], borderWidth: 1.5,
-          pointRadius: 0, fill: false
-        }
-      ]
-    },
-    options: { ...opts, plugins: { ...opts.plugins, legend: {
-      display: true,
-      labels: { font: { family:"'DM Mono',monospace", size:9 }, color:'#c0a8b4', boxWidth:12 }
-    }}}
+  const gradient = ctx.getContext('2d').createLinearGradient(0,0,0,180);
+  gradient.addColorStop(0,'rgba(61,46,110,.2)'); gradient.addColorStop(1,'rgba(61,46,110,.01)');
+  activeCharts[id] = new Chart(ctx.getContext('2d'), {
+    type:'line',
+    data:{labels, datasets:[
+      {label:'Done', data, borderColor:'var(--fuji)', backgroundColor:gradient,
+       pointRadius:labels.length>60?0:2, fill:true, tension:0.2},
+      {label:'Total', data:labels.map(()=>total), borderColor:'rgba(212,96,122,.3)',
+       borderDash:[5,4], borderWidth:1.5, pointRadius:0, fill:false}
+    ]},
+    options:{...opts, plugins:{...opts.plugins, legend:{display:true,
+      labels:{font:{family:"'DM Mono',monospace",size:8},color:'#c0a8b4',boxWidth:10}}}}
   });
 }
 
-// ── Reset ──────────────────────────────────────────────
-function resetUpload() {
-  Object.keys(activeCharts).forEach(k => { activeCharts[k].destroy(); delete activeCharts[k]; });
-  csvRawRows = []; csvHeaders = []; chartData = null;
-  document.getElementById('csv-file-input').value = '';
-  document.getElementById('col-mapper').style.display = 'none';
-  document.getElementById('chart-display').style.display = 'none';
-  document.getElementById('csv-upload-area').style.display = '';
+// ── Log entries ───────────────────────────────────────
+function setMode(mode) {
+  document.getElementById('log-questions-panel').style.display = mode==='questions'?'':'none';
+  document.getElementById('log-exam-panel').style.display      = mode==='exam'?'':'none';
+  document.getElementById('mode-qs').classList.toggle('active',   mode==='questions');
+  document.getElementById('mode-exam').classList.toggle('active', mode==='exam');
+}
+function logEntry() {
+  const date  = document.getElementById('log-date').value  || todayStr();
+  const qs    = parseInt(document.getElementById('log-qs').value);
+  const score = document.getElementById('log-score').value;
+  if (!qs || qs<1) { showToast('Enter number of questions ✦'); return; }
+  entries.push({_id:Date.now().toString(), date, qs, score:score!==''?Number(score):undefined});
+  saveLocal(); syncToFirebase();
+  document.getElementById('log-qs').value=''; document.getElementById('log-score').value='';
+  renderAll();
+  showToast(`${qs} questions logged ✦`);
+}
+function logExam() {
+  const date=document.getElementById('exam-date').value||todayStr();
+  const name=document.getElementById('exam-name').value;
+  const pct=document.getElementById('exam-pct').value;
+  const score3=document.getElementById('exam-3digit').value;
+  if (!name) { showToast('Select an exam name ✦'); return; }
+  exams.push({_id:Date.now().toString(), date, name,
+    pct:pct!==''?Number(pct):undefined, score3:score3!==''?Number(score3):undefined});
+  saveLocal(); syncToFirebase(); renderExams();
+  document.getElementById('exam-name').value='';
+  document.getElementById('exam-pct').value='';
+  document.getElementById('exam-3digit').value='';
+  showToast(`${name} logged ✦`);
+}
+function deleteEntry(id) {
+  entries=entries.filter(e=>e._id!==id);
+  saveLocal(); syncToFirebase(); renderAll();
+  showToast('Entry removed');
+}
+function deleteExam(id) {
+  exams=exams.filter(e=>e._id!==id);
+  saveLocal(); syncToFirebase(); renderExams();
+  showToast('Exam removed');
 }
 
-// ── Restore from localStorage on load ─────────────────
-(function restoreChartData() {
+// ── Render ────────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById('history-container');
+  if (!entries.length) { el.innerHTML='<div class="uw-empty">No entries yet 🌸</div>'; return; }
+  const asc=[...entries].sort((a,b)=>a.date.localeCompare(b.date));
+  const totalsMap={};
+  let cum=settings.done||0;
+  asc.forEach(e=>{cum+=(e.qs||0);totalsMap[e._id]=cum;});
+  const sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
+  let html=`<table class="uw-table"><thead><tr>
+    <th>Date</th><th>Questions</th><th>% Correct</th><th>Running Total</th><th></th>
+  </tr></thead><tbody>`;
+  sorted.forEach(e=>{
+    const ds=new Date(e.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    let sc='—';
+    if (e.score!==undefined&&e.score!==null&&e.score!=='') {
+      const s=Number(e.score);
+      sc=`<span class="uw-badge ${s>=70?'good':s>=55?'warn':'bad'}">${s}%</span>`;
+    }
+    const action=e.fromCSV
+      ? `<span class="uw-badge csv">csv</span>`
+      : `<button class="del-btn" onclick="deleteEntry('${e._id}')">✕</button>`;
+    html+=`<tr>
+      <td>${ds}</td>
+      <td><span class="uw-badge qs">+${e.qs}</span></td>
+      <td>${sc}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">${(totalsMap[e._id]||0).toLocaleString()}</td>
+      <td>${action}</td>
+    </tr>`;
+  });
+  el.innerHTML=html+'</tbody></table>';
+}
+function renderExams() {
+  const el=document.getElementById('exam-container');
+  if (!exams.length){el.innerHTML='<div class="uw-empty">No practice exams logged yet 🌸</div>';return;}
+  const sorted=[...exams].sort((a,b)=>b.date.localeCompare(a.date));
+  let html=`<table class="uw-table"><thead><tr>
+    <th>Date</th><th>Exam</th><th>% Correct</th><th>3-Digit</th><th></th>
+  </tr></thead><tbody>`;
+  sorted.forEach(e=>{
+    const ds=new Date(e.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    let pc='—';
+    if(e.pct!==undefined&&e.pct!==''){const p=Number(e.pct);pc=`<span class="uw-badge ${p>=70?'good':p>=55?'warn':'bad'}">${p}%</span>`;}
+    html+=`<tr>
+      <td>${ds}</td><td style="font-weight:500;">${e.name||'—'}</td><td>${pc}</td>
+      <td>${e.score3?`<span class="uw-badge pred">${e.score3}</span>`:'—'}</td>
+      <td><button class="del-btn" onclick="deleteExam('${e._id}')">✕</button></td>
+    </tr>`;
+  });
+  el.innerHTML=html+'</tbody></table>';
+}
+function renderAll() {
+  initSetupUI(); renderStats(); renderHistory(); renderExams(); renderCharts();
+}
+
+// ── Import modal ──────────────────────────────────────
+let csvRawRows=[], csvHeaders=[], colMap={date:'',questions:'',score:''};
+
+function openImportModal()  { document.getElementById('import-modal').classList.add('open'); }
+function closeImportModal() { document.getElementById('import-modal').classList.remove('open'); }
+function handleModalClick(e) { if(e.target===document.getElementById('import-modal')) closeImportModal(); }
+
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)handleFile(f);});
+document.getElementById('csv-file-input').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);});
+
+function handleFile(file) {
+  const r=new FileReader();
+  r.onload=e=>{try{parseCSV(e.target.result,file.name);}catch(err){showToast('Could not read file');}};
+  r.readAsText(file);
+}
+function parseCSV(text,filename) {
+  const lines=text.trim().split(/\r?\n/);
+  if(lines.length<2){showToast('File appears empty');return;}
+  csvHeaders=splitCSVLine(lines[0]);
+  csvRawRows=[];
+  for(let i=1;i<lines.length;i++){
+    const vals=splitCSVLine(lines[i]);
+    if(vals.every(v=>v.trim()===''))continue;
+    const row={};
+    csvHeaders.forEach((h,idx)=>{row[h]=(vals[idx]||'').trim().replace(/^["']|["']$/g,'');});
+    csvRawRows.push(row);
+  }
+  document.getElementById('csv-file-info').textContent=`${filename} · ${csvRawRows.length} rows`;
+  autoDetectCols(); renderColMapper();
+  document.getElementById('col-mapper').style.display='';
+  document.getElementById('drop-zone').style.display='none';
+}
+function splitCSVLine(line) {
+  const result=[]; let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'&&(i===0||line[i-1]===',')){inQ=true;continue;}
+    if(ch==='"'&&inQ){inQ=false;continue;}
+    if(ch===','&&!inQ){result.push(cur.trim());cur='';continue;}
+    cur+=ch;
+  }
+  result.push(cur.trim()); return result;
+}
+function autoDetectCols() {
+  const lower=csvHeaders.map(h=>h.toLowerCase());
+  const find=kws=>{for(const kw of kws){const i=lower.findIndex(h=>h.includes(kw));if(i>=0)return csvHeaders[i];}return '';};
+  colMap.date=find(['date','day','time','when']);
+  colMap.questions=find(['question','qs','count','num','total','completed','done']);
+  colMap.score=find(['score','correct','pct','percent','accuracy','grade','result']);
+}
+function renderColMapper() {
+  const fields=[
+    {key:'date',label:'Date *'},
+    {key:'questions',label:'Questions *'},
+    {key:'score',label:'Score % (optional)'},
+  ];
+  document.getElementById('col-mapper-grid').innerHTML=fields.map(f=>`
+    <div class="map-row">
+      <div class="map-label">${f.label}</div>
+      <select class="map-select" id="map-${f.key}" onchange="colMap['${f.key}']=this.value">
+        <option value="">— skip —</option>
+        ${csvHeaders.map(h=>`<option value="${h}"${colMap[f.key]===h?' selected':''}>${h}</option>`).join('')}
+      </select>
+    </div>`).join('');
+}
+function importCSV() {
+  if(!colMap.date||!colMap.questions){showToast('Map Date and Questions columns');return;}
+  const parsed=[]; let fails=0;
+  csvRawRows.forEach(row=>{
+    const dt=parseFlexDate(row[colMap.date]);
+    const qs=parseFloat(row[colMap.questions]);
+    if(!dt||isNaN(qs)){fails++;return;}
+    const rawSc=colMap.score?row[colMap.score]:null;
+    const score=rawSc!==null&&rawSc!==''?parseFloat(rawSc):null;
+    parsed.push({dt,qs,score:isNaN(score)?null:score});
+  });
+  if(!parsed.length){showToast('No valid rows — check mapping');return;}
+  const imported=parsed.map((r,i)=>({
+    _id:'csv_'+r.dt.toISOString().slice(0,10).replace(/-/g,'')+'_'+i,
+    date:r.dt.toISOString().slice(0,10),
+    qs:r.qs, score:r.score!==null?r.score:undefined, fromCSV:true
+  }));
+  entries=[...imported, ...entries.filter(e=>!e.fromCSV)];
+  settings.done=0;
+  saveLocal(); syncToFirebase(); renderAll();
+  // Show success state
+  document.getElementById('col-mapper').style.display='none';
+  document.getElementById('import-success').style.display='';
+  const totalQs=parsed.reduce((s,r)=>s+r.qs,0);
+  document.getElementById('import-success-msg').textContent=
+    `${parsed.length} sessions · ${totalQs.toLocaleString()} questions imported`;
+}
+function resetImport() {
+  csvRawRows=[]; csvHeaders=[]; colMap={date:'',questions:'',score:''};
+  document.getElementById('csv-file-input').value='';
+  document.getElementById('col-mapper').style.display='none';
+  document.getElementById('import-success').style.display='none';
+  document.getElementById('drop-zone').style.display='';
+}
+
+function parseFlexDate(str) {
+  if(!str)return null;
+  str=str.trim().replace(/^["']|["']$/g,'');
+  let d=new Date(str);
+  if(!isNaN(d.getTime()))return d;
+  const mo={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  const m1=str.match(/^([A-Za-z]{3})\.?\s+(\d{1,2}),?\s+(\d{4})/);
+  if(m1)return new Date(+m1[3],mo[m1[1].toLowerCase()],+m1[2]);
+  const m2=str.match(/^(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})/);
+  if(m2)return new Date(+m2[3],mo[m2[2].toLowerCase()],+m2[1]);
+  const p=str.split(/[\/\-\.]/);
+  if(p.length===3){const[a,b,c]=p.map(Number);if(c>31)return new Date(c,a-1,b);if(a>12)return new Date(c,b-1,a);return new Date(c,a-1,b);}
+  return null;
+}
+
+// ── Restore CSV entries from localStorage ─────────────
+(function restoreCsvEntries() {
   try {
-    const saved = localStorage.getItem('uw-chart-data');
+    const saved = localStorage.getItem('uw-entries');
     if (!saved) return;
-    const { colMap: cm, rows } = JSON.parse(saved);
-    colMap = cm;
-    const parsed = rows.map(r => ({ dt: new Date(r.dt), qs: r.qs, score: r.score }));
-    chartData = aggregate(parsed);
-    // Need Chart.js loaded — defer
-    setTimeout(() => {
-      if (typeof Chart !== 'undefined') showCharts();
-    }, 300);
+    // CSV entries already in entries via loadLocal — nothing extra needed
+    // Just make sure they're flagged correctly (legacy fix)
+    entries = entries.map(e => {
+      if (e._id && e._id.startsWith('csv_')) return {...e, fromCSV:true};
+      return e;
+    });
   } catch(e) {}
 })();
 
+// ── Init ──────────────────────────────────────────────
 document.getElementById('log-date').value  = todayStr();
 document.getElementById('exam-date').value = todayStr();
-// Render from localStorage immediately so the page isn't blank while Firebase resolves
 loadLocal();
 renderAll();
 </script>
