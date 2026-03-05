@@ -664,7 +664,7 @@ function renderPreview() {
     preview.innerHTML = '<div style="font-size:12px;color:var(--dim);margin-top:8px;">Map Date and Questions columns to see a preview.</div>';
     return;
   }
-  let html = '<div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Preview (first 4 rows)</div>';
+  let html = `<div style="font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Preview (first 4 rows)</div>`;
   html += '<table class="uw-table" style="font-size:12px;"><thead><tr>';
   html += `<th>Date (${colMap.date})</th><th>Questions (${colMap.questions})</th>`;
   if (colMap.score) html += `<th>Score (${colMap.score})</th>`;
