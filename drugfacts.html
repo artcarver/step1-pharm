@@ -45,16 +45,16 @@
     </div>
     
     <nav class="tabs" id="tabs">
-      <button class="tab-btn active" onclick="switchTab('micro', this)"><span class="tab-dot"></span>Microbiology</button>
-      <button class="tab-btn" onclick="switchTab('autonomic', this)"><span class="tab-dot"></span>Autonomics</button>
-      <button class="tab-btn" onclick="switchTab('cv', this)"><span class="tab-dot"></span>Cardio &amp; Renal</button>
-      <button class="tab-btn" onclick="switchTab('blood', this)"><span class="tab-dot"></span>Hematology</button>
-      <button class="tab-btn" onclick="switchTab('gi', this)"><span class="tab-dot"></span>GI &amp; Motility</button>
-      <button class="tab-btn" onclick="switchTab('endo', this)"><span class="tab-dot"></span>Endo &amp; Repro</button>
-      <button class="tab-btn" onclick="switchTab('neuro', this)"><span class="tab-dot"></span>Neuro &amp; Psych</button>
-      <button class="tab-btn" onclick="switchTab('onco', this)"><span class="tab-dot"></span>Oncology</button>
-      <button class="tab-btn" onclick="switchTab('toxicology', this)"><span class="tab-dot"></span>Toxicology</button>
-      <button class="tab-btn" onclick="switchTab('pulm', this)"><span class="tab-dot"></span>Pulmonary</button>
+      <button class="tab-btn active" onclick="switchTab('micro', this)" style="--theme-color: var(--theme-8);"><span class="tab-dot"></span>Microbiology</button>
+      <button class="tab-btn" onclick="switchTab('autonomic', this)" style="--theme-color: var(--theme-1);"><span class="tab-dot"></span>Autonomics</button>
+      <button class="tab-btn" onclick="switchTab('cv', this)" style="--theme-color: var(--theme-11);"><span class="tab-dot"></span>Cardio &amp; Renal</button>
+      <button class="tab-btn" onclick="switchTab('blood', this)" style="--theme-color: var(--theme-16);"><span class="tab-dot"></span>Hematology</button>
+      <button class="tab-btn" onclick="switchTab('gi', this)" style="--theme-color: var(--theme-5);"><span class="tab-dot"></span>GI &amp; Motility</button>
+      <button class="tab-btn" onclick="switchTab('endo', this)" style="--theme-color: var(--theme-13);"><span class="tab-dot"></span>Endo &amp; Repro</button>
+      <button class="tab-btn" onclick="switchTab('neuro', this)" style="--theme-color: var(--theme-19);"><span class="tab-dot"></span>Neuro &amp; Psych</button>
+      <button class="tab-btn" onclick="switchTab('onco', this)" style="--theme-color: var(--theme-9);"><span class="tab-dot"></span>Oncology</button>
+      <button class="tab-btn" onclick="switchTab('toxicology', this)" style="--theme-color: var(--theme-3);"><span class="tab-dot"></span>Toxicology</button>
+      <button class="tab-btn" onclick="switchTab('pulm', this)" style="--theme-color: var(--theme-7);"><span class="tab-dot"></span>Pulmonary</button>
     </nav>
   </div>
 </div>
@@ -188,13 +188,16 @@
 
 let cardCounter = 0;
 
-function drugCardHTML(drug, colorClass, idx) {
+function drugCardHTML(drug, id, themeNum) {
   if (!drug) return '';
-  const id = `drug-${colorClass}-${idx}-${cardCounter++}`;
+  const themeColor = `var(--theme-${themeNum})`;
+  const themeLight = `color-mix(in srgb, ${themeColor} 12%, transparent)`;
+  const styleAttr = `style="--theme-color: ${themeColor}; --theme-color-light: ${themeLight};"`;
+  
   const akaHTML = drug.aka ? drug.aka.replace(/·/g, '<span style="color:var(--dim);font-style:normal;margin:0 3px">·</span>') : '';
   
   return `
-  <div class="drug-card" id="${id}" onclick="toggleCard('${id}')">
+  <div class="drug-card" id="${id}" onclick="toggleCard('${id}')" ${styleAttr}>
     <div class="drug-card-header">
       <div style="flex:1;min-width:0">
         <div class="drug-name">${drug.name || 'Unknown'}</div>
@@ -214,17 +217,14 @@ function drugCardHTML(drug, colorClass, idx) {
   </div>`;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// STEP 8 REFACTOR: STRICT HTML BULLETED LISTS
-// ═══════════════════════════════════════════════════════════════
+// Strict HTML bulleted lists and string parsing logic
 function formatLines(text) {
   if (!text) return '';
   try {
-    // Convert custom bold syntax to strong tags
+    // Convert custom bold syntax to strong tags (which inherit the theme color now)
     let processedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
     let parts = [];
-    // Split sentences intelligently without breaking abbreviations
     const sentenceSplit = processedText.split(/\.\s+(?=(?:<[^>]+>)*[A-Z↑↓(0-9])/);
 
     sentenceSplit.forEach(segment => {
@@ -247,17 +247,18 @@ function formatLines(text) {
       return clean;
     }).filter(p => p.length > 0);
 
-    // If it's just a single phrase/sentence, no bullet points needed
     if (parts.length <= 1) return processedText;
 
-    // Output strict HTML ul/li bulleted lists
     return `<ul>${parts.map(p => `<li>${p}</li>`).join('')}</ul>`;
 
   } catch (err) {
     console.error("Error formatting lines:", err);
-    return text; // Fallback to raw text if parsing fails
+    return text; 
   }
 }
+
+// Systematic color mapping offset to ensure visual variety across tabs
+const sysOffsets = { autonomic: 0, cv: 2, blood: 4, neuro: 6, micro: 8, gi: 10, endo: 12, pulm: 14, onco: 16, toxicology: 18 };
 
 function renderSection(sectionId, sysKey) {
   try {
@@ -269,9 +270,13 @@ function renderSection(sectionId, sysKey) {
     
     let html = '';
     let globalIdx = 0;
+    const offset = sysOffsets[sysKey] || 0;
     
     groups.forEach((group, gi) => {
       const groupId = `grp-${sysKey}-${gi}`;
+      const themeNum = ((offset + gi) % 20) + 1;
+      const themeColor = `var(--theme-${themeNum})`;
+      const themeLight = `color-mix(in srgb, ${themeColor} 12%, transparent)`;
       
       const sortedDrugs = group.drugs.sort((a, b) => {
         const valA = typeof a.tier === 'number' ? a.tier : parseInt(String(a.tier).replace(/\D/g,'')) || 99;
@@ -280,13 +285,13 @@ function renderSection(sectionId, sysKey) {
       });
 
       html += `
-      <div class="class-group" id="${groupId}">
+      <div class="class-group" id="${groupId}" style="--theme-color: ${themeColor}; --theme-color-light: ${themeLight};">
         <div class="class-group-header">
           <span class="class-label">${group.group}</span>
           <button class="group-expand-btn" onclick="toggleGroup('${groupId}', this)">▼ Expand</button>
         </div>
         <div class="drug-grid">
-          ${sortedDrugs.map(d => drugCardHTML(d, group.color, globalIdx++)).join('')}
+          ${sortedDrugs.map(d => drugCardHTML(d, `drug-${globalIdx++}`, themeNum)).join('')}
         </div>
       </div>`;
     });
@@ -380,7 +385,7 @@ function allDrugs() {
     Object.entries(DRUGS).forEach(([sysKey, groups]) => {
       groups.forEach(group => {
         group.drugs.forEach(d => {
-          results.push({ ...d, colorClass: group.color, sysKey });
+          results.push({ ...d, sysKey });
         });
       });
     });
@@ -436,7 +441,9 @@ function handleSearch(q) {
 
     empty.style.display = 'none';
     count.textContent = matches.length + ' result' + (matches.length !== 1 ? 's' : '') + ' for "' + q + '"';
-    grid.innerHTML = matches.map((d, i) => drugCardHTML(d, d.colorClass, 'search-' + i)).join('');
+    
+    // Cycle colors dynamically for search results
+    grid.innerHTML = matches.map((d, i) => drugCardHTML(d, 'search-' + i, (i % 20) + 1)).join('');
   } catch (err) {
     console.error("Error during search:", err);
   }
