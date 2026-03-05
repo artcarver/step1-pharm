@@ -5,23 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style.css"/>
-<title>Step 1 Dashboard — Gwendalynn Stilson</title>
-
-
-
+<title>Step 1 Dashboard</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
 </head>
 <body>
 
 <div class="header">
   <div class="header-inner">
-    <a href="index.html" class="back-link">← Back to Hub</a>
+    
+    <div class="global-nav">
+      <a href="index.html" style="font-size:18px; font-weight:600; color:var(--sakura2);">🌸 Step 1 Hub</a>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <a href="uworld_tracker.html">UWorld</a>
+        <a href="step1_dashboard.html">Dashboard</a>
+        <a href="drugfacts.html">Pharm</a>
+        <a href="microfacts.html">Micro</a>
+      </div>
+    </div>
+
     <div class="header-top">
       <div>
-        <p class="eyebrow">USMLE Step 1 · Gwendalynn Stilson · UCSD SOM</p>
+        <p class="eyebrow">USMLE Step 1 · Performance Tracker</p>
         <h1 class="brand-title">Performance Dashboard</h1>
         <div class="brand-flourish"><div class="fl l"></div><div class="fd"></div><div class="fl r"></div></div>
         <p class="brand-sub">Exam Date: <strong>April 13, 2026</strong> &nbsp;·&nbsp; <span id="days-remaining"></span> days remaining</p>
@@ -143,31 +151,27 @@
 </div>
 
 <script>
-  const firebaseConfig = {
-  apiKey: "AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",
-  authDomain: "sketchy-tracker.firebaseapp.com",
-  projectId: "sketchy-tracker",
-  storageBucket: "sketchy-tracker.firebasestorage.app",
-  messagingSenderId: "970470066509",
-  appId: "1:970470066509:web:14c7300fb1dd882a038f04",
-  measurementId: "G-2KVBCP4THR"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
-
-auth.onAuthStateChanged((user) => {
-  const myEmail = "ghstilson@gmail.com"; 
-
-  if (!user || user.email.toLowerCase() !== myEmail.toLowerCase()) {
-    // Kick to index if no user, or if the email is wrong
+// ── Secure Authentication Check ────────────────────────
+window.addEventListener('appAuthStateChanged', (e) => {
+  const user = e.detail.user;
+  // This dashboard is locked strictly to your account
+  if (!user) {
     window.location.replace("index.html");
-  } else {
-    console.log("Authorized access granted.");
   }
 });
+
+// ── Data Defensiveness Utilities ───────────────────────
+function safeSetHTML(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
+function safeSetText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+// ── Score Data ─────────────────────────────────────────
 const disciplines=[
   {name:"Pathology",cbse:57,cbssa:68,avg:75,weight:"45–55%"},
   {name:"Physiology",cbse:56,cbssa:67,avg:75,weight:"30–40%"},
@@ -179,6 +183,7 @@ const disciplines=[
   {name:"Histology & Cell Biology",cbse:33,cbssa:76,avg:71,weight:"5–15%"},
   {name:"Genetics",cbse:70,cbssa:56,avg:72,weight:"5–10%"},
 ];
+
 const systems=[
   {name:"Reproductive & Endocrine",cbse:77,cbssa:53,avg:75,weight:"12–16%"},
   {name:"Respiratory & Renal/Urinary",cbse:36,cbssa:82,avg:72,weight:"11–15%"},
@@ -189,6 +194,7 @@ const systems=[
   {name:"Cardiovascular System",cbse:43,cbssa:57,avg:73,weight:"7–11%"},
   {name:"Gastrointestinal System",cbse:56,cbssa:63,avg:74,weight:"6–10%"},
 ];
+
 const pharma=[
   {name:"Pharmacology (General Principles)",done:"11/44",correct:82},
   {name:"Cardiovascular System",done:"23/91",correct:35},
@@ -205,6 +211,7 @@ const pharma=[
   {name:"Allergy & Immunology",done:"7/11",correct:43},
   {name:"Dermatology",done:"4/7",correct:50},
 ];
+
 const actionPlan=[
   {rank:"01",title:"Pharmacology",urgency:"CRITICAL",uc:"var(--red)",ub:"rgba(192,48,80,0.3)",note:"30 pts below avg on both tests — your single biggest lever. Prioritize CV pharm (35% correct), Nervous System (45%), and Toxicology (33%) using First Aid + Sketchy Pharm daily. Complete remaining UWorld Pharmacology blocks."},
   {rank:"02",title:"Reproductive & Endocrine",urgency:"URGENT",uc:"var(--orange)",ub:"rgba(184,88,32,0.3)",note:"Dramatic 24-point DROP (77→53) between tests — the most alarming regression in your data. This system is 12–16% of the exam. Revisit endocrine pharmacology (insulin, thyroid, adrenal drugs) and reproductive hormones comprehensively."},
@@ -213,74 +220,168 @@ const actionPlan=[
   {rank:"05",title:"Multisystem Processes",urgency:"WATCH",uc:"var(--yellow)",ub:"rgba(184,120,32,0.3)",note:"Minimal gain (+2 pts), still 19 below average. Covers neoplasia, inflammation, connective tissue — high-yield concepts throughout Step 1. Review Robbins key concepts and related UWorld blocks."},
 ];
 
-function getPriority(cbssa,avg,delta){if(cbssa<avg-20)return"critical";if(cbssa<avg-10||delta<0)return"high";if(cbssa<avg)return"medium";return"good";}
-function deltaHTML(d){const cls=d>0?"up":"down",arrow=d>0?"▲":"▼";return`<span class="delta ${cls}">${arrow} ${Math.abs(d)} pts</span>`;}
-function barColor(s,a){if(s>=a)return"var(--green)";if(s>=a-10)return"var(--yellow)";return"var(--red)";}
-function scoreColor(s,a){if(s>=a)return"var(--green)";if(s>=a-10)return"var(--yellow)";return"var(--red)";}
+// ── Rendering Logic ────────────────────────────────────
+try {
+  function getPriority(cbssa, avg, delta) {
+    if(cbssa < avg - 20) return "critical";
+    if(cbssa < avg - 10 || delta < 0) return "high";
+    if(cbssa < avg) return "medium";
+    return "good";
+  }
 
-const examDate=new Date("2026-04-13T12:00:00"),japanDate=new Date("2026-04-15T12:00:00"),today=new Date();
-today.setHours(0,0,0,0);
-const dE=Math.max(0,Math.round((examDate-today)/86400000)),dJ=Math.max(0,Math.round((japanDate-today)/86400000));
-document.getElementById("days-remaining").textContent=dE;
-document.getElementById("days-big").textContent=dE;
-document.getElementById("days-exam-strip").textContent=dE;
-document.getElementById("days-japan-strip").textContent=dJ;
+  function deltaHTML(d) {
+    const cls = d > 0 ? "up" : "down";
+    const arrow = d > 0 ? "▲" : "▼";
+    return `<span class="delta ${cls}">${arrow} ${Math.abs(d)} pts</span>`;
+  }
 
-const allData=[...disciplines,...systems].map(d=>({...d,delta:d.cbssa-d.cbse}));
-function ovRow(d){return`<div class="ov-row"><span class="ov-name">${d.name}</span>${deltaHTML(d.delta)}</div>`;}
-document.getElementById("most-improved").innerHTML=[...allData].sort((a,b)=>b.delta-a.delta).slice(0,4).map(ovRow).join("");
-document.getElementById("needs-attention").innerHTML=[...allData].sort((a,b)=>a.delta-b.delta).slice(0,4).map(ovRow).join("");
+  function barColor(s, a) {
+    if(s >= a) return "var(--green)";
+    if(s >= a - 10) return "var(--yellow)";
+    return "var(--red)";
+  }
 
-function dsBuild(data,id){
-  document.getElementById(id).innerHTML=data.map(d=>{
-    const delta=d.cbssa-d.cbse,p=getPriority(d.cbssa,d.avg,delta);
-    const bc=barColor(d.cbssa,d.avg),sc=scoreColor(d.cbssa,d.avg);
-    const pl={critical:"Critical",high:"High",medium:"Medium",good:"Good"}[p];
-    return`<div class="ds-card ${p}"><div class="ds-header"><div><span class="priority ${p}">${pl}</span><div class="ds-name">${d.name}</div><div class="ds-weight">${d.weight} of exam</div></div>${deltaHTML(delta)}</div><div class="ds-scores"><div class="ds-score-box"><div class="ds-score-num" style="color:var(--yellow)">${d.cbse}</div><div class="ds-score-lbl">CBSE</div></div><div class="ds-score-box"><div class="ds-score-num" style="color:${sc}">${d.cbssa}</div><div class="ds-score-lbl">CBSSA</div></div><div class="ds-score-box"><div class="ds-score-num" style="color:var(--dim)">${d.avg}</div><div class="ds-score-lbl">Avg</div></div></div><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:${d.cbssa}%;background:${bc}"></div></div><div class="bar-avg-label">avg: ${d.avg}</div></div>`;
+  function scoreColor(s, a) {
+    if(s >= a) return "var(--green)";
+    if(s >= a - 10) return "var(--yellow)";
+    return "var(--red)";
+  }
+
+  // Countdown Render
+  const examDate = new Date("2026-04-13T12:00:00");
+  const japanDate = new Date("2026-04-15T12:00:00");
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  
+  const dE = Math.max(0, Math.round((examDate - today) / 86400000));
+  const dJ = Math.max(0, Math.round((japanDate - today) / 86400000));
+  
+  safeSetText("days-remaining", dE);
+  safeSetText("days-big", dE);
+  safeSetText("days-exam-strip", dE);
+  safeSetText("days-japan-strip", dJ);
+
+  // Overview Arrays
+  const allData = [...disciplines, ...systems].map(d => ({ ...d, delta: d.cbssa - d.cbse }));
+  
+  function ovRow(d) {
+    return `<div class="ov-row"><span class="ov-name">${d.name}</span>${deltaHTML(d.delta)}</div>`;
+  }
+  
+  const mostImpHTML = [...allData].sort((a,b) => b.delta - a.delta).slice(0,4).map(ovRow).join("");
+  const needsAttHTML = [...allData].sort((a,b) => a.delta - b.delta).slice(0,4).map(ovRow).join("");
+  
+  safeSetHTML("most-improved", mostImpHTML);
+  safeSetHTML("needs-attention", needsAttHTML);
+
+  // Detail Grids
+  function dsBuildHTML(data) {
+    return data.map(d => {
+      const delta = d.cbssa - d.cbse;
+      const p = getPriority(d.cbssa, d.avg, delta);
+      const bc = barColor(d.cbssa, d.avg);
+      const sc = scoreColor(d.cbssa, d.avg);
+      const pl = { critical:"Critical", high:"High", medium:"Medium", good:"Good" }[p];
+      
+      return `<div class="ds-card ${p}">
+        <div class="ds-header">
+          <div><span class="priority ${p}">${pl}</span><div class="ds-name">${d.name}</div><div class="ds-weight">${d.weight} of exam</div></div>
+          ${deltaHTML(delta)}
+        </div>
+        <div class="ds-scores">
+          <div class="ds-score-box"><div class="ds-score-num" style="color:var(--yellow)">${d.cbse}</div><div class="ds-score-lbl">CBSE</div></div>
+          <div class="ds-score-box"><div class="ds-score-num" style="color:${sc}">${d.cbssa}</div><div class="ds-score-lbl">CBSSA</div></div>
+          <div class="ds-score-box"><div class="ds-score-num" style="color:var(--dim)">${d.avg}</div><div class="ds-score-lbl">Avg</div></div>
+        </div>
+        <div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:${d.cbssa}%;background:${bc}"></div></div>
+        <div class="bar-avg-label">avg: ${d.avg}</div>
+      </div>`;
+    }).join("");
+  }
+  
+  safeSetHTML("disciplines-grid", dsBuildHTML(disciplines));
+  safeSetHTML("systems-grid", dsBuildHTML(systems));
+
+  // Pharmacology Breakdown
+  const pharmaHTML = [...pharma].sort((a,b) => a.correct - b.correct).map(d => {
+    const c = d.correct >= 70 ? "var(--green)" : d.correct >= 50 ? "var(--yellow)" : "var(--red)";
+    return `<div class="pharma-row">
+      <div><div class="pharma-name">${d.name}</div><div class="pharma-done">${d.done} questions done</div></div>
+      <div class="pharma-pct" style="color:${c}">${d.correct}%</div>
+      <div class="pharma-bar-col">
+        <div class="mini-bar-wrap" style="height:8px"><div class="mini-bar-fill" style="width:${d.correct}%;background:${c}"></div></div>
+        <div class="pharma-bar-labels"><span style="color:var(--green)">✓ ${d.correct}%</span><span style="color:var(--red)">✗ ${100-d.correct}%</span></div>
+      </div>
+    </div>`;
   }).join("");
+  
+  safeSetHTML("pharma-list", pharmaHTML);
+
+  // Focus Areas
+  const fa = allData.map(d => ({ ...d, priority: getPriority(d.cbssa, d.avg, d.delta) }));
+  const crits = fa.filter(d => d.priority === "critical").sort((a,b) => a.cbssa - b.cbssa);
+  const highs = fa.filter(d => d.priority === "high").sort((a,b) => a.cbssa - b.cbssa);
+  
+  function fiHTML(d, cls) {
+    const c = cls === "critical-item" ? "var(--red)" : "var(--orange)";
+    return `<div class="focus-item ${cls}">
+      <div><div class="focus-item-name">${d.name}</div><div class="focus-item-meta">${d.weight} of exam · gap: ${d.cbssa - d.avg} vs avg</div></div>
+      <div><div class="focus-item-score" style="color:${c}">${d.cbssa}</div><div class="focus-item-avg">avg ${d.avg}</div></div>
+    </div>`;
+  }
+  
+  safeSetHTML("focus-critical", crits.map(d => fiHTML(d, "critical-item")).join(""));
+  safeSetHTML("focus-high", highs.map(d => fiHTML(d, "high-item")).join(""));
+
+  // Action Plan
+  const actionPlanHTML = actionPlan.map(i => `<div class="action-row">
+    <div class="action-num">${i.rank}</div>
+    <div><div class="action-title">${i.title}</div><span class="urgency" style="color:${i.uc};border-color:${i.ub}">${i.urgency}</span></div>
+    <p class="action-note">${i.note}</p>
+  </div>`).join("");
+  
+  safeSetHTML("action-plan", actionPlanHTML);
+
+} catch (err) {
+  console.error("Error rendering dashboard components:", err);
 }
-dsBuild(disciplines,"disciplines-grid");
-dsBuild(systems,"systems-grid");
 
-document.getElementById("pharma-list").innerHTML=[...pharma].sort((a,b)=>a.correct-b.correct).map(d=>{
-  const c=d.correct>=70?"var(--green)":d.correct>=50?"var(--yellow)":"var(--red)";
-  return`<div class="pharma-row"><div><div class="pharma-name">${d.name}</div><div class="pharma-done">${d.done} questions done</div></div><div class="pharma-pct" style="color:${c}">${d.correct}%</div><div class="pharma-bar-col"><div class="mini-bar-wrap" style="height:8px"><div class="mini-bar-fill" style="width:${d.correct}%;background:${c}"></div></div><div class="pharma-bar-labels"><span style="color:var(--green)">✓ ${d.correct}%</span><span style="color:var(--red)">✗ ${100-d.correct}%</span></div></div></div>`;
-}).join("");
-
-const fa=allData.map(d=>({...d,priority:getPriority(d.cbssa,d.avg,d.delta)}));
-const crits=fa.filter(d=>d.priority==="critical").sort((a,b)=>a.cbssa-b.cbssa);
-const highs=fa.filter(d=>d.priority==="high").sort((a,b)=>a.cbssa-b.cbssa);
-function fiHTML(d,cls){const c=cls==="critical-item"?"var(--red)":"var(--orange)";return`<div class="focus-item ${cls}"><div><div class="focus-item-name">${d.name}</div><div class="focus-item-meta">${d.weight} of exam · gap: ${d.cbssa-d.avg} vs avg</div></div><div><div class="focus-item-score" style="color:${c}">${d.cbssa}</div><div class="focus-item-avg">avg ${d.avg}</div></div></div>`;}
-document.getElementById("focus-critical").innerHTML=crits.map(d=>fiHTML(d,"critical-item")).join("");
-document.getElementById("focus-high").innerHTML=highs.map(d=>fiHTML(d,"high-item")).join("");
-
-document.getElementById("action-plan").innerHTML=actionPlan.map(i=>`<div class="action-row"><div class="action-num">${i.rank}</div><div><div class="action-title">${i.title}</div><span class="urgency" style="color:${i.uc};border-color:${i.ub}">${i.urgency}</span></div><p class="action-note">${i.note}</p></div>`).join("");
-
-function switchTab(name,btn){
-  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-  document.getElementById("tab-"+name).classList.add("active");
-  btn.classList.add("active");
+// ── Tab Navigation ─────────────────────────────────────
+function switchTab(name, btn) {
+  try {
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    
+    const targetPanel = document.getElementById("tab-" + name);
+    if (targetPanel) targetPanel.classList.add("active");
+    if (btn) btn.classList.add("active");
+  } catch (err) {
+    console.error("Tab switch error:", err);
+  }
 }
-let lastScrollY = window.scrollY;
-const header = document.querySelector('.header');
 
-window.addEventListener('scroll', () => {
-  // Only execute logic if the screen width is mobile-sized (< 768px)
-  if (window.innerWidth <= 768) {
-    if (window.scrollY > lastScrollY && window.scrollY > 100) {
-      // Scrolling down: Hide header
-      header.classList.add('header--hidden');
+// ── Mobile Header Scroll Logic ─────────────────────────
+try {
+  let lastScrollY = window.scrollY;
+  const header = document.querySelector('.header');
+
+  window.addEventListener('scroll', () => {
+    if (!header) return;
+    
+    if (window.innerWidth <= 768) {
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        header.classList.add('header--hidden');
+      } else {
+        header.classList.remove('header--hidden');
+      }
     } else {
-      // Scrolling up: Show header
       header.classList.remove('header--hidden');
     }
-  } else {
-    // Desktop safety: Ensure header is never hidden if window is resized
-    header.classList.remove('header--hidden');
-  }
-  lastScrollY = window.scrollY;
-});
+    lastScrollY = window.scrollY;
+  });
+} catch (err) {
+  console.error("Scroll event error:", err);
+}
 </script>
 </body>
 </html>
