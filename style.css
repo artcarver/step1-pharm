@@ -2091,6 +2091,26 @@ a { text-decoration: none; color: inherit; }
 
 .browse-link:hover { color: var(--sakura2); }
 
+/* ── Drug Card Meta (shared) ─────────────────────────────── */
+.drug-card-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.drug-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ── Tab Color Modifiers ─────────────────────────────────── */
+/* Each tab's theme color is set via a modifier class rather
+   than inline styles, keeping all color decisions in CSS.    */
+.tab-btn--bacteria { --theme-color: var(--theme-12); }
+.tab-btn--viruses   { --theme-color: var(--theme-2);  }
+.tab-btn--parasites { --theme-color: var(--theme-8);  }
+.tab-btn--fungi     { --theme-color: var(--theme-18); }
+
 /* ── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--milk); }
