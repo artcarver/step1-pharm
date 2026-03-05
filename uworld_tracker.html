@@ -258,9 +258,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// Set persistence to LOCAL so auth survives page navigation
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.error);
-
 let currentUser = null;
 const TOTAL_DEFAULT = 3661;
 
@@ -307,23 +304,43 @@ async function loadFromFirebase() {
       if (d.uwEntries)  entries  = d.uwEntries;
       if (d.uwExams)    exams    = d.uwExams;
       saveLocal(); renderAll();
+    } else {
+      renderAll();
     }
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error(e); renderAll(); }
 }
 
-// Keep auth banner hidden until Firebase resolves — avoids flash of "not logged in"
+// Hide banner until Firebase confirms auth state — prevents flash of "not logged in"
 document.getElementById('auth-banner').classList.add('hidden');
 
-auth.onAuthStateChanged(async (user) => {
-  currentUser = user;
-  // Only show the banner if definitely not logged in (after Firebase confirms)
-  document.getElementById('auth-banner').classList.toggle('hidden', !!user);
-  if (user) {
-    await loadFromFirebase();
-  } else {
-    renderAll();
-  }
-});
+// CRITICAL: setPersistence must fully resolve BEFORE registering onAuthStateChanged.
+// If onAuthStateChanged fires first (which it will if setPersistence is fire-and-forget),
+// it reads the old SESSION persistence and returns null, ignoring the existing login.
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      document.getElementById('auth-banner').classList.toggle('hidden', !!user);
+      if (user) {
+        await loadFromFirebase();
+      } else {
+        renderAll();
+      }
+    });
+  })
+  .catch((err) => {
+    // Persistence failed (e.g. private browsing) — still register auth listener
+    console.warn('setPersistence failed, falling back:', err);
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      document.getElementById('auth-banner').classList.toggle('hidden', !!user);
+      if (user) {
+        await loadFromFirebase();
+      } else {
+        renderAll();
+      }
+    });
+  });
 
 function initSetupUI() {
   document.getElementById('setup-done').value   = settings.done      || '';
