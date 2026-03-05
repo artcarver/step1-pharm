@@ -24,6 +24,7 @@
         <a href="step1_dashboard.html">Dashboard</a>
         <a href="drugfacts.html">Pharm</a>
         <a href="microfacts.html">Micro</a>
+        <button id="auth-btn" class="auth-btn" style="position:static; margin-left:8px;">Log in</button>
       </div>
     </div>
   </div>
@@ -35,7 +36,7 @@
   <h1 class="uw-page-title">UWorld <em>Tracker</em></h1>
 
   <div class="uw-auth-banner hidden" id="auth-banner">
-    ⚠️ Not logged in. Please <a href="index.html">log in on the hub</a> to sync and save your data.
+    ⚠️ Not logged in. Please <a href="index.html" style="color:var(--fuji); text-decoration:underline;">log in</a> to sync and save your data.
   </div>
 
   <button class="setup-toggle" id="setup-toggle" onclick="toggleSetup()">
@@ -139,9 +140,9 @@
       <div class="prog-stat-num" id="stat-pct">—</div>
       <div class="prog-stat-lbl">Complete</div>
     </div>
-    <div class="prog-stat stat-clickable" onclick="showPaceMath()">
+    <div class="prog-stat stat-clickable" onclick="showPaceMath()" style="cursor:pointer;" title="Click for pace calculation">
       <div class="prog-stat-num" id="stat-needed">—</div>
-      <div class="prog-stat-lbl">Needed / Day <span class="click-hint">(Click for calc)</span></div>
+      <div class="prog-stat-lbl">Needed / Day</div>
     </div>
   </div>
 
@@ -166,7 +167,7 @@
     <div class="charts-head">
       <span class="charts-title">Activity Charts</span>
       <div class="charts-controls">
-        <button class="import-link" onclick="openImportModal()">↑ Import past data</button>
+        <button class="action-btn" onclick="openImportModal()" style="font-family:'DM Mono',monospace;">↑ Import</button>
         <div class="view-tabs" id="chart-view-toggle">
           <button class="view-tab active" data-view="daily"   onclick="setChartView('daily')">Daily</button>
           <button class="view-tab"        data-view="weekly"  onclick="setChartView('weekly')">Weekly</button>
@@ -175,25 +176,21 @@
       </div>
     </div>
     <div id="charts-body">
-      <div class="charts-empty">Log your first session to start tracking</div>
+      <div class="charts-empty" style="text-align:center; padding:40px; color:var(--dim); font-style:italic;">Log your first session to start tracking</div>
     </div>
   </div>
 
   <div class="history-wrap">
-    <div class="history-head">
-      <span class="history-title">Session Log</span>
-    </div>
+    <div class="history-head">Session Log</div>
     <div id="history-container">
-      <div class="uw-empty">No entries yet</div>
+      <div class="uw-empty" style="text-align:center; padding:20px; color:var(--dim); font-style:italic;">No entries yet</div>
     </div>
   </div>
 
   <div class="history-wrap">
-    <div class="history-head">
-      <span class="history-title">Practice Exams</span>
-    </div>
+    <div class="history-head">Practice Exams</div>
     <div id="exam-container">
-      <div class="uw-empty">No practice exams logged yet</div>
+      <div class="uw-empty" style="text-align:center; padding:20px; color:var(--dim); font-style:italic;">No practice exams logged yet</div>
     </div>
   </div>
 
@@ -205,18 +202,6 @@
     <div class="modal-title">Import Past Data</div>
     <p class="modal-sub">Upload a CSV to load your history. Needs a <strong>date</strong> and <strong>questions</strong> column (score is optional). Maps to your log automatically.</p>
     
-    <div class="import-instructions">
-      <div class="import-instructions-title">How to export your data</div>
-      <ol>
-        <li>Go to the UWorld <strong>Previous Tests</strong> page and set "Items per page" to 100.</li>
-        <li>Highlight the entire table and copy it.</li>
-        <li>Paste the text into an AI with this prompt:<br>
-          <code style="background:rgba(0,0,0,0.05); padding:4px 6px; border-radius:4px; color:var(--ink); display:inline-block; margin-top:4px;">"Convert this UWorld data into a clean CSV. Keep only three columns: Date, # QS, and Percent Correct. Ignore all other data."</code>
-        </li>
-        <li>Save the generated text as a <strong>.csv</strong> file and upload it below.</li>
-      </ol>
-    </div>
-
     <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file-input').click()">
       <div class="drop-zone-icon">📂</div>
       <div class="drop-zone-text">Drop CSV here or <span class="browse-link">click to browse</span></div>
@@ -224,23 +209,20 @@
       <input type="file" id="csv-file-input" accept=".csv,.txt" style="display:none"/>
     </div>
     <div id="col-mapper" style="display:none;">
-      <div class="file-info" id="csv-file-info"></div>
+      <div class="file-info" id="csv-file-info" style="font-family:'DM Mono',monospace; font-size:12px; margin-bottom:10px; color:var(--fuji);"></div>
       <div class="mapper-grid" id="col-mapper-grid"></div>
-      <div id="csv-preview"></div>
       <div class="modal-actions">
         <button class="modal-btn-primary" onclick="importCSV()">Import ✦</button>
         <button class="modal-btn-ghost" onclick="resetImport()">Clear</button>
       </div>
     </div>
-    <div id="import-success" style="display:none;">
-      <div class="import-success-wrap">
-        <div class="import-success-icon">✦</div>
-        <div class="import-success-title" id="import-success-msg"></div>
-        <div class="import-success-sub">Your stats, progress, and charts have been updated.</div>
-        <div class="import-success-actions">
-          <button class="modal-btn-primary" onclick="closeImportModal()">Done</button>
-          <button class="modal-btn-ghost" onclick="resetImport()">Re-import</button>
-        </div>
+    <div id="import-success" style="display:none; text-align:center; padding:20px;">
+      <div style="font-size:32px; color:var(--green); margin-bottom:10px;">✦</div>
+      <div class="modal-title" id="import-success-msg"></div>
+      <div class="modal-sub">Your stats, progress, and charts have been updated.</div>
+      <div class="modal-actions" style="justify-content:center;">
+        <button class="modal-btn-primary" onclick="closeImportModal()">Done</button>
+        <button class="modal-btn-ghost" onclick="resetImport()">Re-import</button>
       </div>
     </div>
   </div>
@@ -267,16 +249,25 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── Realtime Firebase Synchronization ─────────────────
+// ── Auth & Realtime Firebase Synchronization ──────────
 window.addEventListener('appAuthStateChanged', (e) => {
   const user = e.detail.user;
+  
+  // Handle Global Nav Auth Button
+  const authBtn = document.getElementById('auth-btn');
+  if (authBtn) {
+    authBtn.textContent = user ? 'Log out' : 'Log in';
+    if(user) authBtn.classList.add('is-logged-in');
+    else authBtn.classList.remove('is-logged-in');
+  }
+
+  // Handle Auth Banner
   const banner = document.getElementById('auth-banner');
   if (banner) banner.classList.toggle('hidden', !!user);
   
   if (user) {
     setupRealtimeListeners(user.uid);
   } else {
-    // Clear data if logged out
     if (unsubLogs) unsubLogs();
     if (unsubConfig) unsubConfig();
     entries = [];
@@ -286,32 +277,37 @@ window.addEventListener('appAuthStateChanged', (e) => {
   }
 });
 
+// Setup Auth Button click behavior
+const authBtn = document.getElementById('auth-btn');
+if (authBtn) {
+  authBtn.addEventListener('click', () => {
+    if (!auth) return;
+    if (auth.currentUser) {
+      auth.signOut();
+    } else {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(console.error);
+    }
+  });
+}
+
 function setupRealtimeListeners(uid) {
   if (!db) return;
-
   try {
-    // Listen to UWorld Config
     if (unsubConfig) unsubConfig();
     unsubConfig = db.collection('users').doc(uid).collection('uworld').doc('config').onSnapshot((doc) => {
-      if (doc.exists) {
-        settings = { ...settings, ...doc.data() };
-      }
+      if (doc.exists) settings = { ...settings, ...doc.data() };
       renderAll();
     }, err => console.error("Config Listener Error:", err));
 
-    // Listen to all UWorld Logs (Exams and Questions combined via type)
     if (unsubLogs) unsubLogs();
     unsubLogs = db.collection('users').doc(uid).collection('uworld_logs').onSnapshot((snap) => {
-      entries = [];
-      exams = [];
+      entries = []; exams = [];
       snap.forEach((doc) => {
         const data = doc.data();
-        data._id = doc.id; // Store reference ID for editing/deleting
-        if (data.type === 'exam') {
-          exams.push(data);
-        } else {
-          entries.push(data);
-        }
+        data._id = doc.id;
+        if (data.type === 'exam') exams.push(data);
+        else entries.push(data);
       });
       renderAll();
     }, err => console.error("Logs Listener Error:", err));
@@ -320,7 +316,7 @@ function setupRealtimeListeners(uid) {
   }
 }
 
-// ── Setup ─────────────────────────────────────────────
+// ── Setup UI ──────────────────────────────────────────
 function toggleSetup() {
   const panel = document.getElementById('setup-panel');
   const btn   = document.getElementById('setup-toggle');
@@ -360,23 +356,15 @@ async function saveSetup() {
     }
     
     const panel = document.getElementById('setup-panel');
-    const btn = document.getElementById('setup-toggle');
     if (panel) panel.classList.remove('open');
-    if (btn) btn.classList.remove('open');
-    
   } catch (err) {
     console.error("Error saving setup:", err);
   }
 }
 
-// ── Auto vs Manual Unique Progress ────────────────────
-function getRawVolume() {
-  return entries.reduce((sum, e) => sum + (e.qs || 0), 0);
-}
-
-function getCurrentUnique() {
-  return Math.max(0, getRawVolume() + (settings.uniqueOffset || 0));
-}
+// ── Stats Math ────────────────────────────────────────
+function getRawVolume() { return entries.reduce((sum, e) => sum + (e.qs || 0), 0); }
+function getCurrentUnique() { return Math.max(0, getRawVolume() + (settings.uniqueOffset || 0)); }
 
 async function promptUpdateUnique() {
   const current = getCurrentUnique();
@@ -393,13 +381,10 @@ async function promptUpdateUnique() {
       } catch (err) {
         console.error("Error updating unique count:", err);
       }
-    } else {
-      showToast('Please enter a valid number.');
     }
   }
 }
 
-// ── Stats Calculation ─────────────────────────────────
 function calcNeededMath() {
   if (!settings.finishBy) return null;
   const done = getCurrentUnique();
@@ -416,18 +401,13 @@ function calcNeededMath() {
     if ((settings.studyDays || []).includes(cur.getDay())) daysLeft++;
     cur.setDate(cur.getDate() + 1);
   }
-  
-  return { 
-    remaining, 
-    daysLeft, 
-    needed: daysLeft > 0 ? Math.ceil(remaining / daysLeft) : remaining 
-  };
+  return { remaining, daysLeft, needed: daysLeft > 0 ? Math.ceil(remaining / daysLeft) : remaining };
 }
 
 function showPaceMath() {
   const math = calcNeededMath();
   if (!math) return showToast("Set a 'Finish QBank By' date in settings first.");
-  if (math.remaining <= 0) return showToast("QBank complete. No questions needed per day.");
+  if (math.remaining <= 0) return showToast("QBank complete!");
   alert(`Pace Calculation:\n\n${math.remaining.toLocaleString()} remaining questions\n÷ ${math.daysLeft} study days left\n= ${math.needed} questions/day`);
 }
 
@@ -435,35 +415,24 @@ function renderStats() {
   const done = getCurrentUnique();
   const remaining = Math.max(0, settings.total - done);
   const pct  = settings.total > 0 ? Math.round((done/settings.total)*100) : 0;
-  
   const math = calcNeededMath();
   const needed = math ? math.needed : '—';
 
-  const sDone = document.getElementById('stat-done');
-  const sRemain = document.getElementById('stat-remain');
-  const sPct = document.getElementById('stat-pct');
-  const sNeeded = document.getElementById('stat-needed');
-  const pPct = document.getElementById('prog-pct');
-  const pFill = document.getElementById('prog-fill');
-  const pSubL = document.getElementById('prog-sub-left');
-  const pSubR = document.getElementById('prog-sub-right');
-
-  if (sDone) sDone.textContent = done.toLocaleString();
-  if (sRemain) sRemain.textContent = remaining.toLocaleString();
-  if (sPct) sPct.textContent = pct + '%';
-  
-  if (sNeeded) {
-    sNeeded.textContent = needed;
-    sNeeded.className = 'prog-stat-num' + (needed > 80 ? ' alert' : needed > 40 ? ' warn' : ' ok');
+  const el = (id) => document.getElementById(id);
+  if(el('stat-done')) el('stat-done').textContent = done.toLocaleString();
+  if(el('stat-remain')) el('stat-remain').textContent = remaining.toLocaleString();
+  if(el('stat-pct')) el('stat-pct').textContent = pct + '%';
+  if(el('stat-needed')) {
+    el('stat-needed').textContent = needed;
+    el('stat-needed').className = 'prog-stat-num' + (needed > 80 ? ' alert' : needed > 40 ? ' warn' : ' ok');
   }
-
-  if (pPct) pPct.textContent = pct + '%';
-  if (pFill) pFill.style.width = pct + '%';
-  if (pSubL) pSubL.textContent = `${done.toLocaleString()} / ${(settings.total || TOTAL_DEFAULT).toLocaleString()} unique questions`;
-  if (pSubR) pSubR.textContent = settings.finishBy ? `Finish by ${new Date(settings.finishBy + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}` : '';
+  if(el('prog-pct')) el('prog-pct').textContent = pct + '%';
+  if(el('prog-fill')) el('prog-fill').style.width = pct + '%';
+  if(el('prog-sub-left')) el('prog-sub-left').textContent = `${done.toLocaleString()} / ${(settings.total || TOTAL_DEFAULT).toLocaleString()} unique questions`;
+  if(el('prog-sub-right')) el('prog-sub-right').textContent = settings.finishBy ? `Finish by ${new Date(settings.finishBy + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}` : '';
 }
 
-// ── Charts (Live from Volume Logs) ────────────────────
+// ── Chart Logic ───────────────────────────────────────
 let activeCharts = {}, chartView = 'daily';
 
 function buildLiveChartData() {
@@ -473,16 +442,14 @@ function buildLiveChartData() {
     score: (e.score !== undefined && e.score !== null) ? Number(e.score) : null
   })).filter(r => !isNaN(r.dt.getTime()));
   if (!rows.length) return null;
-  return aggregate(rows);
-}
-
-function aggregate(rows) {
+  
   rows.sort((a,b) => a.dt - b.dt);
   const fmtKey = {
-    daily:   d => d.toISOString().slice(0,10),
-    weekly:  d => { const s=new Date(d); s.setDate(d.getDate()-d.getDay()); return s.toISOString().slice(0,10); },
+    daily: d => d.toISOString().slice(0,10),
+    weekly: d => { const s=new Date(d); s.setDate(d.getDate()-d.getDay()); return s.toISOString().slice(0,10); },
     monthly: d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`
   };
+  
   const result = {};
   ['daily','weekly','monthly'].forEach(view => {
     const map = {};
@@ -495,24 +462,21 @@ function aggregate(rows) {
     const keys = Object.keys(map).sort();
     keys.forEach(k => {
       const d = new Date(k+(view==='monthly'?'-01':'')+'T12:00:00');
-      map[k].label = view==='daily'   ? d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
-                   : view==='weekly'  ? 'Wk '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
-                   :                    d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
-      map[k].avgScore = map[k].scores.length
-        ? Math.round(map[k].scores.reduce((a,b)=>a+b,0)/map[k].scores.length) : null;
+      map[k].label = view==='daily' ? d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+                   : view==='weekly' ? 'Wk '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+                   : d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
+      map[k].avgScore = map[k].scores.length ? Math.round(map[k].scores.reduce((a,b)=>a+b,0)/map[k].scores.length) : null;
     });
     result[view] = { keys, map };
   });
   
-  let cum = 0;
-  result.cumul = { labels:[], values:[] };
+  let cum = 0; result.cumul = { labels:[], values:[] };
   result.daily.keys.forEach(k => {
     cum += result.daily.map[k].qs;
     result.cumul.labels.push(result.daily.map[k].label);
     result.cumul.values.push(cum);
   });
-  const allScores = rows.filter(r=>r.score!==null).map(r=>r.score);
-  result.hasScore = allScores.length > 0;
+  result.hasScore = rows.some(r=>r.score!==null);
   return result;
 }
 
@@ -522,7 +486,7 @@ function renderCharts() {
   if (!body) return;
 
   if (!data) {
-    body.innerHTML = '<div class="charts-empty">Log your first session to start tracking</div>';
+    body.innerHTML = '<div class="charts-empty" style="text-align:center; padding:40px; color:var(--dim); font-style:italic;">Log your first session to start tracking</div>';
     Object.keys(activeCharts).forEach(k => { activeCharts[k].destroy(); delete activeCharts[k]; });
     return;
   }
@@ -534,7 +498,7 @@ function renderCharts() {
         <div class="chart-label" id="sc-label">Average % Correct</div>
         <div class="chart-canvas-wrap"><canvas id="chart-score"></canvas></div>
       </div>
-      <div class="chart-label">Cumulative Total Volume (Including Incorrects)</div>
+      <div class="chart-label">Cumulative Total Volume</div>
       <div class="chart-canvas-wrap"><canvas id="chart-cumul"></canvas></div>
     `;
   }
@@ -546,8 +510,7 @@ function setChartView(view, data) {
   data = data || buildLiveChartData();
   if (!data) return;
   
-  document.querySelectorAll('#chart-view-toggle .view-tab').forEach(b =>
-    b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('#chart-view-toggle .view-tab').forEach(b => b.classList.toggle('active', b.dataset.view === view));
 
   const d = data[view];
   const labels = d.keys.map(k => d.map[k].label);
@@ -562,6 +525,7 @@ function setChartView(view, data) {
 
   buildBarChart('chart-qs', labels, qsVals, 'Questions');
   buildCumulChart('chart-cumul', data.cumul.labels, data.cumul.values);
+  
   const sb = document.getElementById('score-chart-block');
   if (sb) {
     if (data.hasScore && scVals.some(v => v !== null)) {
@@ -571,34 +535,20 @@ function setChartView(view, data) {
   }
 }
 
-function destroyChart(id) { if (activeCharts[id]) { activeCharts[id].destroy(); delete activeCharts[id]; } }
-
 function chartDefaults() {
   return {
     responsive:true, maintainAspectRatio:false, animation:{duration:300},
-    plugins: {
-      legend:{display:false},
-      tooltip:{
-        backgroundColor:'rgba(26,20,40,.88)',
-        titleFont:{family:"'DM Mono',monospace",size:12},
-        bodyFont:{family:"'Jost',sans-serif",size:13},
-        padding:10, cornerRadius:6
-      }
-    },
-    scales:{
-      x:{grid:{color:'rgba(236,216,222,.3)'},ticks:{font:{family:"'DM Mono',monospace",size:12},color:'#c0a8b4',maxRotation:45,autoSkip:true,maxTicksLimit:16}},
-      y:{grid:{color:'rgba(236,216,222,.3)'},ticks:{font:{family:"'DM Mono',monospace",size:12},color:'#c0a8b4'},beginAtZero:true}
-    }
+    plugins: { legend:{display:false}, tooltip:{ backgroundColor:'rgba(26,20,40,.88)', titleFont:{family:"'DM Mono',monospace",size:12}, bodyFont:{family:"'Jost',sans-serif",size:13}, padding:10, cornerRadius:6 } },
+    scales:{ x:{grid:{color:'rgba(236,216,222,.3)'},ticks:{font:{family:"'DM Mono',monospace",size:12},color:'#c0a8b4',maxRotation:45,autoSkip:true,maxTicksLimit:16}}, y:{grid:{color:'rgba(236,216,222,.3)'},ticks:{font:{family:"'DM Mono',monospace",size:12},color:'#c0a8b4'},beginAtZero:true} }
   };
 }
+
+function destroyChart(id) { if(activeCharts[id]) { activeCharts[id].destroy(); delete activeCharts[id]; } }
 
 function buildBarChart(id, labels, data) {
   destroyChart(id);
   const ctx = document.getElementById(id); if (!ctx) return;
-  activeCharts[id] = new Chart(ctx.getContext('2d'), {
-    type:'bar', data:{labels, datasets:[{data, backgroundColor:'rgba(61,46,110,.7)', borderRadius:3, borderSkipped:false}]},
-    options:chartDefaults()
-  });
+  activeCharts[id] = new Chart(ctx.getContext('2d'), { type:'bar', data:{labels, datasets:[{data, backgroundColor:'rgba(61,46,110,.7)', borderRadius:3}]}, options:chartDefaults() });
 }
 
 function buildLineChart(id, labels, data) {
@@ -607,272 +557,132 @@ function buildLineChart(id, labels, data) {
   const opts = chartDefaults();
   opts.scales.y.max=100; opts.scales.y.ticks.callback = v=>v+'%';
   opts.plugins.tooltip.callbacks = {label: c => c.parsed.y!==null ? c.parsed.y+'%':'N/A'};
-  activeCharts[id] = new Chart(ctx.getContext('2d'), {
-    type:'line', data:{labels, datasets:[{data, borderColor:'var(--sakura2)', backgroundColor:'rgba(212,96,122,.07)',
-      pointBackgroundColor:'var(--sakura2)', pointRadius:labels.length>60?1:3,
-      fill:true, tension:0.35, spanGaps:true}]},
-    options:opts
-  });
+  activeCharts[id] = new Chart(ctx.getContext('2d'), { type:'line', data:{labels, datasets:[{data, borderColor:'var(--sakura2)', backgroundColor:'rgba(212,96,122,.07)', pointBackgroundColor:'var(--sakura2)', pointRadius:labels.length>60?1:3, fill:true, tension:0.35, spanGaps:true}]}, options:opts });
 }
 
 function buildCumulChart(id, labels, data) {
   destroyChart(id);
   const ctx = document.getElementById(id); if (!ctx) return;
   const opts = chartDefaults();
-  
-  const maxVal = Math.max(settings.total || TOTAL_DEFAULT, ...data);
-  opts.scales.y.max = maxVal + 100;
+  opts.scales.y.max = Math.max(settings.total || TOTAL_DEFAULT, ...data) + 100;
   opts.scales.y.ticks.callback = v => v.toLocaleString();
-  
-  const gradient = ctx.getContext('2d').createLinearGradient(0,0,0,180);
-  gradient.addColorStop(0,'rgba(61,46,110,.2)'); gradient.addColorStop(1,'rgba(61,46,110,.01)');
+  const grad = ctx.getContext('2d').createLinearGradient(0,0,0,180);
+  grad.addColorStop(0,'rgba(61,46,110,.2)'); grad.addColorStop(1,'rgba(61,46,110,.01)');
   activeCharts[id] = new Chart(ctx.getContext('2d'), {
     type:'line',
     data:{labels, datasets:[
-      {label:'Total Volume Done', data, borderColor:'var(--fuji)', backgroundColor:gradient,
-       pointRadius:labels.length>60?0:2, fill:true, tension:0.2},
-      {label:'Total QBank Size', data:labels.map(()=>settings.total || TOTAL_DEFAULT), borderColor:'rgba(212,96,122,.3)',
-       borderDash:[5,4], borderWidth:1.5, pointRadius:0, fill:false}
+      {label:'Total Volume Done', data, borderColor:'var(--fuji)', backgroundColor:grad, pointRadius:labels.length>60?0:2, fill:true, tension:0.2},
+      {label:'Total QBank Size', data:labels.map(()=>settings.total || TOTAL_DEFAULT), borderColor:'rgba(212,96,122,.3)', borderDash:[5,4], borderWidth:1.5, pointRadius:0, fill:false}
     ]},
-    options:{...opts, plugins:{...opts.plugins, legend:{display:true,
-      labels:{font:{family:"'DM Mono',monospace",size:12},color:'#c0a8b4',boxWidth:10}}}}
+    options:{...opts, plugins:{...opts.plugins, legend:{display:true, labels:{font:{family:"'DM Mono',monospace",size:12},color:'#c0a8b4',boxWidth:10}}}}
   });
 }
 
-// ── Log and Edit Entries ──────────────────────────────
+// ── Log Input Actions ─────────────────────────────────
 function setMode(mode) {
-  const pQs = document.getElementById('log-questions-panel');
-  const pExam = document.getElementById('log-exam-panel');
-  const tQs = document.getElementById('mode-qs');
-  const tExam = document.getElementById('mode-exam');
-  
-  if (pQs) pQs.style.display = mode === 'questions' ? '' : 'none';
-  if (pExam) pExam.style.display = mode === 'exam' ? '' : 'none';
-  if (tQs) tQs.classList.toggle('active', mode === 'questions');
-  if (tExam) tExam.classList.toggle('active', mode === 'exam');
+  const el = (id) => document.getElementById(id);
+  if(el('log-questions-panel')) el('log-questions-panel').style.display = mode === 'questions' ? '' : 'none';
+  if(el('log-exam-panel')) el('log-exam-panel').style.display = mode === 'exam' ? '' : 'none';
+  if(el('mode-qs')) el('mode-qs').classList.toggle('active', mode === 'questions');
+  if(el('mode-exam')) el('mode-exam').classList.toggle('active', mode === 'exam');
 }
 
 async function logEntry() {
+  const dEl = document.getElementById('log-date'), qEl = document.getElementById('log-qs'), sEl = document.getElementById('log-score');
+  const qs = parseInt(qEl?.value);
+  if (!qs || qs < 1) return showToast('Enter number of questions ✦');
+  if (!currentUser || !db) return showToast('Must be logged in to save.');
+
+  const entryData = { type: 'qs', date: dEl?.value || todayStr(), qs, score: sEl?.value ? Number(sEl.value) : null };
   try {
-    const dEl = document.getElementById('log-date');
-    const qEl = document.getElementById('log-qs');
-    const sEl = document.getElementById('log-score');
-    
-    const date  = dEl?.value || todayStr();
-    const qs    = parseInt(qEl?.value);
-    const scoreStr = sEl?.value;
-    const score = scoreStr !== '' && scoreStr != null ? Number(scoreStr) : null;
-    
-    if (!qs || qs < 1) { showToast('Enter number of questions ✦'); return; }
-    if (!currentUser || !db) { showToast('Must be logged in to save.'); return; }
-
-    const entryData = {
-      type: 'qs',
-      date: date,
-      qs: qs,
-      score: score
-    };
-
-    if (editingEntryId) {
-      await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(editingEntryId).set(entryData, { merge: true });
-      showToast('Entry updated ✦');
-    } else {
-      await db.collection('users').doc(currentUser.uid).collection('uworld_logs').add(entryData);
-      showToast(`${qs} questions logged ✦`);
-    }
-
+    if (editingEntryId) await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(editingEntryId).set(entryData, { merge: true });
+    else await db.collection('users').doc(currentUser.uid).collection('uworld_logs').add(entryData);
+    showToast(editingEntryId ? 'Entry updated ✦' : `${qs} questions logged ✦`);
     cancelEditEntry();
-  } catch (err) {
-    console.error("Error logging entry:", err);
-  }
+  } catch (err) { console.error("Error logging entry:", err); }
 }
 
 function editEntry(id) {
   const e = entries.find(x => x._id === id);
   if (!e) return;
-  const dEl = document.getElementById('log-date');
-  const qEl = document.getElementById('log-qs');
-  const sEl = document.getElementById('log-score');
-  
-  if (dEl) dEl.value = e.date;
-  if (qEl) qEl.value = e.qs;
-  if (sEl) sEl.value = e.score !== undefined && e.score !== null ? e.score : '';
-  
+  const dEl = document.getElementById('log-date'), qEl = document.getElementById('log-qs'), sEl = document.getElementById('log-score');
+  if(dEl) dEl.value = e.date; if(qEl) qEl.value = e.qs; if(sEl) sEl.value = e.score !== null ? e.score : '';
   editingEntryId = id;
-  const btn = document.getElementById('btn-log-qs');
-  const cBtn = document.getElementById('cancel-edit-qs');
-  
-  if (btn) {
-    btn.textContent = 'Update ✦';
-    btn.classList.add('editing');
-  }
-  if (cBtn) cBtn.style.display = 'inline-block';
-  
-  setMode('questions');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const btn = document.getElementById('btn-log-qs'), cBtn = document.getElementById('cancel-edit-qs');
+  if(btn) { btn.textContent = 'Update ✦'; btn.style.background = 'var(--fuji)'; }
+  if(cBtn) cBtn.style.display = 'inline-block';
+  setMode('questions'); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function cancelEditEntry() {
   editingEntryId = null;
-  const dEl = document.getElementById('log-date');
-  const qEl = document.getElementById('log-qs');
-  const sEl = document.getElementById('log-score');
-  
-  if (dEl) dEl.value = todayStr();
-  if (qEl) qEl.value = '';
-  if (sEl) sEl.value = '';
-  
-  const btn = document.getElementById('btn-log-qs');
-  const cBtn = document.getElementById('cancel-edit-qs');
-  if (btn) {
-    btn.textContent = 'Log ✦';
-    btn.classList.remove('editing');
-  }
-  if (cBtn) cBtn.style.display = 'none';
+  const dEl = document.getElementById('log-date'), qEl = document.getElementById('log-qs'), sEl = document.getElementById('log-score');
+  if(dEl) dEl.value = todayStr(); if(qEl) qEl.value = ''; if(sEl) sEl.value = '';
+  const btn = document.getElementById('btn-log-qs'), cBtn = document.getElementById('cancel-edit-qs');
+  if(btn) { btn.textContent = 'Log ✦'; btn.style.background = 'var(--sakura2)'; }
+  if(cBtn) cBtn.style.display = 'none';
 }
 
 async function logExam() {
+  const dEl = document.getElementById('exam-date'), nEl = document.getElementById('exam-name'), epcEl = document.getElementById('exam-epc'), eppEl = document.getElementById('exam-epp');
+  if (!nEl?.value) return showToast('Select an exam name ✦');
+  if (!currentUser || !db) return showToast('Must be logged in to save.');
+
+  const examData = { type: 'exam', date: dEl?.value || todayStr(), name: nEl.value, epc: epcEl?.value ? Number(epcEl.value) : null, epp: eppEl?.value ? Number(eppEl.value) : null };
   try {
-    const dEl = document.getElementById('exam-date');
-    const nEl = document.getElementById('exam-name');
-    const epcEl = document.getElementById('exam-epc');
-    const eppEl = document.getElementById('exam-epp');
-    
-    const date = dEl?.value || todayStr();
-    const name = nEl?.value;
-    const epcStr = epcEl?.value;
-    const eppStr = eppEl?.value;
-    
-    if (!name) { showToast('Select an exam name ✦'); return; }
-    if (!currentUser || !db) { showToast('Must be logged in to save.'); return; }
-
-    const examData = {
-      type: 'exam',
-      date: date,
-      name: name,
-      epc: epcStr !== '' && epcStr != null ? Number(epcStr) : null,
-      epp: eppStr !== '' && eppStr != null ? Number(eppStr) : null
-    };
-
-    if (editingExamId) {
-      await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(editingExamId).set(examData, { merge: true });
-      showToast('Exam updated ✦');
-    } else {
-      await db.collection('users').doc(currentUser.uid).collection('uworld_logs').add(examData);
-      showToast(`${name} logged ✦`);
-    }
-
+    if (editingExamId) await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(editingExamId).set(examData, { merge: true });
+    else await db.collection('users').doc(currentUser.uid).collection('uworld_logs').add(examData);
+    showToast(editingExamId ? 'Exam updated ✦' : `${nEl.value} logged ✦`);
     cancelEditExam();
-  } catch (err) {
-    console.error("Error logging exam:", err);
-  }
+  } catch (err) { console.error("Error logging exam:", err); }
 }
 
 function editExam(id) {
   const e = exams.find(x => x._id === id);
   if (!e) return;
-  
-  const dEl = document.getElementById('exam-date');
-  const nEl = document.getElementById('exam-name');
-  const epcEl = document.getElementById('exam-epc');
-  const eppEl = document.getElementById('exam-epp');
-  
-  if (dEl) dEl.value = e.date;
-  if (nEl) nEl.value = e.name;
-  if (epcEl) epcEl.value = e.epc !== undefined && e.epc !== null ? e.epc : '';
-  if (eppEl) eppEl.value = e.epp !== undefined && e.epp !== null ? e.epp : '';
-  
+  const dEl = document.getElementById('exam-date'), nEl = document.getElementById('exam-name'), epcEl = document.getElementById('exam-epc'), eppEl = document.getElementById('exam-epp');
+  if(dEl) dEl.value = e.date; if(nEl) nEl.value = e.name; if(epcEl) epcEl.value = e.epc !== null ? e.epc : ''; if(eppEl) eppEl.value = e.epp !== null ? e.epp : '';
   editingExamId = id;
-  const btn = document.getElementById('btn-log-exam');
-  const cBtn = document.getElementById('cancel-edit-exam');
-  if (btn) {
-    btn.textContent = 'Update ✦';
-    btn.classList.add('editing');
-  }
-  if (cBtn) cBtn.style.display = 'inline-block';
-  
-  setMode('exam');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const btn = document.getElementById('btn-log-exam'), cBtn = document.getElementById('cancel-edit-exam');
+  if(btn) { btn.textContent = 'Update ✦'; btn.style.background = 'var(--fuji)'; }
+  if(cBtn) cBtn.style.display = 'inline-block';
+  setMode('exam'); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function cancelEditExam() {
   editingExamId = null;
-  const dEl = document.getElementById('exam-date');
-  const nEl = document.getElementById('exam-name');
-  const epcEl = document.getElementById('exam-epc');
-  const eppEl = document.getElementById('exam-epp');
-  
-  if (dEl) dEl.value = todayStr();
-  if (nEl) nEl.value = '';
-  if (epcEl) epcEl.value = '';
-  if (eppEl) eppEl.value = '';
-  
-  const btn = document.getElementById('btn-log-exam');
-  const cBtn = document.getElementById('cancel-edit-exam');
-  
-  if (btn) {
-    btn.textContent = 'Log ✦';
-    btn.classList.remove('editing');
-  }
-  if (cBtn) cBtn.style.display = 'none';
+  const dEl = document.getElementById('exam-date'), nEl = document.getElementById('exam-name'), epcEl = document.getElementById('exam-epc'), eppEl = document.getElementById('exam-epp');
+  if(dEl) dEl.value = todayStr(); if(nEl) nEl.value = ''; if(epcEl) epcEl.value = ''; if(eppEl) eppEl.value = '';
+  const btn = document.getElementById('btn-log-exam'), cBtn = document.getElementById('cancel-edit-exam');
+  if(btn) { btn.textContent = 'Log ✦'; btn.style.background = 'var(--sakura2)'; }
+  if(cBtn) cBtn.style.display = 'none';
 }
 
 async function deleteEntry(id) {
-  try {
-    if (currentUser && db) {
-      await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(id).delete();
-      showToast('Entry removed');
-    }
-  } catch (err) {
-    console.error("Error deleting entry:", err);
+  if (currentUser && db) {
+    try { await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(id).delete(); showToast('Entry removed'); } 
+    catch(err) { console.error("Error deleting:", err); }
   }
 }
 
-async function deleteExam(id) {
-  try {
-    if (currentUser && db) {
-      await db.collection('users').doc(currentUser.uid).collection('uworld_logs').doc(id).delete();
-      showToast('Exam removed');
-    }
-  } catch (err) {
-    console.error("Error deleting exam:", err);
-  }
-}
-
-// ── Render Views ──────────────────────────────────────
+// ── Render Tables ─────────────────────────────────────
 function renderHistory() {
   const el = document.getElementById('history-container');
   if (!el) return;
-  if (!entries.length) { el.innerHTML='<div class="uw-empty">No entries yet</div>'; return; }
+  if (!entries.length) return el.innerHTML='<div class="uw-empty" style="text-align:center; padding:20px; color:var(--dim); font-style:italic;">No entries yet</div>';
   
   const asc = [...entries].sort((a,b) => a.date.localeCompare(b.date));
-  const totalsMap = {};
-  let cum = 0;
+  let cum = 0, totalsMap = {};
   asc.forEach(e => { cum += (e.qs||0); totalsMap[e._id] = cum; });
   const sorted = [...entries].sort((a,b) => b.date.localeCompare(a.date));
   
-  let html = `<div class="table-responsive"><table class="uw-table"><thead><tr>
-    <th>Date</th><th>Questions</th><th>% Correct</th><th>Running Total</th><th>Actions</th>
-  </tr></thead><tbody>`;
-  
+  let html = `<div class="table-responsive"><table class="uw-table"><thead><tr><th>Date</th><th>Questions</th><th>% Correct</th><th>Running Total</th><th>Actions</th></tr></thead><tbody>`;
   sorted.forEach(e => {
     const ds = new Date(e.date + 'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     let sc = '—';
-    if (e.score !== undefined && e.score !== null && e.score !== '') {
-      const s = Number(e.score);
-      sc = `<span class="uw-badge ${s>=70?'good':s>=55?'warn':'bad'}">${s}%</span>`;
-    }
-    const actions = e.fromCSV
-      ? `<button class="action-btn del" onclick="deleteEntry('${e._id}')">✕</button> <span class="uw-badge csv">csv</span>`
-      : `<button class="action-btn" onclick="editEntry('${e._id}')">✎ Edit</button>
-         <button class="action-btn del" onclick="deleteEntry('${e._id}')">✕</button>`;
-    html += `<tr>
-      <td>${ds}</td>
-      <td><span class="uw-badge qs">+${e.qs}</span></td>
-      <td>${sc}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">${(totalsMap[e._id]||0).toLocaleString()}</td>
-      <td>${actions}</td>
-    </tr>`;
+    if (e.score !== null) { const s = Number(e.score); sc = `<span class="uw-badge ${s>=70?'good':s>=55?'warn':'bad'}">${s}%</span>`; }
+    const actions = e.fromCSV ? `<button class="action-btn del" onclick="deleteEntry('${e._id}')">✕</button> <span class="uw-badge csv">csv</span>` : `<button class="action-btn" onclick="editEntry('${e._id}')">✎ Edit</button><button class="action-btn del" onclick="deleteEntry('${e._id}')">✕</button>`;
+    html += `<tr><td>${ds}</td><td><span class="uw-badge qs">+${e.qs}</span></td><td>${sc}</td><td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">${(totalsMap[e._id]||0).toLocaleString()}</td><td>${actions}</td></tr>`;
   });
   el.innerHTML = html + '</tbody></table></div>';
 }
@@ -880,64 +690,35 @@ function renderHistory() {
 function renderExams() {
   const el = document.getElementById('exam-container');
   if (!el) return;
-  if (!exams.length) { el.innerHTML='<div class="uw-empty">No practice exams logged yet</div>'; return; }
+  if (!exams.length) return el.innerHTML='<div class="uw-empty" style="text-align:center; padding:20px; color:var(--dim); font-style:italic;">No practice exams logged yet</div>';
   
   const sorted = [...exams].sort((a,b) => b.date.localeCompare(a.date));
-  let html = `<div class="table-responsive"><table class="uw-table"><thead><tr>
-    <th>Date</th><th>Exam</th><th>EPC (%)</th><th>Prob. Pass (%)</th><th>Actions</th>
-  </tr></thead><tbody>`;
-  
+  let html = `<div class="table-responsive"><table class="uw-table"><thead><tr><th>Date</th><th>Exam</th><th>EPC (%)</th><th>Prob. Pass (%)</th><th>Actions</th></tr></thead><tbody>`;
   sorted.forEach(e => {
     const ds = new Date(e.date + 'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     let epc = '—', epp = '—';
-    if(e.epc !== undefined && e.epc !== null && e.epc !== '') { const p = Number(e.epc); epc = `<span class="uw-badge ${p>=70?'good':p>=55?'warn':'bad'}">${p}%</span>`; }
-    if(e.epp !== undefined && e.epp !== null && e.epp !== '') { const p = Number(e.epp); epp = `<span class="uw-badge pred">${p}%</span>`; }
-    
-    const actions = `
-      <button class="action-btn" onclick="editExam('${e._id}')">✎ Edit</button>
-      <button class="action-btn del" onclick="deleteExam('${e._id}')">✕</button>`;
-
-    html += `<tr>
-      <td>${ds}</td><td style="font-weight:500;">${e.name||'—'}</td><td>${epc}</td>
-      <td>${epp}</td>
-      <td>${actions}</td>
-    </tr>`;
+    if(e.epc !== null) { const p = Number(e.epc); epc = `<span class="uw-badge ${p>=70?'good':p>=55?'warn':'bad'}">${p}%</span>`; }
+    if(e.epp !== null) { const p = Number(e.epp); epp = `<span class="uw-badge" style="background:var(--surface2); border:1px solid var(--border); color:var(--ink2);">${p}%</span>`; }
+    html += `<tr><td>${ds}</td><td style="font-weight:500;">${e.name||'—'}</td><td>${epc}</td><td>${epp}</td><td><button class="action-btn" onclick="editExam('${e._id}')">✎ Edit</button><button class="action-btn del" onclick="deleteEntry('${e._id}')">✕</button></td></tr>`;
   });
   el.innerHTML = html + '</tbody></table></div>';
 }
 
-function renderAll() {
-  initSetupUI(); renderStats(); renderHistory(); renderExams(); renderCharts();
-}
+function renderAll() { initSetupUI(); renderStats(); renderHistory(); renderExams(); renderCharts(); }
 
-// ── Import modal ──────────────────────────────────────
+// ── CSV Import Logic ──────────────────────────────────
 let csvRawRows=[], csvHeaders=[], colMap={date:'',questions:'',score:''};
+function openImportModal() { const m=document.getElementById('import-modal'); if(m) m.classList.add('open'); }
+function closeImportModal() { const m=document.getElementById('import-modal'); if(m) m.classList.remove('open'); }
+function handleModalClick(e) { if(e.target === document.getElementById('import-modal')) closeImportModal(); }
 
-function openImportModal() { 
-  const modal = document.getElementById('import-modal');
-  if (modal) modal.classList.add('open'); 
-}
-
-function closeImportModal() { 
-  const modal = document.getElementById('import-modal');
-  if (modal) modal.classList.remove('open'); 
-}
-
-function handleModalClick(e) { 
-  if(e.target === document.getElementById('import-modal')) closeImportModal(); 
-}
-
-const dropZone = document.getElementById('drop-zone');
+const dropZone = document.getElementById('drop-zone'), csvInput = document.getElementById('csv-file-input');
 if (dropZone) {
   dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
   dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) handleFile(f); });
+  dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 }
-
-const csvInput = document.getElementById('csv-file-input');
-if (csvInput) {
-  csvInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
-}
+if (csvInput) csvInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
 function handleFile(file) {
   const r = new FileReader();
@@ -947,61 +728,38 @@ function handleFile(file) {
 
 function parseCSV(text, filename) {
   const lines = text.trim().split(/\r?\n/);
-  if (lines.length < 2) { showToast('File appears empty'); return; }
-  csvHeaders = splitCSVLine(lines[0]);
+  if (lines.length < 2) return showToast('File appears empty');
+  csvHeaders = lines[0].split(',').map(s=>s.trim().replace(/^["']|["']$/g,''));
   csvRawRows = [];
-  
   for(let i=1; i<lines.length; i++){
-    const vals = splitCSVLine(lines[i]);
-    if(vals.every(v=>v.trim()==='')) continue;
-    const row = {};
-    csvHeaders.forEach((h,idx) => { row[h] = (vals[idx]||'').trim().replace(/^["']|["']$/g,''); });
+    const vals = lines[i].split(',').map(s=>s.trim().replace(/^["']|["']$/g,''));
+    if(vals.every(v=>v==='')) continue;
+    const row = {}; csvHeaders.forEach((h,idx) => row[h] = vals[idx]||'');
     csvRawRows.push(row);
   }
-  
   const info = document.getElementById('csv-file-info');
-  if (info) info.textContent = `${filename} · ${csvRawRows.length} rows`;
-  
+  if(info) info.textContent = `${filename} · ${csvRawRows.length} rows`;
   autoDetectCols(); renderColMapper();
-  
-  const mapper = document.getElementById('col-mapper');
-  const zone = document.getElementById('drop-zone');
-  if (mapper) mapper.style.display = '';
-  if (zone) zone.style.display = 'none';
-}
-
-function splitCSVLine(line) {
-  const result = []; let cur = '', inQ = false;
-  for(let i=0; i<line.length; i++){
-    const ch = line[i];
-    if(ch === '"' && (i === 0 || line[i-1] === ',')) { inQ=true; continue; }
-    if(ch === '"' && inQ) { inQ=false; continue; }
-    if(ch === ',' && !inQ) { result.push(cur.trim()); cur=''; continue; }
-    cur += ch;
-  }
-  result.push(cur.trim()); return result;
+  const mapper=document.getElementById('col-mapper'), zone=document.getElementById('drop-zone');
+  if(mapper) mapper.style.display=''; if(zone) zone.style.display='none';
 }
 
 function autoDetectCols() {
   const lower = csvHeaders.map(h => h.toLowerCase());
   const find = kws => { for(const kw of kws){ const i = lower.findIndex(h=>h.includes(kw)); if(i>=0) return csvHeaders[i]; } return ''; };
   colMap.date = find(['date','day','time','when']);
-  colMap.questions = find(['question','qs','count','num','total','completed','done']);
-  colMap.score = find(['score','correct','pct','percent','accuracy','grade','result']);
+  colMap.questions = find(['question','qs','count','num','total']);
+  colMap.score = find(['score','correct','pct','percent','result']);
 }
 
 function renderColMapper() {
-  const fields = [
-    {key:'date',label:'Date *'},
-    {key:'questions',label:'Questions *'},
-    {key:'score',label:'Score % (optional)'},
-  ];
+  const fields = [ {key:'date',label:'Date *'}, {key:'questions',label:'Questions *'}, {key:'score',label:'Score % (optional)'} ];
   const grid = document.getElementById('col-mapper-grid');
   if (!grid) return;
   grid.innerHTML = fields.map(f => `
     <div class="map-row">
       <div class="map-label">${f.label}</div>
-      <select class="map-select" id="map-${f.key}" onchange="colMap['${f.key}']=this.value">
+      <select class="map-select" onchange="colMap['${f.key}']=this.value">
         <option value="">— skip —</option>
         ${csvHeaders.map(h=>`<option value="${h}"${colMap[f.key]===h?' selected':''}>${h}</option>`).join('')}
       </select>
@@ -1009,88 +767,53 @@ function renderColMapper() {
 }
 
 async function importCSV() {
-  if (!colMap.date || !colMap.questions) { showToast('Map Date and Questions columns'); return; }
-  if (!currentUser || !db) { showToast('Log in to import data.'); return; }
+  if (!colMap.date || !colMap.questions) return showToast('Map Date and Questions columns');
+  if (!currentUser || !db) return showToast('Log in to import data.');
 
-  const parsed = []; let fails = 0;
+  const parsed = [];
   csvRawRows.forEach(row => {
-    const dt = parseFlexDate(row[colMap.date]);
+    let str = row[colMap.date];
+    let dt = null;
+    if(str) {
+      let d = new Date(str);
+      if(!isNaN(d.getTime())) dt = d;
+      else {
+        const p = str.split(/[\/\-\.]/);
+        if(p.length === 3) { const [a,b,c] = p.map(Number); dt = c>31 ? new Date(c,a-1,b) : (a>12 ? new Date(c,b-1,a) : new Date(c,a-1,b)); }
+      }
+    }
     const qs = parseFloat(row[colMap.questions]);
-    if (!dt || isNaN(qs)) { fails++; return; }
+    if (!dt || isNaN(qs)) return;
     const rawSc = colMap.score ? row[colMap.score] : null;
-    const score = rawSc !== null && rawSc !== '' ? parseFloat(rawSc) : null;
+    const score = rawSc ? parseFloat(rawSc) : null;
     parsed.push({ dt, qs, score: isNaN(score) ? null : score });
   });
 
-  if (!parsed.length) { showToast('No valid rows — check mapping'); return; }
+  if (!parsed.length) return showToast('No valid rows — check mapping');
 
   try {
     const batch = db.batch();
     const logsRef = db.collection('users').doc(currentUser.uid).collection('uworld_logs');
-    
     parsed.forEach((r) => {
-      const newDocRef = logsRef.doc();
-      batch.set(newDocRef, {
-        type: 'qs',
-        date: r.dt.toISOString().slice(0,10),
-        qs: r.qs,
-        score: r.score !== null ? r.score : null,
-        fromCSV: true
-      });
+      batch.set(logsRef.doc(), { type: 'qs', date: r.dt.toISOString().slice(0,10), qs: r.qs, score: r.score, fromCSV: true });
     });
-
     await batch.commit();
 
-    const mapper = document.getElementById('col-mapper');
-    const success = document.getElementById('import-success');
-    const msg = document.getElementById('import-success-msg');
-    
-    if (mapper) mapper.style.display = 'none';
-    if (success) success.style.display = '';
-    
+    const m=document.getElementById('col-mapper'), s=document.getElementById('import-success'), msg=document.getElementById('import-success-msg');
+    if(m) m.style.display = 'none'; if(s) s.style.display = '';
     const totalQs = parsed.reduce((s,r) => s+r.qs, 0);
-    if (msg) msg.textContent = `${parsed.length} sessions · ${totalQs.toLocaleString()} questions imported`;
-    
-  } catch (err) {
-    console.error("Batch import error:", err);
-    showToast('Import failed. Try again.');
-  }
+    if(msg) msg.textContent = `${parsed.length} sessions · ${totalQs.toLocaleString()} Qs imported`;
+  } catch (err) { console.error("Batch import error:", err); showToast('Import failed.'); }
 }
 
 function resetImport() {
-  csvRawRows = []; csvHeaders = []; colMap = {date:'', questions:'', score:''};
-  const inp = document.getElementById('csv-file-input');
-  const mapper = document.getElementById('col-mapper');
-  const success = document.getElementById('import-success');
-  const drop = document.getElementById('drop-zone');
-  
-  if (inp) inp.value = '';
-  if (mapper) mapper.style.display = 'none';
-  if (success) success.style.display = 'none';
-  if (drop) drop.style.display = '';
+  csvRawRows=[]; csvHeaders=[]; colMap={date:'',questions:'',score:''};
+  const inp=document.getElementById('csv-file-input'), m=document.getElementById('col-mapper'), s=document.getElementById('import-success'), d=document.getElementById('drop-zone');
+  if(inp) inp.value=''; if(m) m.style.display='none'; if(s) s.style.display='none'; if(d) d.style.display='';
 }
 
-function parseFlexDate(str) {
-  if (!str) return null;
-  str = str.trim().replace(/^["']|["']$/g,'');
-  let d = new Date(str);
-  if (!isNaN(d.getTime())) return d;
-  const mo = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-  const m1 = str.match(/^([A-Za-z]{3})\.?\s+(\d{1,2}),?\s+(\d{4})/);
-  if(m1) return new Date(+m1[3], mo[m1[1].toLowerCase()], +m1[2]);
-  const m2 = str.match(/^(\d{1,2})\s+([A-Za-z]{3})\.?\s+(\d{4})/);
-  if(m2) return new Date(+m2[3], mo[m2[2].toLowerCase()], +m2[1]);
-  const p = str.split(/[\/\-\.]/);
-  if(p.length === 3) { const [a,b,c] = p.map(Number); if(c>31) return new Date(c,a-1,b); if(a>12) return new Date(c,b-1,a); return new Date(c,a-1,b); }
-  return null;
-}
-
-// ── Initialization ────────────────────────────────────
-const logDate = document.getElementById('log-date');
-const examDate = document.getElementById('exam-date');
-if (logDate) logDate.value = todayStr();
-if (examDate) examDate.value = todayStr();
-
+const logDate = document.getElementById('log-date'), examDate = document.getElementById('exam-date');
+if(logDate) logDate.value = todayStr(); if(examDate) examDate.value = todayStr();
 renderAll();
 </script>
 </body>
