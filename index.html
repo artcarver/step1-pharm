@@ -7,16 +7,27 @@
 <link rel="stylesheet" href="style.css"/>
 <title>Step 1 Study Hub</title>
 
-
-
-
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
 </head>
 <body>
 
-<button id="auth-btn" class="auth-btn">Log in to view secure tools</button>
+<div class="header">
+  <div class="header-inner">
+    <div class="global-nav">
+      <a href="index.html" style="font-size:18px; font-weight:600; color:var(--sakura2);">🌸 Step 1 Hub</a>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <a href="uworld_tracker.html">UWorld</a>
+        <a href="step1_dashboard.html">Dashboard</a>
+        <a href="drugfacts.html">Pharm</a>
+        <a href="microfacts.html">Micro</a>
+        <button id="auth-btn" class="auth-btn">Log in</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="petals" aria-hidden="true">
   <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
@@ -61,34 +72,32 @@
     </div>
   </header>
 
-  <!-- ══ UWORLD TRACKER WIDGET ══════════════════════════════════════════ -->
   <div class="sec-label">📝 &nbsp;UWorld Progress</div>
-<a href="uworld_tracker.html" class="widget-card" style="text-decoration: none; color: inherit; display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: border-color 0.15s;">
-  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
-    <h3 style="margin: 0; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);">UWorld Step 1</h3>
-    <span id="widget-uw-pct" style="font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--fuji);">0%</span>
-  </div>
+  <a href="uworld_tracker.html" class="widget-card" style="text-decoration: none; color: inherit; display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: border-color 0.15s;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+      <h3 style="margin: 0; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);">UWorld Step 1</h3>
+      <span id="widget-uw-pct" style="font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 600; color: var(--fuji);">0%</span>
+    </div>
 
-  <div style="height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 16px;">
-    <div id="widget-uw-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--fuji), var(--sakura2)); border-radius: 99px; transition: width 0.5s ease;"></div>
-  </div>
+    <div style="height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 16px;">
+      <div id="widget-uw-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--fuji), var(--sakura2)); border-radius: 99px; transition: width 0.5s ease;"></div>
+    </div>
 
-  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
-    <div>
-      <div id="widget-uw-done" style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--fuji); line-height: 1;">0</div>
-      <div style="font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 4px;">Unique Done</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+      <div>
+        <div id="widget-uw-done" style="font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 600; color: var(--fuji); line-height: 1;">0</div>
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 4px;">Unique Done</div>
+      </div>
+      <div style="border-left: 1px solid var(--border);">
+        <div id="widget-uw-remain" style="font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 600; color: var(--ink2); line-height: 1;">0</div>
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 4px;">Remaining</div>
+      </div>
+      <div style="border-left: 1px solid var(--border);">
+        <div id="widget-uw-needed" style="font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 600; color: var(--ink2); line-height: 1;">N/A</div>
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 4px;">Needed / Day</div>
+      </div>
     </div>
-    <div style="border-left: 1px solid var(--border);">
-      <div id="widget-uw-remain" style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ink2); line-height: 1;">0</div>
-      <div style="font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 4px;">Remaining</div>
-    </div>
-    <div style="border-left: 1px solid var(--border);">
-      <div id="widget-uw-needed" style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ink2); line-height: 1;">N/A</div>
-      <div style="font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); margin-top: 4px;">Needed / Day</div>
-    </div>
-  </div>
-</a>
-  <!-- ══ END UWORLD WIDGET ═══════════════════════════════════════════════ -->
+  </a>
 
   <div class="sec-label">🌸 &nbsp;My Study Tools</div>
   <div class="tool-grid">
@@ -103,8 +112,7 @@
           </div>
         </div>
         <h2 class="card-title" id="dotd-name">Loading...</h2>
-        <p class="card-desc" id="dotd-pearl" style="font-style: italic; color: var(--ink2);">
-          </p>
+        <p class="card-desc" id="dotd-pearl" style="font-style: italic; color: var(--ink2);"></p>
         <div class="card-pills">
           <span class="pill">View Full Card</span>
         </div>
@@ -119,9 +127,10 @@
         </div>
         <h2 class="card-title">Drug Facts Reference</h2>
         <p class="card-desc">Complete Step 1 pharmacology - MOA, side effects, clinical pearls, and tier ratings across all systems.</p>
-        <div class="card-pills"><span class="pill">8 Systems</span><span class="pill">90+ Drugs</span><span class="pill">Searchable</span><span class="pill">Tier Ratings</span></div>
+        <div class="card-pills"><span class="pill">8 Systems</span><span class="pill">90+ Drugs</span><span class="pill">Searchable</span></div>
       </div>
     </a>
+    
     <a class="tool-card card-micro" href="microfacts.html">
       <div class="card-inner">
         <div class="card-top">
@@ -129,10 +138,11 @@
           <div class="card-meta"><span class="card-tag">Microbiology</span><span class="card-arrow">↗</span></div>
         </div>
         <h2 class="card-title">Micro Facts Reference</h2>
-        <p class="card-desc">Complete Step 1 microbiology — gram stain, virulence factors, classic syndromes, treatment, and pearls for every organism.</p>
-        <div class="card-pills"><span class="pill">Bacteria</span><span class="pill">Viruses</span><span class="pill">Parasites</span><span class="pill">Fungi</span><span class="pill">Searchable</span></div>
+        <p class="card-desc">Complete Step 1 microbiology — gram stain, virulence factors, classic syndromes, treatment, and pearls.</p>
+        <div class="card-pills"><span class="pill">Bacteria</span><span class="pill">Viruses</span><span class="pill">Parasites</span><span class="pill">Fungi</span></div>
       </div>
     </a>
+    
     <a class="tool-card card-sketchy" href="sketchypharm.html">
       <div class="card-inner">
         <div class="card-top">
@@ -140,10 +150,11 @@
           <div class="card-meta"><span class="card-tag">Progress Tracker</span><span class="card-arrow">↗</span></div>
         </div>
         <h2 class="card-title">Sketchy Pharm</h2>
-        <p class="card-desc">Track which Sketchy Pharm you've watched, reviewed, and mastered across all of the organ systems.</p>
+        <p class="card-desc">Track which Sketchy Pharm you've watched and reviewed across all of the organ systems.</p>
         <div class="card-pills"><span class="pill">Pharm</span><span class="pill">Progress %</span></div>
       </div>
     </a>
+    
     <a class="tool-card card-sketchy" href="sketchymicro.html">
       <div class="card-inner">
         <div class="card-top">
@@ -151,10 +162,11 @@
           <div class="card-meta"><span class="card-tag">Progress Tracker</span><span class="card-arrow">↗</span></div>
         </div>
         <h2 class="card-title">Sketchy Micro</h2>
-        <p class="card-desc">Track your progress through bacteria, viruses, fungi, and parasites with yield ratings.</p>
+        <p class="card-desc">Track your progress through bacteria, viruses, fungi, and parasites.</p>
         <div class="card-pills"><span class="pill">Bacteria</span><span class="pill">Viruses</span><span class="pill">Fungi</span><span class="pill">Parasites</span></div>
       </div>
     </a>
+    
     <a class="tool-card card-pixorize" href="pixorize.html">
       <div class="card-inner">
         <div class="card-top">
@@ -166,6 +178,7 @@
         <div class="card-pills"><span class="pill">Biochem</span><span class="pill">Immunology</span><span class="pill">312 Videos</span></div>
       </div>
     </a>
+    
     <a class="tool-card card-dash" href="step1_dashboard.html">
       <div class="card-inner">
         <div class="card-top">
@@ -174,16 +187,9 @@
         </div>
         <h2 class="card-title">Step 1 Dashboard</h2>
         <p class="card-desc">Track daily goals, review scores, and monitor your progress across all subjects.</p>
-        <div class="card-pills"><span class="pill">All Subjects</span><span class="pill">Score Tracking</span><span class="pill">Daily Goals</span></div>
+        <div class="card-pills"><span class="pill">All Subjects</span><span class="pill">Score Tracking</span></div>
       </div>
     </a>
-    <div class="tool-card card-add" onclick="showAddHint()">
-      <div class="card-add-inner">
-        <div style="font-size:22px;">🌸</div>
-        <div class="card-add-text">Add a resource</div>
-        <div style="font-size:10.5px;color:var(--dim);margin-top:4px;font-family:'Cormorant Garamond',serif;font-style:italic;">Edit index.html to link your tools</div>
-      </div>
-    </div>
   </div>
 
   <div class="sec-label" style="margin-top:44px;">🌸 &nbsp;External Resources</div>
@@ -207,7 +213,7 @@
         </div>
         <h2 class="card-title">UWorld</h2>
         <p class="card-desc">The gold standard Step 1 question bank. Detailed explanations and high-yield diagrams.</p>
-        <div class="card-pills"><span class="pill">QBank</span><span class="pill">Gold Standard</span><span class="pill">Explanations</span></div>
+        <div class="card-pills"><span class="pill">QBank</span><span class="pill">Gold Standard</span></div>
       </div>
     </a>
     <a class="tool-card card-bootcamp" href="https://www.bootcamp.com" target="_blank" rel="noopener">
@@ -218,7 +224,7 @@
         </div>
         <h2 class="card-title">Bootcamp</h2>
         <p class="card-desc">High-yield Step 1 question bank with daily practice and focused subject reviews.</p>
-        <div class="card-pills"><span class="pill">QBank</span><span class="pill">Daily Q</span><span class="pill">High-Yield</span></div>
+        <div class="card-pills"><span class="pill">QBank</span><span class="pill">Daily Q</span></div>
       </div>
     </a>
   </div>
@@ -271,15 +277,14 @@
   <div class="modal" style="max-width: 500px;">
     <div class="modal-header">
       <div>
-        <div class="modal-sub" id="dm-group" style="margin-bottom:4px;color:var(--sakura2);text-transform:uppercase;letter-spacing:1px;font-size:10px;"></div>
-        <div class="modal-title" id="dm-name" style="font-size:26px;"></div>
+        <div class="modal-sub" id="dm-group" style="margin-bottom:4px;color:var(--sakura2);text-transform:uppercase;letter-spacing:1px;font-size:12px;"></div>
+        <div class="modal-title" id="dm-name" style="font-size:26px; font-family:'Jost', sans-serif;"></div>
         <div id="dm-aka" style="font-size:12px;color:var(--muted);font-style:italic;"></div>
       </div>
       <button onclick="closeDrugModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--dim);">&times;</button>
     </div>
     
-    <div id="dm-content" style="max-height:60vh;overflow-y:auto;padding-right:8px;">
-      </div>
+    <div id="dm-content" style="max-height:60vh;overflow-y:auto;padding-right:8px;"></div>
 
     <div class="modal-btns" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
       <button class="btn-cancel" onclick="closeDrugModal()">Close</button>
@@ -290,53 +295,42 @@
 
 <script src="drug_data.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBBzOGRAhCD5AOnHnAN47q-j_coCMx2buo",
-  authDomain: "sketchy-tracker.firebaseapp.com",
-  projectId: "sketchy-tracker",
-  storageBucket: "sketchy-tracker.firebasestorage.app",
-  messagingSenderId: "970470066509",
-  appId: "1:970470066509:web:14c7300fb1dd882a038f04",
-  measurementId: "G-2KVBCP4THR"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-const authBtn = document.getElementById('auth-btn');
-
-auth.onAuthStateChanged(async (user) => {
-  authBtn.classList.toggle('is-logged-in', !!user);
+// Wait for auth.js to process authentication
+window.addEventListener('appAuthStateChanged', async (e) => {
+  const user = e.detail.user;
+  const authBtn = document.getElementById('auth-btn');
+  if (!authBtn) return;
+  
   if (user) {
     authBtn.textContent = 'Log out';
-    try {
-      const doc = await db.collection('users').doc(user.uid).get();
-      if (doc.exists && doc.data().examDate) {
-        localStorage.setItem('step1-exam-date', doc.data().examDate);
-        updateCountdown();
-      }
-    } catch (error) {
-      console.error("Cloud sync failed:", error);
+    authBtn.classList.add('is-logged-in');
+    await fetchUserConfig(user.uid);
+    await initUWorldWidget(user.uid);
+  } else {
+    authBtn.textContent = 'Log in';
+    authBtn.classList.remove('is-logged-in');
+    updateCountdown(null);
+    initUWorldWidget(null);
+  }
+});
+
+// Setup Auth Button click behavior
+const authBtn = document.getElementById('auth-btn');
+if (authBtn) {
+  authBtn.addEventListener('click', () => {
+    if (!auth) return;
+    if (auth.currentUser) {
+      auth.signOut();
+    } else {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(console.error);
     }
-  } else {
-    authBtn.textContent = 'Log in to view secure tools';
-    localStorage.removeItem('step1-exam-date');
-    updateCountdown();
-  }
-});
+  });
+}
 
-authBtn.addEventListener('click', () => {
-  if (auth.currentUser) {
-    auth.signOut();
-  } else {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(console.error);
-  }
-});
-
+// Secure Tool Guards
 document.querySelectorAll('.tool-card').forEach(card => {
   card.addEventListener('click', (e) => {
-    // Exclude the drug-of-the-day card from the auth check
     if(card.classList.contains('card-dotd')) return;
 
     const isSecure = card.classList.contains('card-pharm') || 
@@ -345,13 +339,14 @@ document.querySelectorAll('.tool-card').forEach(card => {
                      card.classList.contains('card-pixorize') || 
                      card.classList.contains('card-dash');
     
-    if (isSecure && !auth.currentUser) {
+    if (isSecure && (!auth || !auth.currentUser)) {
       e.preventDefault();
       alert("Access Restricted: Please log in to view your personalized study data.");
     }
   });
 });
 
+// Decorate Daily Quotes
 const QUOTES=[
   {q:"The art of medicine consists of <strong>amusing the patient</strong> while nature cures the disease.",a:"- Voltaire"},
   {q:"Medicine is a science of uncertainty and an <strong>art of probability</strong>.",a:"- William Osler"},
@@ -368,22 +363,43 @@ const QUOTES=[
 
 const today=new Date();
 const qi=today.getDate()%QUOTES.length;
-document.getElementById('daily-quote').innerHTML='"'+QUOTES[qi].q+'"';
-document.getElementById('quote-attr').textContent=QUOTES[qi].a;
-document.getElementById('footer-date').textContent=today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const qEl = document.getElementById('daily-quote');
+const aEl = document.getElementById('quote-attr');
+const dEl = document.getElementById('footer-date');
 
-function updateCountdown(){
-  const s=localStorage.getItem('step1-exam-date');
+if (qEl) qEl.innerHTML='"'+QUOTES[qi].q+'"';
+if (aEl) aEl.textContent=QUOTES[qi].a;
+if (dEl) dEl.textContent=today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Countdown logic powered strictly by Firestore
+async function fetchUserConfig(uid) {
+  if (!db) return;
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    if (doc.exists && doc.data().examDate) {
+      updateCountdown(doc.data().examDate);
+    } else {
+      updateCountdown(null);
+    }
+  } catch(e) {
+    console.error("Error fetching exam date:", e);
+  }
+}
+
+function updateCountdown(dateString) {
   const daysEl = document.getElementById('cd-days');
   const dateEl = document.getElementById('cd-date');
+  if (!daysEl || !dateEl) return;
 
-  if(!s){
+  if(!dateString){
     daysEl.textContent='—';
     dateEl.textContent='Not set';
+    daysEl.style.color='var(--dim)';
     return;
   }
 
-  const exam=new Date(s+'T12:00:00'), now=new Date();
+  const exam=new Date(dateString+'T12:00:00');
+  const now=new Date();
   now.setHours(0,0,0,0);
   const diff=Math.round((exam-now)/(1000*60*60*24));
   
@@ -391,72 +407,164 @@ function updateCountdown(){
   dateEl.textContent = exam.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
 
   if(diff <= 30) daysEl.style.color = 'var(--sakura2)';
-  else if(diff <= 60) daysEl.style.color = 'var(--c6)';
+  else if(diff <= 60) daysEl.style.color = 'var(--yellow)';
   else daysEl.style.color = 'var(--fuji)';
 }
-updateCountdown();
 
 function openModal(){
-  const s=localStorage.getItem('step1-exam-date');
-  if(s) document.getElementById('date-input').value=s;
-  document.getElementById('modal').classList.add('open');
+  const modal = document.getElementById('modal');
+  if (modal) modal.classList.add('open');
 }
 
-function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function closeModal(){ 
+  const modal = document.getElementById('modal');
+  if (modal) modal.classList.remove('open'); 
+}
 
 async function saveDate(){
-  const v = document.getElementById('date-input').value;
-  if(v){
-    localStorage.setItem('step1-exam-date', v);
-    updateCountdown();
-    if (auth.currentUser) {
-      await db.collection('users').doc(auth.currentUser.uid).set({
-        examDate: v
-      }, { merge: true });
+  const inputEl = document.getElementById('date-input');
+  if (!inputEl) return;
+  const v = inputEl.value;
+  
+  if(v) {
+    updateCountdown(v);
+    try {
+      if (currentUser && db) {
+        await db.collection('users').doc(currentUser.uid).set({ examDate: v }, { merge: true });
+      }
+    } catch (e) {
+      console.error("Error saving exam date:", e);
     }
   }
   closeModal();
 }
 
-document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
-function showAddHint(){alert('To add a new tool:\n\n1. Upload your HTML file to GitHub\n2. Copy a tool-card block in index.html\n3. Update the link and details\n4. Commit changes.');}
+const modalOverlay = document.getElementById('modal');
+if (modalOverlay) {
+  modalOverlay.addEventListener('click', e => {
+    if(e.target === modalOverlay) closeModal();
+  });
+}
 
-// --- Drug of the Day Logic ---
+// UWorld Widget logic (Refactored to pull from Firestore Subcollections)
+async function initUWorldWidget(uid) {
+  const elDone = document.getElementById('widget-uw-done');
+  const elRemain = document.getElementById('widget-uw-remain');
+  const elNeeded = document.getElementById('widget-uw-needed');
+  const elPct = document.getElementById('widget-uw-pct');
+  const elFill = document.getElementById('widget-uw-fill');
+  
+  if (!elDone || !elRemain || !elNeeded || !elPct || !elFill) return;
+
+  if (!uid || !db) {
+    // Reset to Empty State if not logged in
+    elDone.textContent = "0";
+    elRemain.textContent = "3661";
+    elNeeded.textContent = "N/A";
+    elPct.textContent = "0%";
+    elFill.style.width = "0%";
+    return;
+  }
+
+  try {
+    let settings = { total: 3661, finishBy: '', studyDays: [0,1,2,3,4,5], uniqueOffset: 0 };
+    
+    // Fetch Settings
+    const configDoc = await db.collection('users').doc(uid).collection('uworld').doc('config').get();
+    if (configDoc.exists) {
+      settings = { ...settings, ...configDoc.data() };
+    }
+
+    // Aggregate Logs
+    const logsSnapshot = await db.collection('users').doc(uid).collection('uworld_logs').get();
+    let loggedQs = 0;
+    logsSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.qs) loggedQs += data.qs;
+    });
+
+    // Calculate done and remaining
+    let done = Math.max(0, loggedQs + (settings.uniqueOffset || 0));
+    const total = settings.total || 3661;
+    const remaining = Math.max(0, total - done);
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    // Calculate Needed / Day
+    let needed = "N/A";
+    if (settings.finishBy && remaining > 0) {
+      const now = new Date(); now.setHours(0,0,0,0);
+      const finish = new Date(settings.finishBy + 'T12:00:00');
+      finish.setHours(0,0,0,0);
+      
+      let daysLeft = 0;
+      let cur = new Date(now);
+      while (cur <= finish) {
+        if ((settings.studyDays || []).includes(cur.getDay())) daysLeft++;
+        cur.setDate(cur.getDate() + 1);
+      }
+      needed = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : remaining;
+    }
+
+    // Update UI Elements
+    elDone.textContent = done.toLocaleString();
+    elRemain.textContent = remaining.toLocaleString();
+    elNeeded.textContent = needed;
+    elPct.textContent = pct + '%';
+    elFill.style.width = pct + '%';
+
+  } catch (err) {
+    console.error('Error rendering UWorld widget:', err);
+  }
+}
+
+// Drug of the Day Widget
 let currentDrug = null;
 
 function initDrugOfTheDay() {
   if (typeof DRUGS === 'undefined') return;
 
-  // 1. Get all Tier 1 (High Yield) drugs
   const allDrugs = [];
   Object.keys(DRUGS).forEach(cat => {
     DRUGS[cat].forEach(group => {
-      const tier1 = group.drugs.filter(d => d.tier === 1);
+      // Find high yield Tier 1 drugs safely
+      const tier1 = group.drugs.filter(d => {
+        const tierVal = typeof d.tier === 'number' ? d.tier : parseInt(String(d.tier).replace(/\D/g,'')) || 99;
+        return tierVal === 1;
+      });
       tier1.forEach(d => allDrugs.push({ ...d, groupName: group.group }));
     });
   });
 
   if (allDrugs.length === 0) return;
 
-  // 2. Pick one based on the date
   const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
   currentDrug = allDrugs[seed % allDrugs.length];
 
-  // 3. Update the Card
-  document.getElementById('dotd-name').textContent = currentDrug.name;
+  const nameEl = document.getElementById('dotd-name');
+  const pearlEl = document.getElementById('dotd-pearl');
   
-  // Truncate Pearl
-  const pearlText = currentDrug.pearl ? "💡 " + currentDrug.pearl.replace(/\*\*/g, '') : "Review this high-yield concept.";
-  document.getElementById('dotd-pearl').textContent = pearlText.length > 85 ? pearlText.substring(0, 85) + "..." : pearlText;
+  if (nameEl) nameEl.textContent = currentDrug.name;
+  
+  if (pearlEl) {
+    const pearlText = currentDrug.pearl ? "💡 " + currentDrug.pearl.replace(/\*\*/g, '') : "Review this high-yield concept.";
+    pearlEl.textContent = pearlText.length > 85 ? pearlText.substring(0, 85) + "..." : pearlText;
+  }
 }
 
-// --- Drug Modal Logic ---
 function openDrugModal() {
   if (!currentDrug) return;
   
-  document.getElementById('dm-name').textContent = currentDrug.name;
-  document.getElementById('dm-aka').textContent = currentDrug.aka || '';
-  document.getElementById('dm-group').textContent = currentDrug.groupName || 'Pharmacology';
+  const nameEl = document.getElementById('dm-name');
+  const akaEl = document.getElementById('dm-aka');
+  const grpEl = document.getElementById('dm-group');
+  const contentEl = document.getElementById('dm-content');
+  const modalEl = document.getElementById('drug-modal');
+  
+  if (!nameEl || !contentEl || !modalEl) return;
+  
+  nameEl.textContent = currentDrug.name;
+  if (akaEl) akaEl.textContent = currentDrug.aka || '';
+  if (grpEl) grpEl.textContent = currentDrug.groupName || 'Pharmacology';
 
   const fmt = (text) => text ? text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : 'See full reference.';
 
@@ -467,153 +575,24 @@ function openDrugModal() {
     ${currentDrug.pearl ? `<div class="drug-row" style="background:var(--surface2);border:1px solid var(--sakura-light);padding:10px;border-radius:8px;"><span class="drug-label" style="color:var(--sakura2);">💎 Pearl</span><div class="drug-text">${fmt(currentDrug.pearl)}</div></div>` : ''}
   `;
 
-  document.getElementById('dm-content').innerHTML = html;
-  document.getElementById('drug-modal').classList.add('open');
+  contentEl.innerHTML = html;
+  modalEl.classList.add('open');
 }
 
 function closeDrugModal() {
-  document.getElementById('drug-modal').classList.remove('open');
+  const modalEl = document.getElementById('drug-modal');
+  if (modalEl) modalEl.classList.remove('open');
 }
 
-document.getElementById('drug-modal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('drug-modal')) closeDrugModal();
-});
+const drugModalOverlay = document.getElementById('drug-modal');
+if (drugModalOverlay) {
+  drugModalOverlay.addEventListener('click', (e) => {
+    if (e.target === drugModalOverlay) closeDrugModal();
+  });
+}
 
-// Initialize Drug Logic
+// Ensure init fires
 initDrugOfTheDay();
-
-// ── UWorld Widget ─────────────────────────────────────────────────────────
-function initUWorldWidget() {
-  try {
-    const settings = JSON.parse(localStorage.getItem('uw-settings') || '{}');
-    const entries = JSON.parse(localStorage.getItem('uw-entries') || '[]');
-    
-    const base = parseInt(settings.done) || 0;
-    const total = parseInt(settings.total) || 3661;
-    const loggedQs = entries.reduce((s, e) => s + (parseInt(e.qs) || 0), 0);
-    const done = base + loggedQs;
-    const remaining = Math.max(0, total - done);
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    const dailyGoal = parseInt(settings.dailyGoal) || 40;
-
-    // Needed per day
-    let needed = dailyGoal;
-    if (settings.finishBy && remaining > 0) {
-      const now = new Date(); now.setHours(0,0,0,0);
-      const finish = new Date(settings.finishBy + 'T12:00:00');
-      const studyDays = settings.studyDays || [0,1,2,3,4,5];
-      let studyDaysLeft = 0;
-      const cur = new Date(now);
-      while (cur <= finish) {
-        if (studyDays.includes(cur.getDay())) studyDaysLeft++;
-        cur.setDate(cur.getDate() + 1);
-      }
-      if (studyDaysLeft > 0) needed = Math.ceil(remaining / studyDaysLeft);
-    }
-
-    // Render ring
-    const circumference = 213.6;
-    const offset = circumference - (pct / 100) * circumference;
-    const ring = document.getElementById('uw-ring-fill');
-    if (ring) ring.style.strokeDashoffset = offset;
-
-    document.getElementById('uw-ring-pct').textContent = pct + '%';
-    document.getElementById('uw-done').textContent = done.toLocaleString();
-    document.getElementById('uw-remain').textContent = remaining.toLocaleString();
-    document.getElementById('uw-today').textContent = dailyGoal;
-    document.getElementById('uw-needed').textContent = needed;
-
-    // Pace
-    const dot = document.getElementById('uw-pace-dot');
-    const msg = document.getElementById('uw-pace-msg');
-    if (!settings.finishBy) {
-      dot.className = 'uw-pace-dot';
-      msg.textContent = 'Set a finish date in tracker';
-    } else if (remaining <= 0) {
-      dot.className = 'uw-pace-dot ok';
-      msg.textContent = 'QBank complete! 🎉';
-    } else {
-      const ratio = needed / dailyGoal;
-      if (ratio <= 1) {
-        dot.className = 'uw-pace-dot ok';
-        msg.textContent = 'On track';
-      } else if (ratio <= 1.5) {
-        dot.className = 'uw-pace-dot warn';
-        msg.textContent = `Slightly behind (${needed}/day)`;
-      } else {
-        dot.className = 'uw-pace-dot behind';
-        msg.textContent = `Behind pace — ${needed}/day needed`;
-      }
-    }
-  } catch(e) { /* widget silently fails if no data */ }
-}
-initUWorldWidget();
-function initUWorldWidget() {
-  let settings = { total: 3661, currentUnique: 0, done: 0, finishBy: '', studyDays: [0,1,2,3,4,5] };
-  let entries = [];
-  
-  try {
-    const s = localStorage.getItem('uw-settings');
-    if (s) {
-      const parsedS = JSON.parse(s);
-      // Fallback for previous variable names
-      if (parsedS.done !== undefined && parsedS.currentUnique === undefined) {
-        parsedS.currentUnique = parsedS.done;
-      }
-      settings = { ...settings, ...parsedS };
-    }
-    const e = localStorage.getItem('uw-entries');
-    if (e) entries = JSON.parse(e);
-  } catch(err) {
-    console.error('Could not load UWorld widget data');
-  }
-
-  // Calculate Unique Questions Done
-  let done = 0;
-  if (settings.currentUnique !== undefined && settings.currentUnique > 0) {
-    done = settings.currentUnique;
-  } else {
-    // Legacy fallback
-    done = (settings.done || 0) + entries.reduce((sum, entry) => sum + (entry.qs || 0), 0);
-  }
-
-  const total = settings.total || 3661;
-  const remaining = Math.max(0, total - done);
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-
-  // Calculate Needed / Day
-  let needed = "N/A";
-  if (settings.finishBy) {
-    const now = new Date(); now.setHours(0,0,0,0);
-    const finish = new Date(settings.finishBy + 'T12:00:00');
-    finish.setHours(0,0,0,0);
-    
-    let daysLeft = 0;
-    let cur = new Date(now);
-    while (cur <= finish) {
-      if ((settings.studyDays || []).includes(cur.getDay())) daysLeft++;
-      cur.setDate(cur.getDate() + 1);
-    }
-    needed = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : remaining;
-  }
-
-  // Update DOM
-  const elDone = document.getElementById('widget-uw-done');
-  const elRemain = document.getElementById('widget-uw-remain');
-  const elNeeded = document.getElementById('widget-uw-needed');
-  const elPct = document.getElementById('widget-uw-pct');
-  const elFill = document.getElementById('widget-uw-fill');
-
-  if (elDone) elDone.textContent = done.toLocaleString();
-  if (elRemain) elRemain.textContent = remaining.toLocaleString();
-  if (elNeeded) elNeeded.textContent = needed;
-  if (elPct) elPct.textContent = pct + '%';
-  if (elFill) elFill.style.width = pct + '%';
-}
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', initUWorldWidget);
-  
 </script>
 </body>
 </html>
